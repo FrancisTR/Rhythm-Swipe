@@ -1,30 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!--p5.js Library-->
-        <script src="/lib/p5.min.js"></script>
-        <script src="/lib/p5.sound.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <style>
-            html, body{
-                background-color: #ccc;
-                margin: 0;
-                padding: 0;
-                color: #fff;
-            }
-            .musicCredit{
-                position: absolute;
-                bottom: 0;
-                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            }
-        </style>
-        <meta charset="utf-8" />
-    </head>
+    <!--p5.js Library-->
+    <script src="/lib/p5.min.js"></script>
+    <script src="/lib/p5.sound.min.js"></script>
+
+    <link rel="shortcut icon" type="x-icon" href="../asset/gems/gem0.png"> 
+    <link rel="stylesheet" href="styles.css">
+    <title>Rhythm Swipe Game</title>
+</head>
 
 
-    
-    <body>
-        <script src="Gamep5.js"></script>
-    </body>
+<!--
+    Game taking place in JS
+    - Used p5.js Libraries
+-->
+<body>
+    <div class="container">
+        <section class="GamePresentation">
+            <center>
+                <h1 id="Error">
+                    This Game is not supported in this window size. 
+                    Please expand your browser window. 
+                    This game only supports Desktop. 
+                    Mobile version coming soon.
+                </h1>
+            </center>
 
+            <!--Loading page-->
+            <div id="p5_loading" class="preloadClass">
+                <center><p>Sandboa Presents</p></center>
+            </div>
+            <script src="Gamep5.js"></script>
+        </section>
+
+
+
+        
+        <section class="Description">
+            <div class="TeamContainer">
+                <h1 class="heading">Project Contributors</h1>
+                
+                <div class="profiles">
+
+                    <div class="profile">
+                        <img src="./asset/Francis.jpg" class="profile-img">
+                        <h3 class="user-name">Francis</h3>
+                        <h5>Team Leader/Programmer</h5>
+                        <p></p>
+                    </div>
+
+
+                    <div class="profile">
+                        <img src="./asset/John.jpg" class="profile-img">
+                        <h3 class="user-name">John</h3>
+                        <h5>Co-Leader/Programmer/Asset Designer</h5>
+                        <p></p>
+                    </div>
+
+
+                    <div class="profile">
+                        <img src="./asset/Nick.png" class="profile-img">
+                        <h3 class="user-name">Nick</h3>
+                        <h5>Programmer</h5>
+                        <p></p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
 </html>

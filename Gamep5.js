@@ -18,7 +18,7 @@ let MainMenuThemeSwitch = false;
 //----------------------------------
 
 //---------------Creating the Board-------------------
-let boardSize = 600; //How big the board is
+var boardSize = 600; //How big the board is
 let tileSize = boardSize/10; //The grid
 //----------------------------------------------------
 
@@ -106,27 +106,47 @@ let volHistory = [] //!!! in main menu
 //--------------------------------------------------------------------
 
 
+//--------Resize window---------
+let redrawLock = false; //Create the buttons once in the setup
+//--------------------------------------------------------------------
 
 
+//-----------------------------Buttons---------------------------
+let StartGameButton
 
+let button;
+let button2;
+let button3;
+let button4;
+
+let buttonStart;
+let button2Start;
+let button3Start;
+let button4Start;
+
+let buttonBack;
+let buttonW;
+//--------------------------------------------------------------------
+var messageError = document.getElementById("Error");
+let resizeLock = false;
 
 //--------------------------------------------------------------PRELOAD----------------------------------------------------------------------------
 function preload() {
     //*/Sounds//
-    easySound = loadSound('../sounds/A_Punch_Up_at_a_Wedding(Easy).mp3');
+    easySound = loadSound('../sounds/A_Punchup_at_a_Wedding_8-bit.mp3');
     //*/
     //*/Sounds//
-    normalSound = loadSound('../sounds/Radiohead_There_There(Medium).mp3');
+    normalSound = loadSound('../sounds/There_There_8-bit.mp3');
     //*/
     //*/Sounds//
-    hardSound = loadSound('../sounds/Where_I_End_and_You_Begin(Hard).mp3');
+    hardSound = loadSound('../sounds/Where_I_End_You_Begin_8-bit.mp3');
     //*/
     //*/Sounds//
     masterSound = loadSound('../sounds/Super_Mario_Galaxy.mp3');
     //*/
 
     //*/Sounds//
-    MainMenuTheme = loadSound('../sounds/Super_Mario_Galaxy_2.mp3');
+    MainMenuTheme = loadSound('../sounds/Main8-bit.mp3');
     //*/
 
 
@@ -153,6 +173,7 @@ function preload() {
         console.log("Items loaded");
     }
 
+    //Main Menu
     BackgroundImage = loadImage('asset/MainMenu.gif');
 }
 
@@ -163,123 +184,133 @@ function preload() {
 //--------------------------------------------------------------------SETUP---------------------------------------------------------------------------------
 //Creation of the Canvas, the buttons, and the sounds
 function setup() {
+    //Center the game on the page
+
     let div = createCanvas(boardSize, boardSize);
-    div.position(100, 100);
+    div.position(100, 101);
     div.center('horizontal');
+
+
+    //Check to see if it supports the game
+    if ((windowWidth <= 620)){
+        level = -2;
+        messageError.style.display = "block";
+        resizeLock = true;
+        div.hide();
+    }else if ((windowWidth > 620) && resizeLock === true){
+        level = -1;
+        messageError.style.display = "none";
+        resizeLock = false;
+        div.show();
+    }
+
     //StartGame
-    StartGameButton = createButton('Start');
-    StartGameButton.style('color', 'blueviolet');
-    StartGameButton.style('font-size', 'large');
-    StartGameButton.size(200, 75);
-    StartGameButton.position(250, 300);
-    StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
-    StartGameButton.center('horizontal');
+    background("darkgray");
+    if (redrawLock == false){
+        StartGameButton = createButton('Start');
+        StartGameButton.style('color', 'blueviolet');
+        StartGameButton.style('font-size', 'large');
+        StartGameButton.size(200, 75);
+        //StartGameButton.position(250, windowHeight/2);
+        StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
 
 
-    //-------------Back button-----------
-    buttonBack = createButton('Back');
-    buttonBack.style('color', 'black');
-    buttonBack.style('font-size', 'large');
-    buttonBack.size(200, 75);
-    buttonBack.position(250, 510);
-    buttonBack.mousePressed(mainMenu); //Goes to Main Menu
-    buttonBack.center('horizontal');
-    //-----------------------------------
+        //-------------Back button-----------
+        buttonBack = createButton('Back');
+        buttonBack.style('color', 'white');
+        buttonBack.style('font-size', 'large');
+        buttonBack.size(200, 75);
+        //buttonBack.position(250, windowHeight/1.3);
+        buttonBack.mousePressed(mainMenu); //Goes to Main Menu
+        //-----------------------------------
 
-    //-----------Easy Button-------------
-    button = createButton('Easy');
-    button.style('color', 'green');
-    button.style('font-size', 'large');
-    button.size(200, 75);
-    button.position(250, 250);
-    button.mousePressed(easyIntermission); //Goes to Intermission
-    button.center('horizontal');
+        //-----------Easy Button-------------
+        button = createButton('Easy');
+        button.style('color', 'green');
+        button.style('font-size', 'large');
+        button.size(200, 75);
+        //button.position(250, windowHeight/3);
+        button.mousePressed(easyIntermission); //Goes to Intermission
 
-    buttonStart = createButton('Start');
-    buttonStart.style('color', 'green');
-    buttonStart.style('font-size', 'large');
-    buttonStart.size(200, 75);
-    buttonStart.position(250, 425);
-    buttonStart.mousePressed(easyLevel); //Play Easy Mode
-    buttonStart.center('horizontal');
-    //-----------------------------------
+        buttonStart = createButton('Start');
+        buttonStart.style('color', 'green');
+        buttonStart.style('font-size', 'large');
+        buttonStart.size(200, 75);
+        //buttonStart.position(250, windowHeight/1.53);
+        buttonStart.mousePressed(easyLevel); //Play Easy Mode
+        //-----------------------------------
 
-    //-----------Normal Button-----------
-    button2 = createButton('Normal');
-    button2.style('color', 'orange');
-    button2.style('font-size', 'large');
-    button2.size(200, 75);
-    button2.position(250, 350);
-    button2.mousePressed(normalIntermission); //Goes to Intermission
-    button2.center('horizontal');
+        //-----------Normal Button-----------
+        button2 = createButton('Normal');
+        button2.style('color', 'orange');
+        button2.style('font-size', 'large');
+        button2.size(200, 75);
+        //button2.position(250, windowHeight/2.2);
+        button2.mousePressed(normalIntermission); //Goes to Intermission
 
-    button2Start = createButton('Start');
-    button2Start.style('color', 'orange');
-    button2Start.style('font-size', 'large');
-    button2Start.size(200, 75);
-    button2Start.position(250, 425);
-    button2Start.mousePressed(normalLevel); //Play Normal Mode
-    button2Start.center('horizontal');
-    //-----------------------------------
+        button2Start = createButton('Start');
+        button2Start.style('color', 'orange');
+        button2Start.style('font-size', 'large');
+        button2Start.size(200, 75);
+        //button2Start.position(250, windowHeight/1.53);
+        button2Start.mousePressed(normalLevel); //Play Normal Mode
+        //-----------------------------------
 
-    //------------Hard button------------
-    button3 = createButton('Hard');
-    button3.style('color', 'red');
-    button3.style('font-size', 'large');
-    button3.size(200, 75);
-    button3.position(250, 450);
-    button3.mousePressed(hardIntermission); //Goes to Intermission
-    button3.center('horizontal');
+        //------------Hard button------------
+        button3 = createButton('Hard');
+        button3.style('color', 'red');
+        button3.style('font-size', 'large');
+        button3.size(200, 75);
+        //button3.position(250, windowHeight/1.74);
+        button3.mousePressed(hardIntermission); //Goes to Intermission
 
-    button3Start = createButton('Start');
-    button3Start.style('color', 'red');
-    button3Start.style('font-size', 'large');
-    button3Start.size(200, 75);
-    button3Start.position(250, 425);
-    button3Start.mousePressed(hardLevel); //Play Hard Mode
-    button3Start.center('horizontal');
-    //------------------------------------
+        button3Start = createButton('Start');
+        button3Start.style('color', 'red');
+        button3Start.style('font-size', 'large');
+        button3Start.size(200, 75);
+        //button3Start.position(250, windowHeight/1.53);
+        button3Start.mousePressed(hardLevel); //Play Hard Mode
+        //------------------------------------
 
-    //-----------Master button (Used to see the world record)----------
-    button4 = createButton('Master');
-    button4.style('color', 'darkred');
-    button4.style('font-size', 'large');
-    button4.size(200, 75);
-    button4.position(250, 550);
-    button4.mousePressed(masterIntermission); //Goes to Intermission
-    button4.center('horizontal');
+        //-----------Master button (Used to see the world record)----------
+        button4 = createButton('Master');
+        button4.style('color', 'blueviolet');
+        button4.style('font-size', 'large');
+        button4.size(200, 75);
+        //button4.position(250, windowHeight/1.43);
+        button4.mousePressed(masterIntermission); //Goes to Intermission
 
-    button4Start = createButton('Start');
-    button4Start.style('color', 'darkred');
-    button4Start.style('font-size', 'large');
-    button4Start.size(200, 75);
-    button4Start.position(250, 425);
-    button4Start.mousePressed(masterLevel); //Play Master Mode
-    button4Start.center('horizontal');
-    //-----------------------------------------------------------------
+        button4Start = createButton('Start');
+        button4Start.style('color', 'blueviolet');
+        button4Start.style('font-size', 'large');
+        button4Start.size(200, 75);
+        //button4Start.position(250, windowHeight/1.53);
+        button4Start.mousePressed(masterLevel); //Play Master Mode
+        //-----------------------------------------------------------------
 
 
-    //---------Return button (For Finish and Fail level)---------------
-    buttonW = createButton('Return');
-    buttonW.style('color', 'black');
-    buttonW.style('font-size', 'large');
-    buttonW.size(200, 75);
-    buttonW.position(250, 550);
-    buttonW.mousePressed(mainMenu); //Main menu
-    buttonW.center('horizontal');
-    buttonW.hide();
-    //-----------------------------------------------------------------
+        //---------Return button (For Finish and Fail level)---------------
+        buttonW = createButton('Return');
+        buttonW.style('color', 'white');
+        buttonW.style('font-size', 'large');
+        buttonW.size(200, 75);
+        //buttonW.position(250, windowHeight/1.3);
+        buttonW.mousePressed(mainMenu); //Main menu
+        buttonW.hide();
+        //-----------------------------------------------------------------
 
 
-    //----------------------Music Related------------------------------
-    amplitude = new p5.Amplitude();
+        //----------------------Music Related------------------------------
+        amplitude = new p5.Amplitude();
 
-    cubeDetector = new Cube();
-    cubeBeat = new Cube();
-    //-----------------------------------------------------------------
+        cubeDetector = new Cube();
+        cubeBeat = new Cube();
+        //-----------------------------------------------------------------
+        redrawLock = true;
+    }
+
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 
 
@@ -291,15 +322,77 @@ function setup() {
 //--------------------------------------------------------------------DRAW----------------------------------------------------------------------------------
 function draw(){
 
+    StartGameButton.position(250, 356.5);
+    StartGameButton.center('horizontal');
+
+    button.position(250, 237.66);
+    button.center('horizontal');
+
+    button2.position(250, 324);
+    button2.center('horizontal');
+
+    button3.position(250, 409.7);
+    button3.center('horizontal');
+
+    button4.position(250, 498.6);
+    button4.center('horizontal');
+
+    buttonStart.position(250, 469);
+    buttonStart.center('horizontal');
+
+    button2Start.position(250, 469);
+    button2Start.center('horizontal');
+ 
+    button3Start.position(250, 469);
+    button3Start.center('horizontal');
+
+    button4Start.position(250, 469);
+    button4Start.center('horizontal');
+
+
+
+    buttonBack.position(250, 552);
+    buttonBack.center('horizontal');
+    buttonW.position(250, 552);
+    buttonW.center('horizontal');
+    
+
     //Switch through rooms based on the 'level' variable. Functionality for buttons mainly
     switch(level){
+        case -2:
+            //Hide all buttons
+            buttonHide();
+            buttonBack.hide();
+            buttonW.hide();
+            buttonStart.hide();
+            button2Start.hide();
+            button3Start.hide();
+            button4Start.hide();
+            StartGameButton.hide();
+
+            //Stop all music
+            //*/Sounds//
+            easySound.stop();
+            //*/
+            //*/Sounds//
+            normalSound.stop();
+            //*/
+            //*/Sounds//
+            hardSound.stop()
+            //*/
+            //*/Sounds//
+            masterSound.stop();
+            //*/
+            //Reset everything
+            failed();
+            break;
         case -1:
             //Start Game
             buttonHide();
             buttonBack.hide();
             StartGameButton.show();
 
-        break;
+            break;
         //---------------Main Menu------------------
         case 0:
             buttonBack.hide();
@@ -309,23 +402,31 @@ function draw(){
             button2Start.hide();
             button3Start.hide();
             button4Start.hide();
-            //*//Sounds
+            //*/Sounds//
             easySound.stop();
             normalSound.stop();
             hardSound.stop();
-            //*/
             masterSound.stop();
+            //*/
+            //*/Sounds//
             if (MainMenuThemeSwitch === false && !MainMenuTheme.isPlaying()){
                 MainMenuTheme.play();
                 MainMenuTheme.loop();
                 MainMenuThemeSwitch = true;
             }
+            //*/
             background('black');
             image(BackgroundImage, 0, 0, boardSize, boardSize);
             showNPC(); //A nice seeing of a cop running to the robber
             fill('gold');
             textSize(50);
-            text("Rhythm Swipe", 144, 100);
+            text("Rhythm Swipe", 140, 100);
+            textSize(15);
+
+            //*/VERSION/
+            fill("white");
+            text("v1.0.0", 5, 15);
+
             buttonShow();
             break;
         //------------------------------------------
@@ -334,7 +435,9 @@ function draw(){
 
         //--------------Easy Mode-------------------
         case 0.5: //Level 1 Overview
+            //*/Sounds//
             MainMenuTheme.stop();
+            //*/
             MainMenuThemeSwitch = false;
             background('gray');
             buttonHide();
@@ -345,15 +448,15 @@ function draw(){
             textSize(25);
             text("Difficulty: Easy", 25, 100);
             textSize(20);
-            text("Music: A Punch Up at a Wedding", 25, 150);
-            text("By Radiohead", 25, 200);
+            text("Music: A Punch Up at a Wedding 8-bit", 25, 150);
+            text("By RGYDK", 25, 200);
             visualAudio(); //Show the audio visually
             break;
         case 1: //Easy Mode Game
             buttonHide();
             if (!player){
                 player = new Player(1,6);
-                //*/Sounds/
+                //*/Sounds//
                 easySound.play();
                 //*/
             }
@@ -369,7 +472,9 @@ function draw(){
 
         //-------------Normal Mode-----------------
         case 1.5: //Level 2 overview
+            //*/Sounds//
             MainMenuTheme.stop();
+            //*/
             MainMenuThemeSwitch = false;
             background('gray');
             buttonHide();
@@ -379,8 +484,8 @@ function draw(){
             textSize(25);
             text("Difficulty: Normal", 25, 100);
             textSize(20);
-            text("Music: There There", 25, 150);
-            text("By Radiohead", 25, 200);
+            text("Music: There There 8-bit", 25, 150);
+            text("By RGYDK", 25, 200);
             visualAudio();
             break;
         case 2: //Normal Mode Game
@@ -389,7 +494,7 @@ function draw(){
                 player = new Player(2,2);
                 playerCounter = 1;
                 player.turn(90);
-                //*/Sounds/
+                //*/Sounds//
                 normalSound.play();
                 //*/
             }
@@ -407,7 +512,9 @@ function draw(){
 
         //---------------Hard Mode-----------------
         case 2.5: //Hard intermission
+            //*/Sounds//
             MainMenuTheme.stop();
+            //*/
             MainMenuThemeSwitch = false;
             background('gray');
             buttonHide();
@@ -417,8 +524,8 @@ function draw(){
             textSize(25);
             text("Difficulty: Hard", 25, 100);
             textSize(20);
-            text("Music: Where I End and You Begin", 25, 150);
-            text("By Radiohead", 25, 200);
+            text("Music: Where I End and You Begin 8-bit", 25, 150);
+            text("By RGYDK", 25, 200);
             visualAudio();
             break;
         case 3: //Hard Mode
@@ -427,7 +534,7 @@ function draw(){
                 player = new Player(6, 9);
                 playerCounter = 3;
                 player.turn(-90);
-                //*/Sounds/
+                //*/Sounds//
                 hardSound.play();
                 //*/
             }
@@ -475,7 +582,9 @@ function draw(){
 
         //--------------Master Mode-------------------
         case 5.5: //Master Mode Intermssion
+            //*/Sounds//
             MainMenuTheme.stop();
+            //*/
             MainMenuThemeSwitch = false;
             background('gray');
             buttonHide();
@@ -488,9 +597,9 @@ function draw(){
             text("Music: Super Mario Galaxy: Staff Roll 8 Bit Remix", 25, 150);
             text("By Vahkiti", 25, 200);
             if (worldRecord === null){
-                text("Creative Coding Current Record Time: None", 20, 550);
+                text("Creative Coding Current Record Time: None", 20, 570);
             }else{
-                text("Creative Coding Current Record Time: "+worldRecord+"s", 20, 550);
+                text("Creative Coding Current Record Time: "+worldRecord+"s", 20, 570);
             }
             visualAudio();
             break;
@@ -498,7 +607,7 @@ function draw(){
             buttonHide();
             if (!player){
                 player = new Player(1, 6);
-                //*/Sounds/
+                //*/Sounds//
                 masterSound.play();
                 //*/
             }
@@ -513,8 +622,10 @@ function draw(){
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
+//Refresh everything
+function windowResized() {
+    setup();
+}
 
 
 
@@ -569,16 +680,16 @@ function finished(){
         enemy2 = []; //
         points = 0; //
         backgroundColor = 210; //
-        //*/Sounds/
+        //*/Sounds//
         easySound.stop();
         //*/
-        //*/Sounds/
+        //*/Sounds//
         normalSound.stop();
         //*/
-        //*/Sounds/
+        //*/Sounds//
         hardSound.stop()
         //*/
-        //*/Sounds/
+        //*/Sounds//
         masterSound.stop();
         //*/
         playerCounter = 0; //
@@ -608,16 +719,16 @@ function failed(){
     enemy2 = []; //
     points = 0; //
     backgroundColor = 210; //
-    //*/Sounds/
+    //*/Sounds//
     easySound.stop();
     //*/
-    //*/Sounds/
+    //*/Sounds//
     normalSound.stop();
     //*/
-    //*/Sounds/
+    //*/Sounds//
     hardSound.stop()
     //*/
-    //*/Sounds/
+    //*/Sounds//
     masterSound.stop();
     //*/
     playerCounter = 0; //
@@ -630,6 +741,9 @@ function failed(){
 
     flipBooleanX = false; //
     flipBooleanY = false; //
+
+    //Do not record the time if failed
+    masterModeTimer = false;
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -641,14 +755,14 @@ function failed(){
 //-------------EASY-----------------
 function easyLevel() {
     level = 1;
-    //*/Sounds/
+    //*/Sounds//
     easySound.stop();
     //*/
 }
 function easyIntermission(){
     level = 0.5;
     buttonStart.show();
-    //*/Sounds/
+    //*/Sounds//
     easySound.play();
     easySound.loop();
     //*/
@@ -658,14 +772,14 @@ function easyIntermission(){
 //-------------NORMAL---------------
 function normalLevel() {
     level = 2;
-    //*/Sounds/
+    //*/Sounds//
     normalSound.stop();
     //*/
 }
 function normalIntermission(){
     level = 1.5;
     button2Start.show();
-    //*/Sounds/
+    //*/Sounds//
     normalSound.play();
     normalSound.loop();
     //*/
@@ -675,14 +789,14 @@ function normalIntermission(){
 //---------------HARD---------------
 function hardLevel() {
     level = 3;
-    //*/Sounds/
+    //*/Sounds//
     hardSound.stop();
     //*/
 }
 function hardIntermission(){
     level = 2.5;
     button3Start.show();
-    //*/Sounds/
+    //*/Sounds//
     hardSound.play();
     hardSound.loop();
     //*/
@@ -694,14 +808,14 @@ function hardIntermission(){
 //-------------MASTER---------------
 function masterLevel() {
     level = 6;
-    //*/Sounds/
+    //*/Sounds//
     masterSound.stop();
     //*/
 }
 function masterIntermission(){
     level = 5.5;
     button4Start.show();
-    //*/Sounds/
+    //*/Sounds//
     masterSound.play();
     masterSound.loop();
     //*/
@@ -1158,15 +1272,36 @@ function board(){
 //Moving correlates to Canvas size. Ex: If Canvas is 600x600, then the
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
-    if (keyCode === LEFT_ARROW) {
-        // moveWidth -= tileSize;
-        playerCounter+= 1;
-        player.turn(90);
-    } else if (keyCode === RIGHT_ARROW) {
-        // moveWidth += tileSize;
-        playerCounter-= 1;
-        player.turn(-90);
-    } else if (key == ' '){
+    if (key === "w") {
+
+        if (playerCounter != 1){
+            playerCounter = 1;
+            player.turn(90);
+        }
+    }
+    if (key === "a") {
+
+        if (playerCounter != 2){
+            playerCounter = 2;
+            player.turn(180);
+        }
+
+    }
+    if (key === "s") {
+
+        if (playerCounter != 3){
+            playerCounter = 3;
+            player.turn(270);
+        }
+    }
+    if (key === "d") {
+
+        if (playerCounter != 0){
+            playerCounter = 0;
+            player.turn(0);
+        }
+    }
+    if (key === "w" || key === "a" || key === "s" || key === "d"){
         player.moveForward();
         pressByBeat = 'red';
     }
@@ -1261,10 +1396,13 @@ class Player{
     //Show the character
     display(){
         //X and Y and width, and height
+        this.showImage(playerCounter); //Shows the character image
+
+        //Character Debug
+
         //let test = makeTriangle(this.center, tileSize/2-(tileSize*0.15), this.facing);
         //fill("blueviolet");
         //triangle(test.x1, test.y1, test.x2, test.y2, test.x3, test.y3);
-        this.showImage(playerCounter); //Shows the character image
         //fill("red");
         //let test2 = makeTriangle({x:test.x1, y:test.y1}, tileSize/4-(tileSize*0.10), this.facing);
         //triangle(test2.x1, test2.y1, test2.x2, test2.y2, test2.x3, test2.y3);
@@ -1301,34 +1439,6 @@ class Player{
 
     //Move the character forward
     moveForward(){
-        // this.center = onCircle(this.center, tileSize, this.facing);
-
-
-
-        /*/TESTING
-        if(this.playerCounter === 0){ //Right side
-            console.log("Right");
-     
-            image(playerAnimation[7], round(this.x) + 20, round(this.y) - 20, 0, 0);
-            image(playerAnimation[8], round(this.x) + 20, round(this.y) - 20, 0, 0);
-        
-            //image(playerAnimation[6], round(this.x) + 20, round(this.y) - 20, 0, 0);
-        }
-        if(this.playerCounter === 1){ //Upper
-            console.log("Upper");
-            image(playerAnimation[3], round(this.x) + 10, round(this.y) -20, 0, 0);
-        }
-        if(this.playerCounter === 2){ //LeftSide (Testing)
-            console.log("Left");
-            image(playerAnimation[9], round(this.x) + 10, round(this.y) - 20, 0, 0);
-        }
-        if(this.playerCounter === 3){ //Front
-            console.log("Front");
-            image(playerAnimation[0], round(this.x) + 10, round(this.y) -20, 0, 0);
-        }
-        //*/
-
-
         let test = onCircle(this.center, tileSize, this.facing);
         this.updatePosition(test.x-tileSize/2, test.y-tileSize/2, this.facing);
         //image(playerAnimation[0], round(this.x) + 5, round(this.y) + 5, 50, 50);
@@ -1337,7 +1447,7 @@ class Player{
     //Turn the character
     turn(deg){
         // this.facing = this.facing+deg;
-        this.updatePosition(this.x, this.y, this.facing+deg); //this.facing+deg
+        this.updatePosition(this.x, this.y, deg); //this.facing+deg
     }
 
     //All the movement is updating its position
@@ -1614,12 +1724,12 @@ class Cube{ //The red cube
     displayMainMenu(){ //Shows a Cop and a Thief Running
         noStroke();
         //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(playerAnimation[6], xMainMenu, yMainMenu - 50, 0, 0);
+        image(playerAnimation[6], xMainMenu, yMainMenu - 53, 0, 0);
         textSize(20);
         fill('white');
-        text("Now playing: Super Mario Galaxy 2 8-bit (By Vahkiti)", xMainMenu + 50, 575);
+        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu + 50, 575);
         //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(guard[14], xMainMenu - 100, yMainMenu - 50, 0, 0);
+        image(guard[14], xMainMenu - 100, yMainMenu - 60, 0, 0);
         if(xMainMenu > width + 100) {
             xMainMenu = -rectWidthMainMenu - 1000;
         }
