@@ -425,7 +425,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.0.0", 5, 15);
+            text("v1.1.0", 5, 15);
 
             buttonShow();
             break;
@@ -695,6 +695,7 @@ function finished(){
         playerCounter = 0; //
         enemyMovingX = 0; //Incrment 60 for moving;
         enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
+        flipBooleanX = false; //
 
         enemyMovingY = 0; //Incrment 60 for moving;
         enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position
