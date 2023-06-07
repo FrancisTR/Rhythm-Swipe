@@ -425,7 +425,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.0.0", 5, 15);
+            text("v1.1.0", 5, 15);
 
             buttonShow();
             break;
@@ -1272,31 +1272,23 @@ function board(){
 //Moving correlates to Canvas size. Ex: If Canvas is 600x600, then the
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
-    if (key === "w") {
-
-        if (playerCounter != 1){
+    if (key === "w" && playerCounter != 1) {
             playerCounter = 1;
             player.turn(90);
         }
     }
-    if (key === "a") {
-
-        if (playerCounter != 2){
+    if (key === "a" && playerCounter != 2) {
             playerCounter = 2;
             player.turn(180);
         }
 
     }
-    if (key === "s") {
-
-        if (playerCounter != 3){
+    if (key === "s" && playerCounter != 3) {
             playerCounter = 3;
             player.turn(270);
         }
     }
-    if (key === "d") {
-
-        if (playerCounter != 0){
+    if (key === "d" && playerCounter != 0) {
             playerCounter = 0;
             player.turn(0);
         }
@@ -1738,8 +1730,8 @@ class Cube{ //The red cube
 
 
 
-
-    displayLevel1(){ //Music:
+    displayLevelSetup(_x2){
+        console.log(_x2);
         noStroke();
         fill('red');
         rect(x2, y2, rectWidth, rectHeight);
@@ -1747,40 +1739,23 @@ class Cube{ //The red cube
         if(x2 > width) {
             x2 = -rectWidth;
         }
-        x2+=7.9; //Change when needed
+        x2+=_x2;
+    }
+
+    displayLevel1(){ //Music:
+        this.displayLevelSetup(7.9); //Change when needed
     }
 
     displayLevel2(){ //Music:
-        noStroke();
-        fill('red');
-        rect(x2, y2, rectWidth, rectHeight);
-        rect(x2, y2, rectWidth, rectHeight);
-        if(x2 > width) {
-            x2 = -rectWidth;
-        }
-        x2+=8.9; //Change when needed
+        this.displayLevelSetup(8.9); //Change when needed
     }
 
     displayLevel3(){ //Music:
-        noStroke();
-        fill('red');
-        rect(x2, y2, rectWidth, rectHeight);
-        rect(x2, y2, rectWidth, rectHeight);
-        if(x2 > width) {
-            x2 = -rectWidth;
-        }
-        x2+=9.9; //Change when needed
+        this.displayLevelSetup(9.9); //Change when needed
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        noStroke();
-        fill('red');
-        rect(x2, y2, rectWidth, rectHeight);
-        rect(x2, y2, rectWidth, rectHeight);
-        if(x2 > width) {
-            x2 = -rectWidth;
-        }
-        x2+=11.9; //Change when needed
+        this.displayLevelSetup(9.9); //Change when needed
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
