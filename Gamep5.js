@@ -153,7 +153,17 @@ function preload() {
 
     //Thief Images
     for (let i = 0; i < 12; i++){
-        playerAnimation[i] = loadImage("asset/thief/Thief"+i+".png");
+        if (i === 0){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else if (i === 3){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else if (i === 6){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else if (i === 9){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else{
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".png");
+        }
         console.log("Sprite Thief loaded");
     }
 
@@ -383,6 +393,10 @@ function draw(){
             //*/Sounds//
             masterSound.stop();
             //*/
+            //*/Sounds//
+            MainMenuTheme.stop();
+            MainMenuThemeSwitch = false;
+            //*/
             //Reset everything
             failed();
             break;
@@ -425,7 +439,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.1.0", 5, 15);
+            text("v1.2.0", 5, 15);
 
             buttonShow();
             break;
@@ -1273,25 +1287,21 @@ function board(){
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if (key === "w" && playerCounter != 1) {
-            playerCounter = 1;
-            player.turn(90);
-        }
+        playerCounter = 1;
+        player.turn(90);
     }
     if (key === "a" && playerCounter != 2) {
-            playerCounter = 2;
-            player.turn(180);
-        }
+        playerCounter = 2;
+        player.turn(180);
 
     }
     if (key === "s" && playerCounter != 3) {
-            playerCounter = 3;
-            player.turn(270);
-        }
+        playerCounter = 3;
+        player.turn(270);
     }
     if (key === "d" && playerCounter != 0) {
-            playerCounter = 0;
-            player.turn(0);
-        }
+        playerCounter = 0;
+        player.turn(0);
     }
     if (key === "w" || key === "a" || key === "s" || key === "d"){
         player.moveForward();
@@ -1415,16 +1425,16 @@ class Player{
             this.playerCounter = counter;
         }
         if(counter === 0){ //Right side
-            image(playerAnimation[6], round(this.x) + 20, round(this.y) - 20, 0, 0);
+            image(playerAnimation[6], round(this.x) + 12, round(this.y) - 20, 0, 0);
         }
         if(counter === 1){ //Upper
-            image(playerAnimation[3], round(this.x) + 10, round(this.y) -20, 0, 0);
+            image(playerAnimation[3], round(this.x) + 7, round(this.y) -20, 0, 0);
         }
         if(counter === 2){ //LeftSide
-            image(playerAnimation[9], round(this.x) + 10, round(this.y) - 20, 0, 0);
+            image(playerAnimation[9], round(this.x) + 7, round(this.y) - 20, 0, 0);
         }
         if(counter === 3){ //Front
-            image(playerAnimation[0], round(this.x) + 10, round(this.y) -20, 0, 0);
+            image(playerAnimation[0], round(this.x) + 7, round(this.y) -20, 0, 0);
         }
     }
 
@@ -1613,7 +1623,7 @@ class Block{
 
     display(){
         push();
-        fill('black');
+        fill('#2e2e2d');
         rect(this.rpos - 20, this.rpos2 - 20, width / 15, height / 15); //Outer circle
         pop();
     }
@@ -1728,10 +1738,7 @@ class Cube{ //The red cube
         xMainMenu+=2; //Change when needed
     }
 
-
-
     displayLevelSetup(_x2){
-        console.log(_x2);
         noStroke();
         fill('red');
         rect(x2, y2, rectWidth, rectHeight);
@@ -1741,21 +1748,20 @@ class Cube{ //The red cube
         }
         x2+=_x2;
     }
-
     displayLevel1(){ //Music:
-        this.displayLevelSetup(7.9); //Change when needed
+        this.displayLevelSetup(7.9);
     }
 
     displayLevel2(){ //Music:
-        this.displayLevelSetup(8.9); //Change when needed
+        this.displayLevelSetup(8.9);
     }
 
     displayLevel3(){ //Music:
-        this.displayLevelSetup(9.9); //Change when needed
+        this.displayLevelSetup(9.9);
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(9.9); //Change when needed
+        this.displayLevelSetup(11.9);
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
