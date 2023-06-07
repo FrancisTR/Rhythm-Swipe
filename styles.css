@@ -19,13 +19,20 @@ section{
     border: 1px solid red;
 } */
 .GamePresentation h1{
+    color: white;
     display: none;
 }
 
+
+
+
+
+
 /* Description CSS*/
 .TeamContainer{
-    margin: 20px 40px;
+    margin: 90px 30px;
     color: white;
+    width: 100%; /* New */
 }
 .heading{
     font-size: 60px;
@@ -37,12 +44,28 @@ section{
     font-size: 30px;
 } */
 .profiles{
-    display: flex;
+    /* display: flex;
     justify-content: space-around;
-    margin: 20px 80px;
+    margin: 20px 80px; */
+
+    /* NEW */
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    grid-gap: 1rem;
+    padding: 1rem 0px;
+    font-size: 1.2rem;
+
+    /* border: 1px solid red; */
 }
 .profile{
-    flex-basis: 260px;
+    /* flex-basis: 260px; */
+    width: 100%;
+    height: 100%;
+    /* border: 1px solid white; */
 }
 
 .profile .profile-img{
@@ -52,12 +75,14 @@ section{
     filter: grayscale(100%);
     transition: 400ms;
     border: 8px solid cyan;
-    object-fit: cover;
 }
 .profile:hover .profile-img{
     filter: grayscale(0);
+}
+.profile img{
     object-fit: cover;
 }
+
 .user-name{
     margin-top: 30px;
     font-size: 35px;
@@ -76,7 +101,8 @@ section{
 
 @media only screen and (max-width: 1150px){
     .profiles{
-        flex-direction: column;
+        /* flex-direction: column; */
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .profile{
@@ -87,7 +113,7 @@ section{
 
     .profile p{
         text-align: center;
-        margin: 20px 60px 80px 60px;
+        /* margin: 0px 0px 0px 0px; */
         font-size: 20px;
     }
 }
@@ -102,11 +128,12 @@ section{
         font-size: 15px;
     } */
     .profiles{
+        grid-template-columns: repeat(1, 1fr);
         margin: 20px 0;
     }
-    .profile p{
+    /* .profile p{
         margin: 20px 10px 80px 10px;
-    }
+    } */
 }
 
 
