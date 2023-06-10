@@ -18,7 +18,7 @@ Rhythm Swipe is a 2D game where the goal is to collect all the Jewels and reachi
 
 # Link to the Game
 
-Play now! https://projectrhythmswipe.netlify.app/
+Play now! <a href="https://projectrhythmswipe.netlify.app/" target="_blank">Rhythm Swipe</a>
 
 
 
