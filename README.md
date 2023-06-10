@@ -8,7 +8,7 @@ Rhythm Swipe is a 2D game where the goal is to collect all the Jewels and reachi
 
 
 
-# Languages Used
+# Languages/Library Used
 - HTML <img width="3%" src="https://github.com/FrancisTR/RhythmSwipe/assets/123771828/e1cba53c-4542-4458-ad17-53c6f3840225" />
 - CSS <img width="3%" src="https://github.com/FrancisTR/RhythmSwipe/assets/123771828/4867807e-b2be-4737-bf59-627b69dfb884" />
 - JavaScript <img width="3%" src="https://github.com/FrancisTR/RhythmSwipe/assets/123771828/9045feeb-2634-4526-8bb9-bc5cf5c3f84c" />
