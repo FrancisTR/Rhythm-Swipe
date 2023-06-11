@@ -1749,7 +1749,7 @@ class Cube{ //The red cube
         x2+=_x2;
     }
     displayLevel1(){ //Music:
-        this.displayLevelSetup(7.9);
+        this.displayLevelSetup(8.047271645); // ..640 - ..650
     }
 
     displayLevel2(){ //Music:
