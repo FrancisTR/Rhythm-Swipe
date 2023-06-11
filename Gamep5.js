@@ -1754,7 +1754,7 @@ class Cube{ //The red cube
     }
 
     displayLevel2(){ //Music:
-        this.displayLevelSetup(8.7); // xpos needs to change if it's split in 3 // tempo untouched
+        this.displayLevelSetup(8.9); // xpos needs to change if it's split in 3 // tempo untouched
     }
 
     displayLevel3(){ //Music:
