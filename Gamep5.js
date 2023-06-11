@@ -61,7 +61,7 @@ var cubeBeat;
 let rectWidth = 30;
 let rectHeight = 500;
 //position of red cube
-let x2start = tileSize*3.25; // original position
+let x2start = tileSize*3.25;
 let x2 = x2start; //!!!
 let y2 = 575;
 //-----------------------------------------------------------------------------------------------------------
