@@ -28,7 +28,7 @@ let tileSize = boardSize/10; //The grid
 let moveWidth = 0; //!!!
 let moveHeight = 0; //!!!
 let player; //The player !!!
-let playerAnimation = [] //List of images to use for the character
+let playerAnimation = []; //List of images to use for the character
 var playerCounter = 0; //!!!
 let backgroundColor = 210; //The background color of the board. !!!
 //----------------------------------------------------
@@ -52,7 +52,9 @@ var cubeDetector; //The box that detects the red cube
 var cubeBeat;
 let rectWidth = 30;
 let rectHeight = 500;
-let x2 = rectWidth; //!!!
+//position of red cube
+let x2start = tileSize*3.25;
+let x2 = x2start; //!!!
 let y2 = 575;
 //-----------------------------------------------------------------------------------------------------------
 
@@ -94,7 +96,7 @@ var hardSound;
 var masterSound;
 
 var amplitude;
-let volHistory = [] //!!! in main menu
+let volHistory = []; //!!! in main menu
 //--------------------------------------------------------------------
 
 
@@ -104,7 +106,7 @@ let redrawLock = false; //Create the buttons once in the setup
 
 
 //-----------------------------Buttons---------------------------
-let StartGameButton
+let StartGameButton;
 
 let button;
 let button2;
@@ -433,7 +435,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.2.0", 5, 15);
+            text("v1.2.1", 5, 15);
 
             buttonShow();
             break;
@@ -678,7 +680,7 @@ function finished(){
 
         //Clear everything when level complete
         player = null; //
-        x2 = rectWidth; //
+        x2 = x2start; //
         i = 0; //
         finishLine = []; //
         coins = []; //
@@ -715,7 +717,7 @@ function failed(){
     //console.log("Winner!");
     //Clear everything when level complete
     player = null; //
-    x2 = rectWidth; //
+    x2 = x2start; //
     i = 0; //
     finishLine = []; //
     coins = []; //
@@ -1681,26 +1683,28 @@ class Cube{ //The red cube
         noStroke();
         fill('red');
         rect(x2, y2, rectWidth, rectHeight);
-        rect(x2, y2, rectWidth, rectHeight);
         if(x2 > width) {
             x2 = -rectWidth;
         }
         x2+=_x2;
     }
     displayLevel1(){ //Music:
-        this.displayLevelSetup(8.047271645); // ..640 - ..650
+        this.displayLevelSetup(8.047271649); // ..645 - ..650
     }
 
     displayLevel2(){ //Music:
-        this.displayLevelSetup(8.9);
+        this.displayLevelSetup(8.9); // xpos needs to change if it's split in 3 // tempo untouched
     }
 
     displayLevel3(){ //Music:
-        this.displayLevelSetup(9.9);
+        this.displayLevelSetup(10.05); // ..00 - ..10
+        // this changes tempo after intro (10.05 --> 120 bpm (12?)) i like it though
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(11.9);
+        this.displayLevelSetup(12.52); // ...12.50 - ..12.55
+        // starts with 2 16th notes.
+        // changes tempo mid-song: ? to about 98 bpm
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
