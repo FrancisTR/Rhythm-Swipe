@@ -36,19 +36,11 @@ let backgroundColor = 210; //The background color of the board. !!!
 
 
 //------------------Enemies (Work in progress)-------------------------------
-let enemy = []; //!!!
-let enemy2 = []; //!!!
+let enemyJ = [];
 let guard = []; //Images of the guard
-let flipBooleanX = false; //!!!
-let enemyMoveMaxX = 240; //Can move up to 240 in the X position
-var enemyMovingX = 0; //Incrment 60 for moving; !!!
-let enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position !!!
+let enemyMovePattern = 0;
+let lockPattern = false;
 //Use these variables to check collision with a player
-
-let flipBooleanY = false; //!!!
-let enemyMoveMaxY = 240; //Can move up to 240 in the Y
-var enemyMovingY = 0; //Incrment 60 for moving; !!!
-let enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position !!!
 //---------------------------------------------------------------------------
 
 
@@ -153,7 +145,17 @@ function preload() {
 
     //Thief Images
     for (let i = 0; i < 12; i++){
-        playerAnimation[i] = loadImage("asset/thief/Thief"+i+".png");
+        if (i === 0){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else if (i === 3){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else if (i === 6){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else if (i === 9){
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else{
+            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".png");
+        }
         console.log("Sprite Thief loaded");
     }
 
@@ -294,9 +296,11 @@ function setup() {
         buttonW.style('color', 'white');
         buttonW.style('font-size', 'large');
         buttonW.size(200, 75);
+
         //buttonW.position(250, windowHeight/1.3);
         buttonW.mousePressed(mainMenu); //Main menu
         buttonW.hide();
+
         //-----------------------------------------------------------------
 
 
@@ -383,6 +387,10 @@ function draw(){
             //*/Sounds//
             masterSound.stop();
             //*/
+            //*/Sounds//
+            MainMenuTheme.stop();
+            MainMenuThemeSwitch = false;
+            //*/
             //Reset everything
             failed();
             break;
@@ -425,7 +433,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.0.0", 5, 15);
+            text("v1.2.0", 5, 15);
 
             buttonShow();
             break;
@@ -455,7 +463,7 @@ function draw(){
         case 1: //Easy Mode Game
             buttonHide();
             if (!player){
-                player = new Player(1,6);
+                player = new Player(1, 6, "right");
                 //*/Sounds//
                 easySound.play();
                 //*/
@@ -464,7 +472,7 @@ function draw(){
             level1();
             board();
             level1Beat();
-            finished();
+            //finished();
             break;
         //-----------------------------------------
 
@@ -491,9 +499,9 @@ function draw(){
         case 2: //Normal Mode Game
             buttonHide();
             if (!player){
-                player = new Player(2,2);
+                player = new Player(2, 2, "up");
                 playerCounter = 1;
-                player.turn(90);
+                // player.turn(90);
                 //*/Sounds//
                 normalSound.play();
                 //*/
@@ -502,7 +510,7 @@ function draw(){
             level2();
             board();
             level2Beat();
-            finished();
+            //finished();
             break;
         //-----------------------------------------
 
@@ -531,9 +539,9 @@ function draw(){
         case 3: //Hard Mode
             buttonHide();
             if (!player){
-                player = new Player(6, 9);
-                playerCounter = 3;
-                player.turn(-90);
+                player = new Player(6, 9, "down");
+                // playerCounter = 3;
+                // player.turn(-90);
                 //*/Sounds//
                 hardSound.play();
                 //*/
@@ -542,7 +550,7 @@ function draw(){
             level3();
             board();
             level3Beat()
-            finished();
+            //finished();
             break;
          //----------------------------------------
 
@@ -606,7 +614,7 @@ function draw(){
         case 6: //Master Mode Game
             buttonHide();
             if (!player){
-                player = new Player(1, 6);
+                player = new Player(1, 6, "right");
                 //*/Sounds//
                 masterSound.play();
                 //*/
@@ -615,7 +623,7 @@ function draw(){
             level4();
             board();
             level4Beat();
-            finished(); //Might change
+            //finished(); //Might change
             break;
         //-------------------------------------------
     }
@@ -661,7 +669,9 @@ function level4Beat(){
 //-------------------------------------------------------------------------FINISH OR FAILED LEVEL-------------------------------------------------------------------------------
 //Finish the level or not, clear everything!
 function finished(){
-    if (round(moveWidth) === finishLine[0] && round(moveHeight) === finishLine[1] && coins.length === points){ //If it collides with the endBlock
+    let tilePos = {x: player.x, y: player.y};
+    let finishedPos = {x: finishLine[0], y: finishLine[1]}
+    if (coins.length === points && finishedPos.x == tilePos.x && finishedPos.y == tilePos.y){ //If it collides with the endBlock
         //console.log("Winner!");
         level = 4;
 
@@ -676,8 +686,6 @@ function finished(){
         endblock = null; //
         moveWidth = 0; //
         moveHeight = 0; //
-        enemy = []; //
-        enemy2 = []; //
         points = 0; //
         backgroundColor = 210; //
         //*/Sounds//
@@ -693,13 +701,13 @@ function finished(){
         masterSound.stop();
         //*/
         playerCounter = 0; //
-        enemyMovingX = 0; //Incrment 60 for moving;
-        enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
-        flipBooleanX = false; //
+        // enemyMovingX = 0; //Incrment 60 for moving;
+        // enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
+        // flipBoolean = false; //
 
-        enemyMovingY = 0; //Incrment 60 for moving;
-        enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position
-        flipBooleanY = false; //
+        // enemyMovingY = 0; //Incrment 60 for moving;
+        // enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position
+        //flipbooleany = false; //
 
     }
 }
@@ -715,8 +723,8 @@ function failed(){
     endblock = null; //
     moveWidth = 0; //
     moveHeight = 0; //
-    enemy = []; //
-    enemy2 = []; //
+    // enemy = []; //
+    // enemy2 = []; //
     points = 0; //
     backgroundColor = 210; //
     //*/Sounds//
@@ -732,15 +740,15 @@ function failed(){
     masterSound.stop();
     //*/
     playerCounter = 0; //
-    enemyMovingX = 0; //Incrment 60 for moving;
-    enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
+    // enemyMovingX = 0; //Incrment 60 for moving;
+    // enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
 
 
-    enemyMovingY = 0; //Incrment 60 for moving;
-    enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position
+    // enemyMovingY = 0; //Incrment 60 for moving;
+    // enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position
 
-    flipBooleanX = false; //
-    flipBooleanY = false; //
+    flipBoolean = false; //
+    //flipbooleany = false; //
 
     //Do not record the time if failed
     masterModeTimer = false;
@@ -853,6 +861,7 @@ function mainMenu(){
     level = 0;
     buttonW.hide();
     buttonBack.hide();
+    resetEnemies();
     //Temporary for now
     if (masterModeTimer === true){
         if (worldRecord > timer || worldRecord === null){
@@ -955,7 +964,7 @@ function level1(){ //Done
 }
 
 
-
+let lvl2EnemyFlag = false;
 function level2(){ //Normal mode
     finishLine[0] = 540;
     finishLine[1] = 300;
@@ -970,10 +979,18 @@ function level2(){ //Normal mode
 
 
     //Enemies
-    enemy[0] = new Enemy(30, 330);
-    enemy[1] = new Enemy(270, 510);
-    enemy[2] = new Enemy(90, 150);
-    enemy[3] = new Enemy(330, 30);
+    if(!lvl2EnemyFlag){
+        //reorganized them based on y level
+        enemyJ[0] = new EnemyJ(6, 10, "right", "horizontal");
+        enemyJ[1] = new EnemyJ(2, 8, "right", "horizontal");
+        enemyJ[2] = new EnemyJ(1, 5, "right", "horizontal");
+        enemyJ[3] = new EnemyJ(5, 2, "right", "horizontal");
+        lvl2EnemyFlag = true;
+    }
+    // enemy[0] = new Enemy(30, 330); //1, 5
+    // enemy[1] = new Enemy(270, 510); //5, 2
+    // enemy[2] = new Enemy(90, 150); //2, 8
+    // enemy[3] = new Enemy(330, 30); //6, 10
     
 
 
@@ -1039,7 +1056,7 @@ function level2(){ //Normal mode
 }
 
 
-
+let lvl3EnemyFlag = false;
 function level3(){ // Hard Mode
     finishLine[0] = 300;
     finishLine[1] = 300;
@@ -1053,14 +1070,23 @@ function level3(){ // Hard Mode
         i++;
     }
     //[30, 90, 150, 210, 270, 330, 390, 450, 510, 570]
-    enemy[0] = new Enemy(270, 450);
-    enemy[1] = new Enemy(30, 210);
-    enemy[2] = new Enemy(330, 210);
+    if(!lvl3EnemyFlag){
+        //reorganized them based on y level
+        enemyJ[0] = new EnemyJ(1, 7, "right", "horizontal");
+        enemyJ[1] = new EnemyJ(6, 7, "right", "horizontal");
+        enemyJ[2] = new EnemyJ(4, 7, "down", "vertical");
+        enemyJ[3] = new EnemyJ(8, 7, "down", "vertical");
+        enemyJ[4] = new EnemyJ(5, 3, "right", "horizontal");
+        lvl3EnemyFlag = true;
+    }
 
+    // enemy[0] = new Enemy(270, 450); //5, 3
+    // enemy[1] = new Enemy(30, 210); //1, 7 
+    // enemy[2] = new Enemy(330, 210); //6, 7
 
-    enemy2[0] = new Enemy(210, 210);
-    enemy2[1] = new Enemy(450, 210);
-
+    // // vertical enemies
+    // enemy2[0] = new Enemy(210, 210); //4, 7
+    // enemy2[1] = new Enemy(450, 210); //8, 7
 
 
     //Points boarder (Coins)
@@ -1118,6 +1144,7 @@ function level3(){ // Hard Mode
 }
 
 
+let lvl4EnemyFlag = false;
 function level4(){ //MASTER MODE
     finishLine[0] = 540;
     finishLine[1] = 240;
@@ -1132,23 +1159,18 @@ function level4(){ //MASTER MODE
         i++;
     }
 
-
-    enemy[0] = new Enemy(30, 150);
-    enemy[1] = new Enemy(210, 30);
-    enemy[2] = new Enemy(210, 510);
-
-    enemy2[0] = new Enemy(270, 150);
-    enemy2[1] = new Enemy(510, 30);
-    enemy2[2] = new Enemy(510, 270);
-
-
+    if(!lvl4EnemyFlag){
+        //reorganized them based on y level
+        enemyJ[0] = new EnemyJ(9, 10, "down", "vertical");
+        enemyJ[1] = new EnemyJ(4, 10, "right", "horizontal");
+        enemyJ[2] = new EnemyJ(5, 8, "down", "vertical");
+        enemyJ[3] = new EnemyJ(1, 8, "right", "horizontal");
+        enemyJ[4] = new EnemyJ(9, 6, "down", "vertical");
+        enemyJ[5] = new EnemyJ(4, 2, "right", "horizontal");
 
 
-
-
-
-
-
+        lvl4EnemyFlag = true;
+    }
 
 
     //Points boarder (Coins)
@@ -1242,14 +1264,11 @@ function board(){
     for (var i = 0; i < blocks.length; i++){
         blocks[i].display();
     }
-    //EnemyX display
-    for (var i = 0; i < enemy.length; i++){
-       enemy[i].displayX();
+
+    for (var i = 0; i < enemyJ.length; i++){
+        enemyJ[i].display();
     }
-    //EnemyY display
-    for (var i = 0; i < enemy2.length; i++){
-        enemy2[i].displayY();
-    }
+    
     player.display();
     endBlock.finishDisplay();
 
@@ -1263,7 +1282,7 @@ function board(){
 
 
     cubeDetector.displayDetector();
- 
+
 }   
 
 
@@ -1272,39 +1291,28 @@ function board(){
 //Moving correlates to Canvas size. Ex: If Canvas is 600x600, then the
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
-    if (key === "w") {
-
-        if (playerCounter != 1){
-            playerCounter = 1;
-            player.turn(90);
+    if(player != null){
+        if (key === "w") {
+            player.face("up");
+            player.move(0, 1);
+        }
+        if (key === "a") {
+            player.face("left");
+            player.move(-1, 0);
+        }
+        if (key === "s") {
+            player.face("down");
+            player.move(0, -1);
+        }
+        if (key === "d") {
+            player.face("right");
+            player.move(1, 0);
+        }
+        if (key === "w" || key === "a" || key === "s" || key === "d"){
+            pressByBeat = 'red';
         }
     }
-    if (key === "a") {
-
-        if (playerCounter != 2){
-            playerCounter = 2;
-            player.turn(180);
-        }
-
-    }
-    if (key === "s") {
-
-        if (playerCounter != 3){
-            playerCounter = 3;
-            player.turn(270);
-        }
-    }
-    if (key === "d") {
-
-        if (playerCounter != 0){
-            playerCounter = 0;
-            player.turn(0);
-        }
-    }
-    if (key === "w" || key === "a" || key === "s" || key === "d"){
-        player.moveForward();
-        pressByBeat = 'red';
-    }
+    
 }
 //---------------------------------------------------------LEVEL DESIGN-------------------------------------------------------------------
 
@@ -1313,29 +1321,6 @@ function keyPressed() {
 
 
 
-
-//*/-------------------------------temporary for player ------------------------
-function onCircle(coords, r, deg){
-    let t = degToRad(deg);
-    return new createVector(r*Math.cos(t)+coords.x,r*Math.sin(t)+coords.y);
-}
-function degToRad(deg){//Size of the triangle in height
-    return -deg*(Math.PI/180);
-}
-//Making the triangle of the player
-function makeTriangle(center, radius, deg){
-    let p1 = onCircle(center, radius, deg);
-    let p2 = onCircle(center, radius, deg+120);
-    let p3 = onCircle(center, radius, deg-120);
-    // let bigger = max(p2.x, shift);
-    // let smaller = min(p2.x, shift);
-    // let shiftX = bigger-smaller;
-    // p1.x = max(p1.x, shiftX)-min(p1.x, shiftX);
-    // p2.x = max(p2.x, shiftX)-min(p2.x, shiftX);
-    // p3.x = max(p3.x, shiftX)-min(p3.x, shiftX);
-    return {x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, x3:p3.x, y3:p3.y}
-}
-//--------------------------------------------------------------------------------
 
 
 
@@ -1382,142 +1367,88 @@ function tileAt(x, y){
 
 //------------------------------------------------------Player Class--------------------------------------------
 class Player{
-    constructor(startPosX, startPosY){
-        this.facing = 0;
+    constructor(startPosX, startPosY, facing){
+        this.facingOLD = 0;
+        this.facing = facing;
         this.xy = tileAt(startPosX,startPosY);
+        this.currentTile = {x: startPosX, y: startPosY};
         this.x = this.xy.x;
         this.y = this.xy.y;
-        this.center = {x: this.x+tileSize/2, y:this.y+tileSize/2};
         this.playerCounter = playerCounter;
         this.prevX = this.x;
         this.prevY = this.y;
+        this.playerWidth = 50;
+        this.playerHeight = 82;
+        this.currentImg;
     }
 
     //Show the character
     display(){
-        //X and Y and width, and height
-        this.showImage(playerCounter); //Shows the character image
-
-        //Character Debug
-
-        //let test = makeTriangle(this.center, tileSize/2-(tileSize*0.15), this.facing);
-        //fill("blueviolet");
-        //triangle(test.x1, test.y1, test.x2, test.y2, test.x3, test.y3);
-        //fill("red");
-        //let test2 = makeTriangle({x:test.x1, y:test.y1}, tileSize/4-(tileSize*0.10), this.facing);
-        //triangle(test2.x1, test2.y1, test2.x2, test2.y2, test2.x3, test2.y3);
+        this.showImg(this.facing);
     }
 
+    
 
-    //WORK IN PROGRESS
-    showImage(counter){
-        //There are 0, 3, 6
-        this.playerCounter = counter;
-        if (counter === -1){
-            counter = 3;
-            playerCounter = counter;
-            this.playerCounter = counter;
-        }else if(counter === 4){
-            counter = 0;
-            playerCounter = counter;
-            this.playerCounter = counter;
+    showImg(str){
+        
+        let offsetX = tileSize*0.5-this.playerWidth*0.5;
+        let offsetY = (this.y+tileSize)-(this.y + this.playerHeight);
+        if(str === "right"){
+            this.currentImg = playerAnimation[6];
         }
-        if(counter === 0){ //Right side
-            image(playerAnimation[6], round(this.x) + 20, round(this.y) - 20, 0, 0);
+        if(str === "up"){
+            this.currentImg = playerAnimation[3];
         }
-        if(counter === 1){ //Upper
-            image(playerAnimation[3], round(this.x) + 10, round(this.y) -20, 0, 0);
+        if(str === "left"){
+            this.currentImg = playerAnimation[9];
         }
-        if(counter === 2){ //LeftSide
-            image(playerAnimation[9], round(this.x) + 10, round(this.y) - 20, 0, 0);
+        if(str === "down"){
+            this.currentImg = playerAnimation[0];
         }
-        if(counter === 3){ //Front
-            image(playerAnimation[0], round(this.x) + 10, round(this.y) -20, 0, 0);
-        }
+        image(this.currentImg, this.x+offsetX, this.y+offsetY);
     }
 
-
-    //Move the character forward
-    moveForward(){
-        let test = onCircle(this.center, tileSize, this.facing);
-        this.updatePosition(test.x-tileSize/2, test.y-tileSize/2, this.facing);
-        //image(playerAnimation[0], round(this.x) + 5, round(this.y) + 5, 50, 50);
+    face(str){
+        this.facing = str;
     }
 
-    //Turn the character
-    turn(deg){
-        // this.facing = this.facing+deg;
-        this.updatePosition(this.x, this.y, deg); //this.facing+deg
-    }
-
-    //All the movement is updating its position
-    updatePosition(x, y, deg){
-        //console.log(round(x));
-        //console.log(round(y));
-        moveWidth = round(x);
-        moveHeight = round(y);
-        if (round(x) === -60){
-            this.prevX = this.x;
-            this.prevY = this.y;
-
-            this.x = 0;
-            this.y = y;
-            this.center = {x: this.x+tileSize/2, y:this.y+tileSize/2};
-            this.facing = deg;
-        }else if (round(x) === 600){
-            this.prevX = this.x;
-            this.prevY = this.y;
-
-            this.x = 540;
-            this.y = y;
-            this.center = {x: this.x+tileSize/2, y:this.y+tileSize/2};
-            this.facing = deg;
-        }else if (round(y) === -60){
-            this.prevX = this.x;
-            this.prevY = this.y;
-
-            this.x = x;
-            this.y = 0;
-            this.center = {x: this.x+tileSize/2, y:this.y+tileSize/2};
-            this.facing = deg;
-        }else if (round(y) === 540){
-            this.prevX = this.x;
-            this.prevY = this.y;
-
-            this.x = x;
-            this.y = 480;
-            this.center = {x: this.x+tileSize/2, y:this.y+tileSize/2};
-            this.facing = deg;
-        }else{
-            this.prevX = this.x;
-            this.prevY = this.y;
-
-            this.x = x;
-            this.y = y;
-            this.center = {x: this.x+tileSize/2, y:this.y+tileSize/2};
-            this.facing = deg;
+    move(x, y){
+        let tileRequested = {x: this.currentTile.x + x, y: this.currentTile.y + y}
+        if(!this.isBlocked(tileRequested.x, tileRequested.y)){
+            this.xy = tileAt(tileRequested.x, tileRequested.y);
+            this.currentTile = {x: tileRequested.x, y: tileRequested.y};
+            this.x = this.xy.x;
+            this.y = this.xy.y;
+            this.collectCoin();
         }
+        finished();
+    }
 
-        //Collect coins
+    isBlocked(x, y){
+        if(x<1 || x>10 || y<=1 || y>10){
+            return true;
+        }
+        let tileRequested = tileAt(x, y);
+        let tilePos = {x: tileRequested.x+tileSize*0.5, y: tileRequested.y+tileSize*0.5};
+        for (var i = 0; i < blocks.length; i++){
+            let blockPos = {x: blocks[i].rpos, y: blocks[i].rpos2};
+            if(blockPos.x == tilePos.x && blockPos.y == tilePos.y){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    collectCoin(){
+        let tilePos = {x: this.x+tileSize*0.5, y: this.y+tileSize*0.5};
         for (var i = 0; i < coins.length; i++){
-            if (coins[i].rpos - 30 === round(this.x) && coins[i].rpos2 - 30 === round(this.y)){
-                //Coins gone
+            let coinPos = {x: coins[i].rpos, y: coins[i].rpos2};
+            if(coinPos.x == tilePos.x && coinPos.y == tilePos.y){
                 coins[i].rpos = 1;
                 coins[i].rpos2 = 1;
                 points++;
             }
         }
-
-        //Detect blocks
-        for (var i = 0; i < blocks.length; i++){
-            if (blocks[i].rpos - 30 === round(this.x) && blocks[i].rpos2 - 30 === round(this.y)){
-                this.x = this.prevX;
-                this.y = this.prevY;
-                this.center = {x: this.x+tileSize/2, y:this.y+tileSize/2};
-                this.facing = deg;
-            }
-        }
-
     }
 
 }
@@ -1528,69 +1459,106 @@ class Player{
 
 
 //-------------------------------------------------------ENEMY CLASS-----------------------------------------------
-class Enemy{
-    constructor(enemyblockX, enemyblockY){
-        this.posX = enemyblockX;
-        this.pos2X = enemyblockY;
+class EnemyJ{
+    constructor(startPosX, startPosY, facing, dir){
+        //dir is which way the enemy will be moving: horizontal or vertical
+        //facing is which way the enemy is facing upon startup: left, right, up, or down
 
-        this.posY = enemyblockX;
-        this.pos2Y = enemyblockY;
+        /*NOTE:
+            Having opposite parameters will result in only the enemy image change and NO movement
+            ex: EnemyJ(3, 5, "left", "vertical");
+            result: every 5 beats, the image will turn around, but stay in place
+            
+            RULE OF THUMB:
+                "left" and "right" belongs with "horizontal"
+                "up" and "down" belongs to "vertical"
+        */
+        this.imgLeft = guard[13];
+        this.imgRight = guard[14];
+        this.imgUp = guard[15];
+        this.imgDown = guard[12];
+        this.currentImg;
+        this.img1;
+        this.img2;
+        this.dir = dir;
+        this.currentTile = {x: startPosX, y: startPosY};
+        this.xy = tileAt(startPosX,startPosY);
+        this.x = this.xy.x;
+        this.y = this.xy.y;
+        //height and width are based on pixels of the png
+        this.enemyHeight = 89;
+        this.enemyWidth = 50;
 
-
-        this.enemyMovingX = enemyMovingX;
-        this.enemyMovingY = enemyMovingY;
-
-
-        this.flip = flipBooleanX; //Flip the sprite when walking back
+        this.moveX = 0;
+        this.moveY = 0;
+        
+        //Sets up how the enemy starts and moves
+        if(facing === "right" || facing === "left"){
+            this.moveX = facing === "right"? 1:-1;
+            this.img1 = facing === "right"? this.imgRight:this.imgLeft;
+            this.img2 = facing === "right"? this.imgLeft:this.imgRight;
+        }else if(facing === "up" || facing === "down"){
+            this.moveY = facing === "up"? 1:-1;
+            this.img1 = facing === "up"? this.imgUp:this.imgDown;
+            this.img2 = facing === "up"? this.imgDown:this.imgUp;
+        }
+        this.currentImg = this.img1;
     }
 
-    displayX(){
-        
-        fill('blue');
-        if (this.enemyMovingX <= enemyMoveMaxX){
-            this.posX += enemyMovingX;
-        }
-        if (this.flip === true){
-            image(guard[13], round(this.posX) - 20, round(this.pos2X) - 57, 0, 0);
-        }else{
-            image(guard[14], round(this.posX) - 20, round(this.pos2X) - 57, 0, 0);
-        }
-        //rect(this.posX - 20, this.pos2X - 20, width / 15, height / 15);
-        
-
-        //Detect enemy
-        for (let i = 0; i < enemy.length; i++){
-            if(this.posX - 30 === moveWidth && this.pos2X - 30 === moveHeight){
-                level = 5;
+    display(){
+        let offsetX = tileSize*0.5-this.enemyWidth*0.5;
+        let offsetY = (this.y+tileSize)-(this.y + this.enemyHeight);
+        if(this.dir === "horizontal"){
+            if(enemyMovePattern < 5){
+                this.move(this.moveX, 0);
+                this.currentImg = this.img1;
+            }else{
+                //enemy flips and goes opposite (horizontal) direction
+                this.move(-this.moveX, 0);
+                this.currentImg = this.img2;
+            }
+        }else if(this.dir === "vertical"){
+            if(enemyMovePattern < 5){
+                this.move(0, this.moveY);
+                this.currentImg = this.img1;
+            }else{
+                //enemy flips and goes opposite (vertical) direction
+                this.move(0, -this.moveY);
+                this.currentImg = this.img2;
             }
         }
-    }
+        image(this.currentImg, this.x+offsetX, this.y+offsetY);
 
-
-    displayY(){
-        fill('blue');
-        if (this.enemyMovingY <= enemyMoveMaxY){
-            this.pos2Y += enemyMovingY;
-        }
-
-        if (this.flip === true){
-            image(guard[15], round(this.posY) - 24, round(this.pos2Y) - 57, 0, 0);
-        }else{
-            image(guard[12], round(this.posY) - 24, round(this.pos2Y) - 57, 0, 0);
-        }
-        //rect(this.posX - 20, this.pos2X - 20, width / 15, height / 15);
-        
-
-        //Detect enemy
-        for (let i = 0; i < enemy2.length; i++){
-            if(this.posY - 30 === moveWidth && this.pos2Y - 30 === moveHeight){
-                level = 5;
-            }
+        //Detect if player collides with enemy
+        let playerPos = {x: player.x, y: player.y};
+        if (this.x == playerPos.x && this.y == playerPos.y){
+            level = 5;
         }
     }
+
+    move(x, y){
+        if(!lockPattern){
+            return;
+        }
+        let tileRequested = {x: this.currentTile.x + x, y: this.currentTile.y + y}
+        this.xy = tileAt(tileRequested.x, tileRequested.y);
+        this.currentTile = {x: tileRequested.x, y: tileRequested.y};
+        this.x = this.xy.x;
+        this.y = this.xy.y;
+
+    }
+    
 }
-//-----------------------------------------------------------------------------------------------------------------
 
+function resetEnemies(){
+    enemyJ = [];
+    lvl2EnemyFlag = false;
+    lvl3EnemyFlag = false;
+    lvl4EnemyFlag = false;
+    lockPattern = false;
+    
+    enemyMovePattern = 0;
+}
 
 //----------------------------------------------------COINS CLASS--------------------------------------------------
 class Coins{
@@ -1621,7 +1589,7 @@ class Block{
 
     display(){
         push();
-        fill('black');
+        fill('#2e2e2d');
         rect(this.rpos - 20, this.rpos2 - 20, width / 15, height / 15); //Outer circle
         pop();
     }
@@ -1678,44 +1646,17 @@ class Cube{ //The red cube
 
 
         //-----Enemy moving in the X-------
-        if (x2 < 530 && x2 > 520 && enemyMovingX <= enemyMoveMaxX && enemyMoveMaxLockX === false){
-            enemyMovingX+=60;
-            flipBooleanX = false;
-        }
-        //Moving back for the X
-        if (x2 < 530 && x2 > 520 && enemyMoveMaxLockX === true){
-            enemyMovingX -=60;
-            flipBooleanX = true;
-            if (enemyMovingX === 0){
-                enemyMoveMaxLockX = false;
+        if(x2 < 530 && x2 > 520){
+            if(!lockPattern){
+                enemyMovePattern = (enemyMovePattern+1)%8;
+                if(enemyMovePattern == 0){
+                    enemyMovePattern = 8;
+                }
+                lockPattern = true;
             }
+        }else{
+            lockPattern = false;
         }
-        //Locks for the X
-        if (enemyMovingX === enemyMoveMaxX){ 
-            enemyMoveMaxLockX = true;
-        }
-        //-------------
-
-
-
-
-        //-----Enemy moving in the Y-------
-        if (x2 < 530 && x2 > 520 && enemyMovingY <= enemyMoveMaxY && enemyMoveMaxLockY === false){
-            enemyMovingY+=60;
-        }
-        //Moving back for the Y
-        if (x2 < 530 && x2 > 520 && enemyMoveMaxLockY === true){
-            enemyMovingY -=60;
-            flipBooleanY = true;
-            if (enemyMovingY === 0){
-                enemyMoveMaxLockY = false;
-            }
-        }
-        //Locks for the Y
-        if (enemyMovingY === enemyMoveMaxY){ 
-            enemyMoveMaxLockY = true;
-        }
-        //-------------
 
 
     }
@@ -1736,10 +1677,7 @@ class Cube{ //The red cube
         xMainMenu+=2; //Change when needed
     }
 
-
-
-
-    displayLevel1(){ //Music:
+    displayLevelSetup(_x2){
         noStroke();
         fill('red');
         rect(x2, y2, rectWidth, rectHeight);
@@ -1747,40 +1685,22 @@ class Cube{ //The red cube
         if(x2 > width) {
             x2 = -rectWidth;
         }
-        x2+=7.9; //Change when needed
+        x2+=_x2;
+    }
+    displayLevel1(){ //Music:
+        this.displayLevelSetup(8.047271645); // ..640 - ..650
     }
 
     displayLevel2(){ //Music:
-        noStroke();
-        fill('red');
-        rect(x2, y2, rectWidth, rectHeight);
-        rect(x2, y2, rectWidth, rectHeight);
-        if(x2 > width) {
-            x2 = -rectWidth;
-        }
-        x2+=8.9; //Change when needed
+        this.displayLevelSetup(8.9);
     }
 
     displayLevel3(){ //Music:
-        noStroke();
-        fill('red');
-        rect(x2, y2, rectWidth, rectHeight);
-        rect(x2, y2, rectWidth, rectHeight);
-        if(x2 > width) {
-            x2 = -rectWidth;
-        }
-        x2+=9.9; //Change when needed
+        this.displayLevelSetup(9.9);
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        noStroke();
-        fill('red');
-        rect(x2, y2, rectWidth, rectHeight);
-        rect(x2, y2, rectWidth, rectHeight);
-        if(x2 > width) {
-            x2 = -rectWidth;
-        }
-        x2+=11.9; //Change when needed
+        this.displayLevelSetup(11.9);
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
