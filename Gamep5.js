@@ -435,7 +435,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.2.1", 5, 15);
+            text("V1.5.0", 5, 15);
 
             buttonShow();
             break;
