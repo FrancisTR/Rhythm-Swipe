@@ -24,10 +24,11 @@ Play <a href="https://projectrhythmswipe.netlify.app/" target="_blank">Rhythm Sw
 
 ## Issues
 
-If you find any issues or bugs, please let us know in the "Issues" section in this repository.
+If you find any issues or bugs, please let us know in the "[Issues](https://github.com/FrancisTR/Rhythm-Swipe/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)" section in this repository.
 
 - Make sure to have enough details to reproduce the issue.
 - Add a screenshot of the issue if appropriate.
+- Make sure your issue hasn't been already posted in the Issues section.
 
 
 
