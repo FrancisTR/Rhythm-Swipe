@@ -704,12 +704,12 @@ function finished(){
 
         //Clear everything when level complete
         player = null; //
-        x2 = x2start - 120; //
+        x2 = x2start - 105; //
         x22 = x2start;//
-        x23 = x2start + 100; //
-        x24 = x2start + 200; //
-        x25 = x2start + 300;//
-        x26 = x2start + 400;//
+        x23 = x2start + 105; //
+        x24 = x2start + 210; //
+        x25 = x2start + 315;//
+        x26 = x2start + 420;//
         y2 = 575; //
         i = 0; //
         finishLine = []; //
