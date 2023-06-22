@@ -1781,22 +1781,22 @@ class Cube{ //The red cube
 
         //rect(x2+ 100, y2, rectWidth, rectHeight);
         if(x2 > width) {
-            x2 = -rectWidth;
+            x2 = 0;
         }
         if(x22 > width) {
-            x22 = -rectWidth;
+            x22 = 0;
         }
         if(x23 > width) {
-            x23 = -rectWidth;
+            x23 = 0;
         }
         if(x24 > width) {
-            x24 = -rectWidth;
+            x24 = 0;
         }
         if(x25 > width) {
-            x25 = -rectWidth;
+            x25 = 0;
         }
         if(x26 > width) {
-            x26 = -rectWidth;
+            x26 = 0;
         }
 
         x2+=_x2;
