@@ -68,12 +68,12 @@ let rectHeight = 500;
 //position of red cubes
 let x2start = tileSize*3.25;
 
-let x2 = x2start - 120; //!!!
+let x2 = x2start - 105; //!!!
 let x22 = x2start;//!!!
-let x23 = x2start + 100; //!!!
-let x24 = x2start + 200; //!!!
-let x25 = x2start + 300;//!!!
-let x26 = x2start + 400;//!!!
+let x23 = x2start + 105; //!!!
+let x24 = x2start + 210; //!!!
+let x25 = x2start + 315;//!!!
+let x26 = x2start + 420;//!!!
 
 let y2 = 575; //!!!
 //----------------------------------------------------
