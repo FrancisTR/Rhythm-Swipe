@@ -3,19 +3,29 @@ Game Project
 Rhythm Swipe
 
 Legends:
-- !!!: Variable restart in Finish or Failed function
+- //!!!: Variable restart in Finish or Failed function
 /*/
 
-//------------MainMenu--------------
+
+
+//----------------------MainMenu----------------------
 let BackgroundImage; //Main menu background
 var NPCS; 
 let rectWidthMainMenu = 30;
 let rectHeightMainMenu = 500;
-let xMainMenu = rectWidthMainMenu; //!!!
+
+//Characters in the Main Menu (Decoration)
+let xMainMenu = rectWidthMainMenu; 
+
+let xMainMenuCop = rectWidthMainMenu; 
+let xMainMenuRobber = rectWidthMainMenu; 
+
 let yMainMenu = 575;
+
+//Audio for the Main Menu
 let MainMenuTheme;
 let MainMenuThemeSwitch = false;
-//----------------------------------
+//----------------------------------------------------
 
 //---------------Creating the Board-------------------
 var boardSize = 600; //How big the board is
@@ -27,36 +37,46 @@ let tileSize = boardSize/10; //The grid
 //-----------------The Character----------------------
 let moveWidth = 0; //!!!
 let moveHeight = 0; //!!!
-let player; //The player !!!
+let player; //The player //!!!
 let playerAnimation = []; //List of images to use for the character
 var playerCounter = 0; //!!!
-let backgroundColor = 210; //The background color of the board. !!!
+let backgroundColor = 210; //The background color of the board. //!!!
+let playerAttempts = 3; //!!!
+let beatColorBoolean = false; //!!!
 //----------------------------------------------------
 
 
 
-//------------------Enemies (Work in progress)-------------------------------
+//------------------Enemies---------------------------
 let enemyJ = [];
 let guard = []; //Images of the guard
-let enemyMovePattern = 0;
-let lockPattern = false;
-//Use these variables to check collision with a player
-//---------------------------------------------------------------------------
+let enemyMovePattern = 0; //!!! In reset enemies
+let lockPattern = false; //!!! In reset enemies
+//Use these variables to check collision with a player above
+//----------------------------------------------------
 
 
 
-//-------------------------------The bar that detects the beat in game. (Work in progress)-------------------
+//---------The bar that detects the beat in game------
 let pressByBeat = 500;
 var cubeDetector; //The box that detects the red cube
 //The red cube
 var cubeBeat;
 let rectWidth = 30;
 let rectHeight = 500;
-//position of red cube
+
+//position of red cubes
 let x2start = tileSize*3.25;
-let x2 = x2start; //!!!
-let y2 = 575;
-//-----------------------------------------------------------------------------------------------------------
+
+let x2 = x2start - 105; //!!!
+let x22 = x2start;//!!!
+let x23 = x2start + 105; //!!!
+let x24 = x2start + 210; //!!!
+let x25 = x2start + 315;//!!!
+let x26 = x2start + 420;//!!!
+
+let y2 = 575; //!!!
+//----------------------------------------------------
 
 
 
@@ -77,7 +97,7 @@ let blocks = []; //!!!
 
 let points = 0; //!!!
 let i = 0; //!!!
-let level = -1; //Can change any level for testing purposes
+let level = -1; //Can change any level for testing purposes (Default: -1)
 //--------------------------------------------------------------------
 
 
@@ -102,8 +122,11 @@ let volHistory = []; //!!! in main menu
 
 //--------Resize window---------
 let redrawLock = false; //Create the buttons once in the setup
-//--------------------------------------------------------------------
+//------------------------------
 
+//------Others---------
+let OtherImg = [];
+//---------------------
 
 //-----------------------------Buttons---------------------------
 let StartGameButton;
@@ -146,7 +169,7 @@ function preload() {
 
 
     //Thief Images
-    for (let i = 0; i < 12; i++){
+    for (let i = 0; i <= 12; i++){
         if (i === 0){
             playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
         }else if (i === 3){
@@ -155,6 +178,8 @@ function preload() {
             playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
         }else if (i === 9){
             playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
+        }else if (i == 12){ //Main Menu Thief
+            playerAnimation[i] = loadImage("asset/thief/ThiefMainMenu.gif");
         }else{
             playerAnimation[i] = loadImage("asset/thief/Thief"+i+".png");
         }
@@ -177,6 +202,11 @@ function preload() {
         console.log("Items loaded");
     }
 
+    //Other Images (For Mission Failed/Success screen)
+    for (let i = 1; i <= 2; i++){
+        OtherImg[i] = loadImage("asset/OtherImg/OtherImg"+i+".gif");
+    }
+
     //Main Menu
     BackgroundImage = loadImage('asset/MainMenu.gif');
 }
@@ -193,7 +223,6 @@ function setup() {
     let div = createCanvas(boardSize, boardSize);
     div.position(100, 101);
     div.center('horizontal');
-
 
     //Check to see if it supports the game
     if ((windowWidth <= 620)){
@@ -215,7 +244,6 @@ function setup() {
         StartGameButton.style('color', 'blueviolet');
         StartGameButton.style('font-size', 'large');
         StartGameButton.size(200, 75);
-        //StartGameButton.position(250, windowHeight/2);
         StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
 
 
@@ -224,7 +252,6 @@ function setup() {
         buttonBack.style('color', 'white');
         buttonBack.style('font-size', 'large');
         buttonBack.size(200, 75);
-        //buttonBack.position(250, windowHeight/1.3);
         buttonBack.mousePressed(mainMenu); //Goes to Main Menu
         //-----------------------------------
 
@@ -233,14 +260,12 @@ function setup() {
         button.style('color', 'green');
         button.style('font-size', 'large');
         button.size(200, 75);
-        //button.position(250, windowHeight/3);
         button.mousePressed(easyIntermission); //Goes to Intermission
 
         buttonStart = createButton('Start');
         buttonStart.style('color', 'green');
         buttonStart.style('font-size', 'large');
         buttonStart.size(200, 75);
-        //buttonStart.position(250, windowHeight/1.53);
         buttonStart.mousePressed(easyLevel); //Play Easy Mode
         //-----------------------------------
 
@@ -249,14 +274,12 @@ function setup() {
         button2.style('color', 'orange');
         button2.style('font-size', 'large');
         button2.size(200, 75);
-        //button2.position(250, windowHeight/2.2);
         button2.mousePressed(normalIntermission); //Goes to Intermission
 
         button2Start = createButton('Start');
         button2Start.style('color', 'orange');
         button2Start.style('font-size', 'large');
         button2Start.size(200, 75);
-        //button2Start.position(250, windowHeight/1.53);
         button2Start.mousePressed(normalLevel); //Play Normal Mode
         //-----------------------------------
 
@@ -265,14 +288,12 @@ function setup() {
         button3.style('color', 'red');
         button3.style('font-size', 'large');
         button3.size(200, 75);
-        //button3.position(250, windowHeight/1.74);
         button3.mousePressed(hardIntermission); //Goes to Intermission
 
         button3Start = createButton('Start');
         button3Start.style('color', 'red');
         button3Start.style('font-size', 'large');
         button3Start.size(200, 75);
-        //button3Start.position(250, windowHeight/1.53);
         button3Start.mousePressed(hardLevel); //Play Hard Mode
         //------------------------------------
 
@@ -281,14 +302,12 @@ function setup() {
         button4.style('color', 'blueviolet');
         button4.style('font-size', 'large');
         button4.size(200, 75);
-        //button4.position(250, windowHeight/1.43);
         button4.mousePressed(masterIntermission); //Goes to Intermission
 
         button4Start = createButton('Start');
         button4Start.style('color', 'blueviolet');
         button4Start.style('font-size', 'large');
         button4Start.size(200, 75);
-        //button4Start.position(250, windowHeight/1.53);
         button4Start.mousePressed(masterLevel); //Play Master Mode
         //-----------------------------------------------------------------
 
@@ -299,7 +318,6 @@ function setup() {
         buttonW.style('font-size', 'large');
         buttonW.size(200, 75);
 
-        //buttonW.position(250, windowHeight/1.3);
         buttonW.mousePressed(mainMenu); //Main menu
         buttonW.hide();
 
@@ -421,8 +439,10 @@ function draw(){
             //*/Sounds//
             if (MainMenuThemeSwitch === false && !MainMenuTheme.isPlaying()){
                 MainMenuTheme.play();
+                MainMenuTheme.setVolume(0.2);
                 MainMenuTheme.loop();
                 MainMenuThemeSwitch = true;
+                console.log("play")
             }
             //*/
             background('black');
@@ -435,7 +455,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("V1.5.0", 5, 15);
+            text("v1.6.0", 5, 15);
 
             buttonShow();
             break;
@@ -474,7 +494,7 @@ function draw(){
             level1();
             board();
             level1Beat();
-            //finished();
+            finished();
             break;
         //-----------------------------------------
 
@@ -512,7 +532,7 @@ function draw(){
             level2();
             board();
             level2Beat();
-            //finished();
+            finished();
             break;
         //-----------------------------------------
 
@@ -552,16 +572,19 @@ function draw(){
             level3();
             board();
             level3Beat()
-            //finished();
+            finished();
             break;
          //----------------------------------------
 
         //Either win or lose
         case 4: //Mission accomplished with Stats (Competition used Testing)
             background('green');
-            fill('gold');
+            fill('cyan');
             textSize(50);
-            text("Mission Success", boardSize/5, 100);
+            text("Mission Success", boardSize/5.1, 100);
+            if (!masterModeTimer){
+                image(OtherImg[2], 104, 125);
+            }
             //Master code
             if (masterModeTimer === true){
                 if (worldRecord > timer || worldRecord === null){
@@ -570,7 +593,7 @@ function draw(){
                 }else{
                     text("Finish Time: "+timer+"s", boardSize/5, 200);
                     textSize(25);
-                    text("Creative Coding Exhibition World Record: "+worldRecord+"s", boardSize/12, 300);
+                    text("World Record: "+worldRecord+"s", boardSize/12, 300);
                 }
             }
             //----
@@ -578,10 +601,11 @@ function draw(){
             buttonHide();
             break;
         case 5: //Mission Failed
-            background('red');
+            background('#D9544D');
             fill('black');
             textSize(50);
             text("Mission Failed", boardSize/4.3, 100);
+            image(OtherImg[1], 50, 125);
             buttonW.show();
             buttonHide();
             failed();
@@ -607,9 +631,9 @@ function draw(){
             text("Music: Super Mario Galaxy: Staff Roll 8 Bit Remix", 25, 150);
             text("By Vahkiti", 25, 200);
             if (worldRecord === null){
-                text("Creative Coding Current Record Time: None", 20, 570);
+                text("World Record Time: None", 20, 570);
             }else{
-                text("Creative Coding Current Record Time: "+worldRecord+"s", 20, 570);
+                text("World Record Time: "+worldRecord+"s", 20, 570);
             }
             visualAudio();
             break;
@@ -625,7 +649,7 @@ function draw(){
             level4();
             board();
             level4Beat();
-            //finished(); //Might change
+            finished(); //Might change
             break;
         //-------------------------------------------
     }
@@ -674,13 +698,19 @@ function finished(){
     let tilePos = {x: player.x, y: player.y};
     let finishedPos = {x: finishLine[0], y: finishLine[1]}
     if (coins.length === points && finishedPos.x == tilePos.x && finishedPos.y == tilePos.y){ //If it collides with the endBlock
-        //console.log("Winner!");
+        console.log("Winner!");
         level = 4;
 
 
         //Clear everything when level complete
         player = null; //
-        x2 = x2start; //
+        x2 = x2start - 105; //
+        x22 = x2start;//
+        x23 = x2start + 105; //
+        x24 = x2start + 210; //
+        x25 = x2start + 315;//
+        x26 = x2start + 420;//
+        y2 = 575; //
         i = 0; //
         finishLine = []; //
         coins = []; //
@@ -690,6 +720,8 @@ function finished(){
         moveHeight = 0; //
         points = 0; //
         backgroundColor = 210; //
+        playerAttempts = 3; //
+        beatColorBoolean = false; //
         //*/Sounds//
         easySound.stop();
         //*/
@@ -705,7 +737,7 @@ function finished(){
         playerCounter = 0; //
         // enemyMovingX = 0; //Incrment 60 for moving;
         // enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
-        // flipBoolean = false; //
+        //flipBoolean = false; //
 
         // enemyMovingY = 0; //Incrment 60 for moving;
         // enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position
@@ -717,7 +749,13 @@ function failed(){
     //console.log("Winner!");
     //Clear everything when level complete
     player = null; //
-    x2 = x2start; //
+    x2 = x2start - 105; //
+    x22 = x2start;//
+    x23 = x2start + 105; //
+    x24 = x2start + 210; //
+    x25 = x2start + 315;//
+    x26 = x2start + 420;//
+    y2 = 575; //
     i = 0; //
     finishLine = []; //
     coins = []; //
@@ -729,6 +767,8 @@ function failed(){
     // enemy2 = []; //
     points = 0; //
     backgroundColor = 210; //
+    playerAttempts = 3; //
+    beatColorBoolean = false; //
     //*/Sounds//
     easySound.stop();
     //*/
@@ -749,7 +789,7 @@ function failed(){
     // enemyMovingY = 0; //Incrment 60 for moving;
     // enemyMoveMaxLockY = false; //Lock the increment and decrement back to its original position
 
-    flipBoolean = false; //
+    //flipBoolean = false; //
     //flipbooleany = false; //
 
     //Do not record the time if failed
@@ -774,6 +814,7 @@ function easyIntermission(){
     buttonStart.show();
     //*/Sounds//
     easySound.play();
+    easySound.setVolume(0.2);
     easySound.loop();
     //*/
 }
@@ -791,6 +832,7 @@ function normalIntermission(){
     button2Start.show();
     //*/Sounds//
     normalSound.play();
+    normalSound.setVolume(0.2);
     normalSound.loop();
     //*/
 }
@@ -808,6 +850,7 @@ function hardIntermission(){
     button3Start.show();
     //*/Sounds//
     hardSound.play();
+    hardSound.setVolume(0.2);
     hardSound.loop();
     //*/
 }
@@ -827,6 +870,7 @@ function masterIntermission(){
     button4Start.show();
     //*/Sounds//
     masterSound.play();
+    masterSound.setVolume(0.1);
     masterSound.loop();
     //*/
 }
@@ -841,7 +885,7 @@ function visualAudio(){
   
     if(volHistory.length > width*1) volHistory.splice(0,1); //width map
   
-    stroke(255);
+    stroke('cyan');
     noFill();
     beginShape();
     for(let i=0; i<volHistory.length; i++) {
@@ -850,7 +894,7 @@ function visualAudio(){
     }
     endShape();
   
-    stroke(255,0,0);
+    stroke(11, 37, 52);
     line(volHistory.length, 0, volHistory.length, height);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -911,9 +955,15 @@ function buttonShow(){
 }
 //-------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
+function resetEnemies(){
+    enemyJ = [];
+    lvl2EnemyFlag = false;
+    lvl3EnemyFlag = false;
+    lvl4EnemyFlag = false;
+    lockPattern = false;
+    
+    enemyMovePattern = 0;
+}
 
 //---------------------------------------------------------LEVEL DESIGN-------------------------------------------------------------------
 
@@ -1020,13 +1070,12 @@ function level2(){ //Normal mode
     blocks[15] = new Block(330, 270);
     blocks[16] = new Block(330, 330);
     blocks[17] = new Block(330, 390);
-    blocks[18] = new Block(330, 450);
 
-    blocks[19] = new Block(390, 270);
-    blocks[20] = new Block(390, 330);
-    blocks[21] = new Block(390, 390);
-    blocks[22] = new Block(390, 450);
-    blocks[23] = new Block(390, 210);
+    blocks[18] = new Block(390, 270);
+    blocks[19] = new Block(390, 330);
+    blocks[20] = new Block(390, 390);
+    blocks[21] = new Block(390, 450);
+    blocks[22] = new Block(390, 210);
 
     blocks[23] = new Block(30, 90);
     blocks[24] = new Block(90, 90);
@@ -1266,7 +1315,7 @@ function board(){
     for (var i = 0; i < blocks.length; i++){
         blocks[i].display();
     }
-
+    //Enemy display
     for (var i = 0; i < enemyJ.length; i++){
         enemyJ[i].display();
     }
@@ -1384,28 +1433,34 @@ class Player{
         this.currentImg;
     }
 
-    //Show the character
+    //Show the character in a certain direction
     display(){
         this.showImg(this.facing);
     }
-
-    
-
     showImg(str){
-        
         let offsetX = tileSize*0.5-this.playerWidth*0.5;
         let offsetY = (this.y+tileSize)-(this.y + this.playerHeight);
+        
+        if (!beatColorBoolean){
+            fill(255, 204, 0, 120);
+        }else{
+            fill(100, 120);
+        }
+        rect(this.x, this.y, width / 10, height / 10);
+
         if(str === "right"){
             this.currentImg = playerAnimation[6];
         }
         if(str === "up"){
             this.currentImg = playerAnimation[3];
+            offsetY = (this.y+tileSize +3)-(this.y + this.playerHeight);
         }
         if(str === "left"){
             this.currentImg = playerAnimation[9];
         }
         if(str === "down"){
             this.currentImg = playerAnimation[0];
+            offsetY = (this.y+tileSize +3)-(this.y + this.playerHeight);
         }
         image(this.currentImg, this.x+offsetX, this.y+offsetY);
     }
@@ -1423,7 +1478,7 @@ class Player{
             this.y = this.xy.y;
             this.collectCoin();
         }
-        finished();
+        //finished();
     }
 
     isBlocked(x, y){
@@ -1434,7 +1489,7 @@ class Player{
         let tilePos = {x: tileRequested.x+tileSize*0.5, y: tileRequested.y+tileSize*0.5};
         for (var i = 0; i < blocks.length; i++){
             let blockPos = {x: blocks[i].rpos, y: blocks[i].rpos2};
-            if(blockPos.x == tilePos.x && blockPos.y == tilePos.y){
+            if (blockPos.x == tilePos.x && blockPos.y == tilePos.y){
                 return true;
             }
         }
@@ -1445,7 +1500,7 @@ class Player{
         let tilePos = {x: this.x+tileSize*0.5, y: this.y+tileSize*0.5};
         for (var i = 0; i < coins.length; i++){
             let coinPos = {x: coins[i].rpos, y: coins[i].rpos2};
-            if(coinPos.x == tilePos.x && coinPos.y == tilePos.y){
+            if (coinPos.x == tilePos.x && coinPos.y == tilePos.y){
                 coins[i].rpos = 1;
                 coins[i].rpos2 = 1;
                 points++;
@@ -1534,7 +1589,7 @@ class EnemyJ{
         //Detect if player collides with enemy
         let playerPos = {x: player.x, y: player.y};
         if (this.x == playerPos.x && this.y == playerPos.y){
-            level = 5;
+            level = 5; //Mission Failed
         }
     }
 
@@ -1552,15 +1607,6 @@ class EnemyJ{
     
 }
 
-function resetEnemies(){
-    enemyJ = [];
-    lvl2EnemyFlag = false;
-    lvl3EnemyFlag = false;
-    lvl4EnemyFlag = false;
-    lockPattern = false;
-    
-    enemyMovePattern = 0;
-}
 
 //----------------------------------------------------COINS CLASS--------------------------------------------------
 class Coins{
@@ -1621,6 +1667,7 @@ class FinishBlock{
 
 //----------------------------------------------------MUSIC BEAT CLASS---------------------------------------------
 class Cube{ //The red cube
+ 
     displayDetector(){
         fill('black');
         rect(0, 540, 600 ,60); //Whole bar
@@ -1628,34 +1675,29 @@ class Cube{ //The red cube
         rect(480, 540, 60 , 60); //Beat detector?
         // now see if distance between two is less than sum of two radius'
        
+        //Show player attempts on the bar
+        fill('gold');
+        textSize(50);
+        text(playerAttempts, 496, 590);
 
-        //Are you in sync? (COMMENT OUT FOR NOW)
+        //Are you in sync?
+        //*/Debug/
+        this.beatSync();
+        //*/
         
-        if ((x2 > 540 || x2 < 480) && pressByBeat === 'red'){ //If you miss the beat
-            backgroundColor-= 50;
-        }else if (backgroundColor <= 60){
-            level = 5;
-        }
-
-        //If condition for now. Enemy collision
-
-
-
-
         if (pressByBeat === 'red'){
             pressByBeat = 500;
         }
 
 
-        //-----Enemy moving in the X-------
-        if(x2 < 530 && x2 > 520){
-            if(!lockPattern){
-                enemyMovePattern = (enemyMovePattern+1)%8;
-                if(enemyMovePattern == 0){
-                    enemyMovePattern = 8;
-                }
-                lockPattern = true;
+        //-----Enemy moving in the X and Y-------
+        if(x2 <= 530 && x2 > 526.5 && !lockPattern){
+            enemyMovePattern = (enemyMovePattern+1)%8;
+            if(enemyMovePattern == 0){
+                enemyMovePattern = 8;
             }
+            lockPattern = true;
+            
         }else{
             lockPattern = false;
         }
@@ -1663,48 +1705,130 @@ class Cube{ //The red cube
 
     }
 
+    beatSync(){
+
+        // x2 = -rectWidth;
+        // x22 = -rectWidth;
+        // x23 = -rectWidth;
+        // x24 = -rectWidth;
+        // x25 = -rectWidth;
+        // x26 = -rectWidth;
+
+        if ((x2 > 540 || x2 < 480) && (x22 > 540 || x22 < 480) && (x23 > 540 || x23 < 480) && (x24 > 540 || x24 < 480) && (x25 > 540 || x25 < 480) && (x26 > 540 || x26 < 480)){
+            beatColorBoolean = true;
+        }else{
+            beatColorBoolean = false;
+        }
+        if (pressByBeat === 'red'){
+            if ((x2 > 540 || x2 < 480) && (x22 > 540 || x22 < 480) && (x23 > 540 || x23 < 480) && (x24 > 540 || x24 < 480) && (x25 > 540 || x25 < 480) && (x26 > 540 || x26 < 480)){ //If you miss the beat
+                backgroundColor -= 50;
+                playerAttempts -= 1;
+                y2 -= 12;
+            }else{
+                console.log("Perfect!");
+            }
+        }
+
+        if (playerAttempts === 0){
+            level = 5;
+        }
+    }
+
 
     displayMainMenu(){ //Shows a Cop and a Thief Running
         noStroke();
         //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(playerAnimation[6], xMainMenu, yMainMenu - 53, 0, 0);
+        image(playerAnimation[12], xMainMenu - 550, yMainMenu - 53, 0, 0);
         textSize(20);
         fill('white');
-        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu + 50, 575);
+        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
         //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(guard[14], xMainMenu - 100, yMainMenu - 60, 0, 0);
-        if(xMainMenu > width + 100) {
+        image(guard[14], xMainMenu - 650, yMainMenu - 60, 0, 0);
+
+        //Cop and Robber running (Funny decoration)
+        image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53, 0, 0);
+        image(guard[14], xMainMenuCop - 100, yMainMenu - 60, 0, 0);
+
+        if(xMainMenu > width + 700) {
             xMainMenu = -rectWidthMainMenu - 1000;
         }
+        if(xMainMenuRobber > width + 100) {
+            xMainMenuRobber = -rectWidthMainMenu - 1000;
+        }
+        if(xMainMenuCop > width + 110) {
+            xMainMenuCop = -rectWidthMainMenu - 700;
+        }
+
+
         xMainMenu+=2; //Change when needed
+
+        xMainMenuCop+=2.5;
+        xMainMenuRobber+=3;
     }
 
+    //Rhythm beat based on speed of the cube
     displayLevelSetup(_x2){
         noStroke();
-        fill('red');
+        fill('cyan'); //The beat that allow the Guard to move
         rect(x2, y2, rectWidth, rectHeight);
+
+        fill('red'); //Red boxes
+        rect(x22, y2, rectWidth, rectHeight);
+        rect(x23, y2, rectWidth, rectHeight);
+        rect(x24, y2, rectWidth, rectHeight);
+        rect(x25, y2, rectWidth, rectHeight);
+        rect(x26, y2, rectWidth, rectHeight);
+
+        //rect(x2+ 100, y2, rectWidth, rectHeight);
         if(x2 > width) {
-            x2 = -rectWidth;
+            x2 = 0;
         }
+        if(x22 > width) {
+            x22 = 0;
+        }
+        if(x23 > width) {
+            x23 = 0;
+        }
+        if(x24 > width) {
+            x24 = 0;
+        }
+        if(x25 > width) {
+            x25 = 0;
+        }
+        if(x26 > width) {
+            x26 = 0;
+        }
+
         x2+=_x2;
+        x22+=_x2;
+        x23+=_x2;
+        x24+=_x2;
+        x25+=_x2;
+        x26+=_x2;
     }
     displayLevel1(){ //Music:
-        this.displayLevelSetup(8.047271649); // ..645 - ..650
+        this.displayLevelSetup(2); // ..645 - ..650
     }
 
     displayLevel2(){ //Music:
-        this.displayLevelSetup(8.9); // xpos needs to change if it's split in 3 // tempo untouched
+        this.displayLevelSetup(3); // xpos needs to change if it's split in 3 // tempo untouched
     }
 
     displayLevel3(){ //Music:
-        this.displayLevelSetup(10.05); // ..00 - ..10
+        this.displayLevelSetup(4); // ..00 - ..10
         // this changes tempo after intro (10.05 --> 120 bpm (12?)) i like it though
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(12.52); // ...12.50 - ..12.55
+        this.displayLevelSetup(5); // ...12.50 - ..12.55
         // starts with 2 16th notes.
         // changes tempo mid-song: ? to about 98 bpm
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
