@@ -76,7 +76,7 @@ let x2start = tileSize-(rectWidth/2);
 
 // All x values must be <= 600 to be positioned correctly.
 // Check x26 (highest number) when changing values.
-let x2 = x2start - 100; //!!! CHANGE OTHER VALUES B4 COMMIT 
+let x2 = x2start - 100; //!!!
 let x22 = x2start;//!!!
 let x23 = x2start + 100; //!!!
 let x24 = x2start + 200; //!!!
@@ -1816,7 +1816,7 @@ class Cube{ //The red cube
         x26+=_x2;
     }
     displayLevel1(){ //Music:
-        this.displayLevelSetup(2); // 2.671 - 2.673
+        this.displayLevelSetup(2); // 2.671 - 2.673 // might need readjustment
     }
 
     displayLevel2(){ //Music:
