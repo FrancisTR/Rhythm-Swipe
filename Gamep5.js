@@ -66,14 +66,23 @@ let rectWidth = 30;
 let rectHeight = 500;
 
 //position of red cubes
-let x2start = tileSize*3.25;
 
-let x2 = x2start - 105; //!!!
+let x2start = 100;// tileSize-(rectWidth/2);
+// Above positioned on 1st/2nd tile border.
+// IF there was 5 cubes it might be perfect position.
+// might change later. as long as it's under 600 this is a fix.
+// let x2start = tileSize*2+((tileSize-rectWidth)/2);
+// Above positioned in center of 3rd tile
+
+// All x values must be within [0, 600] to be positioned correctly.
+// Check x26 (highest number) when changing values.
+let x2temp = -rectWidth; //!!!
+let x2 = x2start - 100; //!!!
 let x22 = x2start;//!!!
-let x23 = x2start + 105; //!!!
-let x24 = x2start + 210; //!!!
-let x25 = x2start + 315;//!!!
-let x26 = x2start + 420;//!!!
+let x23 = x2start + 100; //!!!
+let x24 = x2start + 200; //!!!
+let x25 = x2start + 300;//!!!
+let x26 = x2start + 400;//!!! 
 
 let y2 = 575; //!!!
 //----------------------------------------------------
@@ -374,7 +383,6 @@ function draw(){
     button4Start.center('horizontal');
 
 
-
     buttonBack.position(250, 552);
     buttonBack.center('horizontal');
     buttonW.position(250, 552);
@@ -455,7 +463,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.6.0", 5, 15);
+            text("v1.6.1", 5, 15);
 
             buttonShow();
             break;
@@ -704,12 +712,13 @@ function finished(){
 
         //Clear everything when level complete
         player = null; //
-        x2 = x2start - 105; //
+        x2 = x2start - 100; //
+        x2temp = -rectWidth; //
         x22 = x2start;//
-        x23 = x2start + 105; //
-        x24 = x2start + 210; //
-        x25 = x2start + 315;//
-        x26 = x2start + 420;//
+        x23 = x2start + 100; //
+        x24 = x2start + 200; //
+        x25 = x2start + 300;//
+        x26 = x2start + 400;//
         y2 = 575; //
         i = 0; //
         finishLine = []; //
@@ -749,12 +758,13 @@ function failed(){
     //console.log("Winner!");
     //Clear everything when level complete
     player = null; //
-    x2 = x2start - 105; //
+    x2temp = -rectWidth; //
+    x2 = x2start - 100; //
     x22 = x2start;//
-    x23 = x2start + 105; //
-    x24 = x2start + 210; //
-    x25 = x2start + 315;//
-    x26 = x2start + 420;//
+    x23 = x2start + 100; //
+    x24 = x2start + 200; //
+    x25 = x2start + 300;//
+    x26 = x2start + 400;//
     y2 = 575; //
     i = 0; //
     finishLine = []; //
@@ -1707,6 +1717,7 @@ class Cube{ //The red cube
 
     beatSync(){
 
+        // x2temp = -rectWidth;
         // x2 = -rectWidth;
         // x22 = -rectWidth;
         // x23 = -rectWidth;
@@ -1771,8 +1782,16 @@ class Cube{ //The red cube
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
         rect(x2, y2, rectWidth, rectHeight);
+        if(x2 > width - rectWidth){
+            rect(x2temp, y2, rectWidth, rectHeight);
+            x2temp+=_x2;
+        }
 
         fill('red'); //Red boxes
+        if((x22 > width - rectWidth) || (x23 > width - rectWidth) || (x24 > width - rectWidth) || (x25 > width - rectWidth) || (x26 > width - rectWidth)) {
+            rect(x2temp, y2, rectWidth, rectHeight);
+            x2temp+=_x2;
+        }
         rect(x22, y2, rectWidth, rectHeight);
         rect(x23, y2, rectWidth, rectHeight);
         rect(x24, y2, rectWidth, rectHeight);
@@ -1781,23 +1800,30 @@ class Cube{ //The red cube
 
         //rect(x2+ 100, y2, rectWidth, rectHeight);
         if(x2 > width) {
-            x2 = 0;
+            x2 = 0; 
+            x2temp = -rectWidth;
         }
         if(x22 > width) {
             x22 = 0;
+            x2temp = -rectWidth;
         }
         if(x23 > width) {
             x23 = 0;
+            x2temp = -rectWidth;
         }
         if(x24 > width) {
             x24 = 0;
+            x2temp = -rectWidth;
         }
         if(x25 > width) {
             x25 = 0;
+            x2temp = -rectWidth;
         }
         if(x26 > width) {
             x26 = 0;
+            x2temp = -rectWidth;
         }
+
 
         x2+=_x2;
         x22+=_x2;
@@ -1807,7 +1833,8 @@ class Cube{ //The red cube
         x26+=_x2;
     }
     displayLevel1(){ //Music:
-        this.displayLevelSetup(2); // ..645 - ..650
+        // this.displayLevelSetup(.2); // works for visualizing cube positions while testing
+        this.displayLevelSetup(2); // 2.671 - 2.673 // might need readjustment
     }
 
     displayLevel2(){ //Music:
