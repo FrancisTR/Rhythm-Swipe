@@ -64,13 +64,12 @@ var cubeDetector; //The box that detects the red cube
 var cubeBeat;
 let rectWidth = 30;
 let rectHeight = 500;
+let widthMinusCube = boardSize - rectWidth;
 
 //position of red cubes
 
 let realPrevTime = 0;
 let realTime = 0;
-// let tempCountTime = 0;
-// var tempCountTotal = 0;
 let x2t = 0;
 let x2start = 100;// tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
@@ -80,12 +79,15 @@ let x2start = 100;// tileSize-(rectWidth/2);
 
 // All visible x values are within [0, boardSize (600 if it's not changed)].
 let x2temp = -rectWidth; //!!!
-let x2 = x2start - 100; //!!!
-let x22 = x2start;//!!!
-let x23 = x2start + 100; //!!!
-let x24 = x2start + 200; //!!!
-let x25 = x2start + 300;//!!!
-let x26 = x2start + 400;//!!! 
+// let x2 = x2start - 100; //!!!
+let x2 = [
+    x2start - 100, // old x2 --> x2[0]
+    x2start, // old x22 --> x2[1]
+    x2start + 100, // old x23
+    x2start + 200, // old x24
+    x2start + 300, // old x25
+    x2start + 400 // old x26
+];
 
 let y2 = 575; //!!!
 //----------------------------------------------------
@@ -162,35 +164,29 @@ let resizeLock = false;
 //--------------------------------------------------------------PRELOAD----------------------------------------------------------------------------
 function preload() {
     //*/Sounds//
-    easySound = loadSound('../sounds/A_Punchup_at_a_Wedding_8-bit.mp3');
+    easySound = loadSound('sounds/A_Punchup_at_a_Wedding_8-bit.mp3');
     //*/
     //*/Sounds//
-    normalSound = loadSound('../sounds/There_There_8-bit.mp3');
+    normalSound = loadSound('sounds/There_There_8-bit.mp3');
     //*/
     //*/Sounds//
-    hardSound = loadSound('../sounds/Where_I_End_You_Begin_8-bit.mp3');
+    hardSound = loadSound('sounds/Where_I_End_You_Begin_8-bit.mp3');
     //*/
     //*/Sounds//
-    masterSound = loadSound('../sounds/Super_Mario_Galaxy.mp3');
+    masterSound = loadSound('sounds/Super_Mario_Galaxy.mp3');
     //*/
 
     //*/Sounds//
-    MainMenuTheme = loadSound('../sounds/Main8-bit.mp3');
+    MainMenuTheme = loadSound('sounds/Main8-bit.mp3');
     //*/
 
 
 
     //Thief Images
     for (let i = 0; i <= 12; i++){
-        if (i === 0){
+        if (i === 0 || i === 3 || i === 6 || i === 9){
             playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
-        }else if (i === 3){
-            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
-        }else if (i === 6){
-            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
-        }else if (i === 9){
-            playerAnimation[i] = loadImage("asset/thief/Thief"+i+".gif");
-        }else if (i == 12){ //Main Menu Thief
+        }else if (i === 12){ //Main Menu Thief
             playerAnimation[i] = loadImage("asset/thief/ThiefMainMenu.gif");
         }else{
             playerAnimation[i] = loadImage("asset/thief/Thief"+i+".png");
@@ -199,13 +195,13 @@ function preload() {
     }
 
     //Guard Images
-    for (let i = 0; i < 16; i++){
-        if (i >= 12){
-            guard[i] = loadImage("asset/guard/Guard"+i+".gif");
-        }else{
-            guard[i] = loadImage("asset/guard/Guard"+i+".png");
-        }
+    for (let i = 0; i < 12; i++){
+        guard[i] = loadImage("asset/guard/Guard"+i+".png");
         console.log("Sprite Guard loaded");
+    }
+    for (let i = 12; i < 16; i++){
+        guard[i] = loadImage("asset/guard/Guard"+i+".gif");
+        console.log("Animated Sprite Guard loaded");
     }
 
     //Diamond Images
@@ -598,11 +594,10 @@ function draw(){
             }
             //Master code
             if (masterModeTimer === true){
+                text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (worldRecord > timer || worldRecord === null){
-                    text("Finish Time: "+timer+"s", boardSize/5, 200);
                     text("New World Record!", boardSize/6.5, 300);
                 }else{
-                    text("Finish Time: "+timer+"s", boardSize/5, 200);
                     textSize(25);
                     text("World Record: "+worldRecord+"s", boardSize/12, 300);
                 }
@@ -715,13 +710,13 @@ function finished(){
 
         //Clear everything when level complete
         player = null; //
-        x2 = x2start - 100; //
+        x2[0] = x2start - 100; //
         x2temp = -rectWidth; //
-        x22 = x2start;//
-        x23 = x2start + 100; //
-        x24 = x2start + 200; //
-        x25 = x2start + 300;//
-        x26 = x2start + 400;//
+        x2[1] = x2start;//
+        x2[2] = x2start + 100; //
+        x2[3] = x2start + 200; //
+        x2[4] = x2start + 300;//
+        x2[5] = x2start + 400;//
         y2 = 575; //
         i = 0; //
         finishLine = []; //
@@ -762,12 +757,12 @@ function failed(){
     //Clear everything when level complete
     player = null; //
     x2temp = -rectWidth; //
-    x2 = x2start - 100; //
-    x22 = x2start;//
-    x23 = x2start + 100; //
-    x24 = x2start + 200; //
-    x25 = x2start + 300;//
-    x26 = x2start + 400;//
+    x2[0] = x2start - 100; //
+    x2[1] = x2start;//
+    x2[2] = x2start + 100; //
+    x2[3] = x2start + 200; //
+    x2[4] = x2start + 300;//
+    x2[5] = x2start + 400;//
     y2 = 575; //
     i = 0; //
     finishLine = []; //
@@ -814,6 +809,15 @@ function failed(){
 
 //--------------------------------------------------------------------LEVEL Intermission => Actual Level-------------------------------------------------------------------------------
 //Transition to different levels. Used in a button
+function intermissionSetup(_level, _button, _sound) {
+    level = _level;
+    _button.show();
+    //*/Sounds//
+    _sound.play();
+    _sound.setVolume(0.2);
+    _sound.loop();
+    //*/
+}
 
 //-------------EASY-----------------
 function easyLevel() {
@@ -823,13 +827,7 @@ function easyLevel() {
     //*/
 }
 function easyIntermission(){
-    level = 0.5;
-    buttonStart.show();
-    //*/Sounds//
-    easySound.play();
-    easySound.setVolume(0.2);
-    easySound.loop();
-    //*/
+    intermissionSetup(0.5, buttonStart, easySound);
 }
 //----------------------------------
 
@@ -841,13 +839,7 @@ function normalLevel() {
     //*/
 }
 function normalIntermission(){
-    level = 1.5;
-    button2Start.show();
-    //*/Sounds//
-    normalSound.play();
-    normalSound.setVolume(0.2);
-    normalSound.loop();
-    //*/
+    intermissionSetup(1.5, button2Start, normalSound);
 }
 //----------------------------------
 
@@ -859,13 +851,7 @@ function hardLevel() {
     //*/
 }
 function hardIntermission(){
-    level = 2.5;
-    button3Start.show();
-    //*/Sounds//
-    hardSound.play();
-    hardSound.setVolume(0.2);
-    hardSound.loop();
-    //*/
+    intermissionSetup(2.5, button3Start, hardSound);
 }
 //----------------------------------
 
@@ -879,13 +865,7 @@ function masterLevel() {
     //*/
 }
 function masterIntermission(){
-    level = 5.5;
-    button4Start.show();
-    //*/Sounds//
-    masterSound.play();
-    masterSound.setVolume(0.1);
-    masterSound.loop();
-    //*/
+    intermissionSetup(5.5, button4Start, masterSound);
 }
 //----------------------------------
 
@@ -1356,23 +1336,23 @@ function board(){
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if(player != null){
-        if (key === "w") {
-            player.face("up");
-            player.move(0, 1);
-        }
-        if (key === "a") {
-            player.face("left");
-            player.move(-1, 0);
-        }
-        if (key === "s") {
-            player.face("down");
-            player.move(0, -1);
-        }
-        if (key === "d") {
-            player.face("right");
-            player.move(1, 0);
-        }
         if (key === "w" || key === "a" || key === "s" || key === "d"){
+            if (key === "w") {
+                player.face("up");
+                player.move(0, 1);
+            }
+            if (key === "a") {
+                player.face("left");
+                player.move(-1, 0);
+            }
+            if (key === "s") {
+                player.face("down");
+                player.move(0, -1);
+            }
+            if (key === "d") {
+                player.face("right");
+                player.move(1, 0);
+            }
             pressByBeat = 'red';
         }
     }
@@ -1704,7 +1684,7 @@ class Cube{ //The red cube
 
 
         //-----Enemy moving in the X and Y-------
-        if(x2 <= 530 && x2 > 526.5 && !lockPattern){
+        if(x2[0] <= 530 && x2[0] > 526.5 && !lockPattern){
             enemyMovePattern = (enemyMovePattern+1)%8;
             if(enemyMovePattern == 0){
                 enemyMovePattern = 8;
@@ -1721,20 +1701,16 @@ class Cube{ //The red cube
     beatSync(){
 
         // x2temp = -rectWidth;
-        // x2 = -rectWidth;
-        // x22 = -rectWidth;
-        // x23 = -rectWidth;
-        // x24 = -rectWidth;
-        // x25 = -rectWidth;
-        // x26 = -rectWidth;
+        // x2[0] = -rectWidth;
+        // x2[1] = -rectWidth;
+        // x2[2] = -rectWidth;
+        // x2[3] = -rectWidth;
+        // x2[4] = -rectWidth;
+        // x2[5] = -rectWidth;
 
-        if ((x2 > 540 || x2 < 480) && (x22 > 540 || x22 < 480) && (x23 > 540 || x23 < 480) && (x24 > 540 || x24 < 480) && (x25 > 540 || x25 < 480) && (x26 > 540 || x26 < 480)){
-            beatColorBoolean = true;
-        }else{
-            beatColorBoolean = false;
-        }
+        beatColorBoolean = (x2[0] > 540 || x2[0] < 480) && (x2[1] > 540 || x2[1] < 480) && (x2[2] > 540 || x2[2] < 480) && (x2[3] > 540 || x2[3] < 480) && (x2[4] > 540 || x2[4] < 480) && (x2[5] > 540 || x2[5] < 480)
         if (pressByBeat === 'red'){
-            if ((x2 > 540 || x2 < 480) && (x22 > 540 || x22 < 480) && (x23 > 540 || x23 < 480) && (x24 > 540 || x24 < 480) && (x25 > 540 || x25 < 480) && (x26 > 540 || x26 < 480)){ //If you miss the beat
+            if ((x2[0] > 540 || x2[0] < 480) && (x2[1] > 540 || x2[1] < 480) && (x2[2] > 540 || x2[2] < 480) && (x2[3] > 540 || x2[3] < 480) && (x2[4] > 540 || x2[4] < 480) && (x2[5] > 540 || x2[5] < 480)){ //If you miss the beat
                 backgroundColor -= 50;
                 playerAttempts -= 1;
                 y2 -= 12;
@@ -1796,56 +1772,28 @@ class Cube{ //The red cube
 
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
-        rect(x2, y2, rectWidth, rectHeight);
-        if(x2 > width - rectWidth){
+        rect(x2[0], y2, rectWidth, rectHeight);
+        if(x2[0] > widthMinusCube){
             rect(x2temp, y2, rectWidth, rectHeight);
             x2temp+=x2t;
         }
 
         fill('red'); //Red boxes
-        if((x22 > width - rectWidth) || (x23 > width - rectWidth) || (x24 > width - rectWidth) || (x25 > width - rectWidth) || (x26 > width - rectWidth)) {
+        if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
             rect(x2temp, y2, rectWidth, rectHeight);
             x2temp+=x2t;
         }
-        rect(x22, y2, rectWidth, rectHeight);
-        rect(x23, y2, rectWidth, rectHeight);
-        rect(x24, y2, rectWidth, rectHeight);
-        rect(x25, y2, rectWidth, rectHeight);
-        rect(x26, y2, rectWidth, rectHeight);
 
-        //rect(x2+ 100, y2, rectWidth, rectHeight);
-        if(x2 > width) {
-            x2 -= 600; 
-            x2temp = -rectWidth;
-            console.log("x2=" + x2);
+        for (let i = 1; i < x2.length; i++) {
+            rect(x2[i], y2, rectWidth, rectHeight);
         }
-        if(x22 > width) {
-            x22 -= 600;
-            x2temp = -rectWidth;
+        for (let i = 0; i < x2.length; i++) {
+            if(x2[i] > width) {
+                x2[i] -= 600; 
+                x2temp = -rectWidth;
+            }
+            x2[i]+=x2t;
         }
-        if(x23 > width) {
-            x23 -= 600;
-            x2temp = -rectWidth;
-        }
-        if(x24 > width) {
-            x24 -= 600;
-            x2temp = -rectWidth;
-        }
-        if(x25 > width) {
-            x25 -= 600;
-            x2temp = -rectWidth;
-        }
-        if(x26 > width) {
-            x26 -= 600;
-            x2temp = -rectWidth;
-        }
-
-        x2+=x2t;
-        x22+=x2t;
-        x23+=x2t;
-        x24+=x2t;
-        x25+=x2t;
-        x26+=x2t;
     }
     displayLevel1(){ //Music:
         // this.displayLevelSetup(10); // works for visualizing cube positions while testing
@@ -1855,15 +1803,6 @@ class Cube{ //The red cube
 
     displayLevel2(){ //Music:
         this.displayLevelSetup(212.67); // (212.63, 212.7) // xpos needs to change if it's split in 3
-        // 212.45: Drifts 2.5 cubes left after song plays 
-        // 212.48: Drifts 1.25 cubes left
-        // 212.51: Drifts 1 || 0.5 cubes left
-        // 212.53: Drifts 1 || 0.5 cubes left
-        // 212.63: Drifts 1 || 0.5 cubes left
-        // 212.7: Drifts 0.5 cubes right
-        // 213: Drifts 3.5 cubes right
-        // 213.7: Drifts ~8 cubes right (whoops typo 212.7 is correct value)
-
     }
 
     displayLevel3(){ //Music:
