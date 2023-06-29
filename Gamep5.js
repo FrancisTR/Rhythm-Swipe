@@ -67,15 +67,18 @@ let rectHeight = 500;
 
 //position of red cubes
 
+let realPrevTime = 0;
+let realTime = 0;
+// let tempCountTime = 0;
+// var tempCountTotal = 0;
+let x2t = 0;
 let x2start = 100;// tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
-// might change later. as long as it's under 600 this is a fix.
 // let x2start = tileSize*2+((tileSize-rectWidth)/2);
 // Above positioned in center of 3rd tile
 
-// All x values must be within [0, 600] to be positioned correctly.
-// Check x26 (highest number) when changing values.
+// All visible x values are within [0, boardSize (600 if it's not changed)].
 let x2temp = -rectWidth; //!!!
 let x2 = x2start - 100; //!!!
 let x22 = x2start;//!!!
@@ -463,7 +466,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.6.1", 5, 15);
+            text("v1.6.2", 5, 15);
 
             buttonShow();
             break;
@@ -1779,18 +1782,30 @@ class Cube{ //The red cube
 
     //Rhythm beat based on speed of the cube
     displayLevelSetup(_x2){
+        realPrevTime = realTime;
+        realTime = getAudioContext().currentTime;
+        
+        // console.log("(_x2: " + _x2 + ") (new _x2: " + x2t + ") realTime - realPrevTime = " + (realTime - realPrevTime) + " Avg: " + (tempCountTotal / tempCountTime));
+        x2t = (realTime - realPrevTime) * _x2;
+        // if (isNaN(tempCountTotal)){
+        //     tempCountTotal = 0;
+        // }
+        // ++tempCountTime;
+        // tempCountTotal = tempCountTotal + (realTime - realPrevTime);
+        // console.log(tempCountTotal + " | " + realTime + " - " + realPrevTime);
+
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
         rect(x2, y2, rectWidth, rectHeight);
         if(x2 > width - rectWidth){
             rect(x2temp, y2, rectWidth, rectHeight);
-            x2temp+=_x2;
+            x2temp+=x2t;
         }
 
         fill('red'); //Red boxes
         if((x22 > width - rectWidth) || (x23 > width - rectWidth) || (x24 > width - rectWidth) || (x25 > width - rectWidth) || (x26 > width - rectWidth)) {
             rect(x2temp, y2, rectWidth, rectHeight);
-            x2temp+=_x2;
+            x2temp+=x2t;
         }
         rect(x22, y2, rectWidth, rectHeight);
         rect(x23, y2, rectWidth, rectHeight);
@@ -1800,54 +1815,65 @@ class Cube{ //The red cube
 
         //rect(x2+ 100, y2, rectWidth, rectHeight);
         if(x2 > width) {
-            x2 = 0; 
+            x2 -= 600; 
             x2temp = -rectWidth;
+            console.log("x2=" + x2);
         }
         if(x22 > width) {
-            x22 = 0;
+            x22 -= 600;
             x2temp = -rectWidth;
         }
         if(x23 > width) {
-            x23 = 0;
+            x23 -= 600;
             x2temp = -rectWidth;
         }
         if(x24 > width) {
-            x24 = 0;
+            x24 -= 600;
             x2temp = -rectWidth;
         }
         if(x25 > width) {
-            x25 = 0;
+            x25 -= 600;
             x2temp = -rectWidth;
         }
         if(x26 > width) {
-            x26 = 0;
+            x26 -= 600;
             x2temp = -rectWidth;
         }
 
-
-        x2+=_x2;
-        x22+=_x2;
-        x23+=_x2;
-        x24+=_x2;
-        x25+=_x2;
-        x26+=_x2;
+        x2+=x2t;
+        x22+=x2t;
+        x23+=x2t;
+        x24+=x2t;
+        x25+=x2t;
+        x26+=x2t;
     }
     displayLevel1(){ //Music:
-        // this.displayLevelSetup(.2); // works for visualizing cube positions while testing
-        this.displayLevelSetup(2); // 2.671 - 2.673 // might need readjustment
+        // this.displayLevelSetup(10); // works for visualizing cube positions while testing
+        this.displayLevelSetup(134);
+        // 218 | 133 - 134
     }
 
     displayLevel2(){ //Music:
-        this.displayLevelSetup(3); // xpos needs to change if it's split in 3 // tempo untouched
+        this.displayLevelSetup(212.67); // (212.63, 212.7) // xpos needs to change if it's split in 3
+        // 212.45: Drifts 2.5 cubes left after song plays 
+        // 212.48: Drifts 1.25 cubes left
+        // 212.51: Drifts 1 || 0.5 cubes left
+        // 212.53: Drifts 1 || 0.5 cubes left
+        // 212.63: Drifts 1 || 0.5 cubes left
+        // 212.7: Drifts 0.5 cubes right
+        // 213: Drifts 3.5 cubes right
+        // 213.7: Drifts ~8 cubes right (whoops typo 212.7 is correct value)
+
     }
 
     displayLevel3(){ //Music:
-        this.displayLevelSetup(4); // ..00 - ..10
+        this.displayLevelSetup(200); // (200, ?)
+        // this is based on tempo after 20ish seconds
         // this changes tempo after intro (10.05 --> 120 bpm (12?)) i like it though
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(5); // ...12.50 - ..12.55
+        this.displayLevelSetup(213); // (212, 214)
         // starts with 2 16th notes.
         // changes tempo mid-song: ? to about 98 bpm
     }
