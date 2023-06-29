@@ -462,7 +462,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.6.2", 5, 15);
+            text("v1.6.3", 5, 15);
 
             buttonShow();
             break;
@@ -1789,7 +1789,7 @@ class Cube{ //The red cube
         }
         for (let i = 0; i < x2.length; i++) {
             if(x2[i] > width) {
-                x2[i] -= 600; 
+                x2[i] %= 600;
                 x2temp = -rectWidth;
             }
             x2[i]+=x2t;
