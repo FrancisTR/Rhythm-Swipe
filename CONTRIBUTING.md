@@ -1,10 +1,6 @@
 # Contribution Instructions
 
-## Prerequisite
-
-- You must have Contributor access to this repository. Any other Pull Requests received without Contributor access will be taken into consideration based on the nature of the Pull Request.
-
-## Before contributing, make sure you follow these steps:
+### Before contributing, make sure you follow these steps:
 
 - Anything added must be pushed in a new branch OR in a Forked repository.
 - In the pull request, make sure to give a description of the changes you made.
