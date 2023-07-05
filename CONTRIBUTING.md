@@ -1,5 +1,7 @@
 # Contribution Instructions
 
+***Note that this only applies to those that have Collaborator Access and you must have this access in order to contribute.***
+
 ### Before contributing, make sure you follow these steps:
 
 - Anything added must be pushed in a new branch OR in a Forked repository.
