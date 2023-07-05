@@ -52,6 +52,7 @@ let enemyJ = [];
 let guard = []; //Images of the guard
 let enemyMovePattern = 0; //!!! In reset enemies
 let lockPattern = false; //!!! In reset enemies
+let lockPatternUsed = false; //!!! In reset enemies
 //Use these variables to check collision with a player above
 //----------------------------------------------------
 
@@ -462,7 +463,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.6.3", 5, 15);
+            text("v1.6.4", 5, 15);
 
             buttonShow();
             break;
@@ -954,6 +955,8 @@ function resetEnemies(){
     lvl3EnemyFlag = false;
     lvl4EnemyFlag = false;
     lockPattern = false;
+    lockPatternUsed = false;
+    
     
     enemyMovePattern = 0;
 }
@@ -1684,15 +1687,18 @@ class Cube{ //The red cube
 
 
         //-----Enemy moving in the X and Y-------
-        if(x2[0] <= 530 && x2[0] > 526.5 && !lockPattern){
+        if (lockPattern) {
+            lockPattern = false;
+            lockPatternUsed = true;
+        }else if(x2[0] <= 530 || x2[0] > 560) {
+            lockPattern = false;
+            lockPatternUsed = false;
+        }else if(!lockPatternUsed) { 
             enemyMovePattern = (enemyMovePattern+1)%8;
             if(enemyMovePattern == 0){
                 enemyMovePattern = 8;
             }
-            lockPattern = true;
-            
-        }else{
-            lockPattern = false;
+            lockPattern = true; // only should be true once per red cube cycle
         }
 
 
@@ -1797,8 +1803,8 @@ class Cube{ //The red cube
     }
     displayLevel1(){ //Music:
         // this.displayLevelSetup(10); // works for visualizing cube positions while testing
-        this.displayLevelSetup(134);
-        // 218 | 133 - 134
+        this.displayLevelSetup(133.8);
+        // 218 | 133.7 - 133.9 (it's possible this is wrong)
     }
 
     displayLevel2(){ //Music:
@@ -1806,13 +1812,13 @@ class Cube{ //The red cube
     }
 
     displayLevel3(){ //Music:
-        this.displayLevelSetup(200); // (200, ?)
+        this.displayLevelSetup(205.07); // (205, 205.1)
         // this is based on tempo after 20ish seconds
         // this changes tempo after intro (10.05 --> 120 bpm (12?)) i like it though
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(213); // (212, 214)
+        this.displayLevelSetup(213.25); // (213, 213.5)
         // starts with 2 16th notes.
         // changes tempo mid-song: ? to about 98 bpm
     }
