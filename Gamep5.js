@@ -955,7 +955,7 @@ function resetEnemies(){
     lvl3EnemyFlag = false;
     lvl4EnemyFlag = false;
     lockPattern = false;
-    lockPatternUsed = true;
+    lockPatternUsed = false;
     
     
     enemyMovePattern = 0;
@@ -1687,7 +1687,6 @@ class Cube{ //The red cube
 
 
         //-----Enemy moving in the X and Y-------
-        // let lockPatternUsed = false; //!!! In reset enemies
         if (lockPattern) {
             lockPattern = false;
             lockPatternUsed = true;
