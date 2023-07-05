@@ -463,7 +463,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.6.3", 5, 15);
+            text("v1.6.4", 5, 15);
 
             buttonShow();
             break;
