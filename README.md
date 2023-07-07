@@ -35,3 +35,9 @@ If you find any issues or bugs, please let us know in the "[Issues](https://gith
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute.
+
+
+
+## License
+
+See this repository [License](https://github.com/FrancisTR/Rhythm-Swipe/blob/main/LICENSE).
