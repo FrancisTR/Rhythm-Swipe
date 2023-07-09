@@ -4,7 +4,7 @@
 
 ## Description
 
-Rhythm Swipe is a 2D game where the goal is to collect all the Jewels and to reach the end without missing the beat of the rhythm.
+Rhythm Swipe is a 2D game where the goal is to collect all the Jewels and to reach the end without missing the beat of the rhythm. This game is inspired by "Cadence of Hyrule - Crypt of the Necrodancer" for the Nintendo Switch!
 
 
 
