@@ -69,10 +69,11 @@ let widthMinusCube = boardSize - rectWidth;
 
 //position of red cubes
 
-let realPrevTime = 0;
-let realTime = 0;
-let x2t = 0;
-let x2start = 100;// tileSize-(rectWidth/2);
+let realPrevTime = 0; //!!!
+let realTime = 0; //!!!
+let realOffsetTime = 0; //!!!
+let x2t = 0; //!!!
+let x2start = 100;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
 // let x2start = tileSize*2+((tileSize-rectWidth)/2);
@@ -82,12 +83,12 @@ let x2start = 100;// tileSize-(rectWidth/2);
 let x2temp = -rectWidth; //!!!
 // let x2 = x2start - 100; //!!!
 let x2 = [
-    x2start - 100, // old x2 --> x2[0]
-    x2start, // old x22 --> x2[1]
-    x2start + 100, // old x23
-    x2start + 200, // old x24
-    x2start + 300, // old x25
-    x2start + 400 // old x26
+    x2start - 100, //!!! old x2 --> x2[0]
+    x2start, //!!! old x22 --> x2[1]
+    x2start + 100, //!!! old x23
+    x2start + 200, //!!! old x24
+    x2start + 300, //!!! old x25
+    x2start + 400 //!!! old x26
 ];
 
 let y2 = 575; //!!!
@@ -711,8 +712,12 @@ function finished(){
 
         //Clear everything when level complete
         player = null; //
-        x2[0] = x2start - 100; //
+        realPrevTime = 0;
+        realTime = 0;
+        realOffsetTime = 0;
+        x2t = 0;
         x2temp = -rectWidth; //
+        x2[0] = x2start - 100; //
         x2[1] = x2start;//
         x2[2] = x2start + 100; //
         x2[3] = x2start + 200; //
@@ -757,6 +762,10 @@ function failed(){
     //console.log("Winner!");
     //Clear everything when level complete
     player = null; //
+    realPrevTime = 0;
+    realTime = 0;
+    realOffsetTime = 0;
+    x2t = 0;
     x2temp = -rectWidth; //
     x2[0] = x2start - 100; //
     x2[1] = x2start;//
@@ -1763,12 +1772,28 @@ class Cube{ //The red cube
     }
 
     //Rhythm beat based on speed of the cube
-    displayLevelSetup(_x2){
+    displayLevelSetup(music, _x2){
         realPrevTime = realTime;
+        if (realOffsetTime <= 0) {
+            realOffsetTime = music.currentTime();
+            console.log(`t(offset) = ${realOffsetTime}`)
+            if (realOffsetTime > 30) { // note: if it's continuously above 30, assume it's correct later
+                realOffsetTime = 0;
+            }
+        }
+
+        // realTime = music.currentTime();
+        // p5js currentTime() is a bit buggy.
+            // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
+            // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
+            // 3. When AFK, the cubes disappear for some time. Don't know why.
+
         realTime = getAudioContext().currentTime;
-        
+
+        // console.log("p5js: " + music.currentTime());
+        // console.log("js: " + getAudioContext().currentTime);
         // console.log("(_x2: " + _x2 + ") (new _x2: " + x2t + ") realTime - realPrevTime = " + (realTime - realPrevTime) + " Avg: " + (tempCountTotal / tempCountTime));
-        x2t = (realTime - realPrevTime) * _x2;
+        x2t = (realTime - realPrevTime) * _x2[0][1];
         // if (isNaN(tempCountTotal)){
         //     tempCountTotal = 0;
         // }
@@ -1782,6 +1807,7 @@ class Cube{ //The red cube
         if(x2[0] > widthMinusCube){
             rect(x2temp, y2, rectWidth, rectHeight);
             x2temp+=x2t;
+            console.log(_x2[0])
         }
 
         fill('red'); //Red boxes
@@ -1803,22 +1829,32 @@ class Cube{ //The red cube
     }
     displayLevel1(){ //Music:
         // this.displayLevelSetup(10); // works for visualizing cube positions while testing
-        this.displayLevelSetup(133.8);
-        // 218 | 133.7 - 133.9 (it's possible this is wrong)
+        this.displayLevelSetup(easySound, [
+            [0, 133.8], // 218 | 133.7 - 133.9 (it's possible this is wrong)
+        ]);
     }
 
     displayLevel2(){ //Music:
-        this.displayLevelSetup(212.67); // (212.63, 212.7) // xpos needs to change if it's split in 3
+        this.displayLevelSetup(normalSound, [
+            [0, 212.67], // (212.63, 212.7) // xpos needs to change if it's split in 3
+        ]);
     }
 
     displayLevel3(){ //Music:
-        this.displayLevelSetup(205.07); // (205, 205.1)
-        // this is based on tempo after 20ish seconds
+        this.displayLevelSetup(hardSound, [
+            [20, 205.07], // (205, 205.1) // this is based on tempo after 20ish seconds
+        ]); 
+        
         // this changes tempo after intro (10.05 --> 120 bpm (12?)) i like it though
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(213.25); // (213, 213.5)
+        masterSound.addCue(0.61, () => { console.log("sus"); })// () => ++tempoChange, )
+        this.displayLevelSetup(masterSound, [
+            [0.61, 213.25], // (213, 213.5)
+            [100, 180],
+            [150, 213.25],
+        ]);
         // starts with 2 16th notes.
         // changes tempo mid-song: ? to about 98 bpm
     }
