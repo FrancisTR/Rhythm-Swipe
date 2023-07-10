@@ -71,6 +71,7 @@ let widthMinusCube = boardSize - rectWidth;
 
 let realPrevTime = 0; //!!!
 let realTime = 0; //!!!
+let isRealOffsetTime = false; //!!!
 let realOffsetTime = 0; //!!!
 let x2t = 0; //!!!
 let x2start = 100;//!!! tileSize-(rectWidth/2);
@@ -494,10 +495,10 @@ function draw(){
         case 1: //Easy Mode Game
             buttonHide();
             if (!player){
-                player = new Player(1, 6, "right");
                 //*/Sounds//
                 easySound.play();
                 //*/
+                player = new Player(1, 6, "right");
             }
             background(backgroundColor);
             level1();
@@ -530,12 +531,12 @@ function draw(){
         case 2: //Normal Mode Game
             buttonHide();
             if (!player){
-                player = new Player(2, 2, "up");
-                playerCounter = 1;
-                // player.turn(90);
                 //*/Sounds//
                 normalSound.play();
                 //*/
+                player = new Player(2, 2, "up");
+                playerCounter = 1;
+                // player.turn(90);
             }
             background(backgroundColor);
             level2();
@@ -570,12 +571,12 @@ function draw(){
         case 3: //Hard Mode
             buttonHide();
             if (!player){
-                player = new Player(6, 9, "down");
-                // playerCounter = 3;
-                // player.turn(-90);
                 //*/Sounds//
                 hardSound.play();
                 //*/
+                player = new Player(6, 9, "down");
+                // playerCounter = 3;
+                // player.turn(-90);
             }
             background(backgroundColor);
             level3();
@@ -648,10 +649,11 @@ function draw(){
         case 6: //Master Mode Game
             buttonHide();
             if (!player){
-                player = new Player(1, 6, "right");
                 //*/Sounds//
+                console.log("Now playing master sound");
                 masterSound.play();
                 //*/
+                player = new Player(1, 6, "right");
             }
             background(backgroundColor);
             level4();
@@ -715,6 +717,7 @@ function finished(){
         realPrevTime = 0;
         realTime = 0;
         realOffsetTime = 0;
+        isRealOffsetTime = false;
         x2t = 0;
         x2temp = -rectWidth; //
         x2[0] = x2start - 100; //
@@ -765,6 +768,7 @@ function failed(){
     realPrevTime = 0;
     realTime = 0;
     realOffsetTime = 0;
+    isRealOffsetTime = false;
     x2t = 0;
     x2temp = -rectWidth; //
     x2[0] = x2start - 100; //
@@ -1774,12 +1778,15 @@ class Cube{ //The red cube
     //Rhythm beat based on speed of the cube
     displayLevelSetup(music, _x2){
         realPrevTime = realTime;
-        if (realOffsetTime <= 0) {
-            realOffsetTime = music.currentTime();
-            console.log(`t(offset) = ${realOffsetTime}`)
-            if (realOffsetTime > 30) { // note: if it's continuously above 30, assume it's correct later
-                realOffsetTime = 0;
+        if (!isRealOffsetTime) {
+            let newOffsetTime = music.currentTime();
+            // currentTime() is not instantly updated. check it a few times.
+            if (realOffsetTime > newOffsetTime) { 
+                isRealOffsetTime = true;
+                console.log("TRUEEE")
             }
+            realOffsetTime = newOffsetTime;
+            console.log(`t(offset) = ${realOffsetTime}`)
         }
 
         // realTime = music.currentTime();
@@ -1793,7 +1800,7 @@ class Cube{ //The red cube
         // console.log("p5js: " + music.currentTime());
         // console.log("js: " + getAudioContext().currentTime);
         // console.log("(_x2: " + _x2 + ") (new _x2: " + x2t + ") realTime - realPrevTime = " + (realTime - realPrevTime) + " Avg: " + (tempCountTotal / tempCountTime));
-        x2t = (realTime - realPrevTime) * _x2[0][1];
+        x2t = (realTime - realPrevTime) * _x2[0][1] + realOffsetTime;
         // if (isNaN(tempCountTotal)){
         //     tempCountTotal = 0;
         // }
