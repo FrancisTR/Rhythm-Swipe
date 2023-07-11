@@ -74,7 +74,7 @@ let realTime = 0; //!!!
 let isRealOffsetTime = false; //!!!
 let realOffsetTime = 0; //!!!
 let x2t = 0; //!!!
-let x2start = 100;//!!! tileSize-(rectWidth/2);
+let x2start = 0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
 // let x2start = tileSize*2+((tileSize-rectWidth)/2);
@@ -496,7 +496,7 @@ function draw(){
             buttonHide();
             if (!player){
                 //*/Sounds//
-                easySound.play();
+                // easySound.play();
                 //*/
                 player = new Player(1, 6, "right");
             }
@@ -532,7 +532,7 @@ function draw(){
             buttonHide();
             if (!player){
                 //*/Sounds//
-                normalSound.play();
+                // normalSound.play();
                 //*/
                 player = new Player(2, 2, "up");
                 playerCounter = 1;
@@ -572,7 +572,7 @@ function draw(){
             buttonHide();
             if (!player){
                 //*/Sounds//
-                hardSound.play();
+                // hardSound.play();
                 //*/
                 player = new Player(6, 9, "down");
                 // playerCounter = 3;
@@ -651,7 +651,7 @@ function draw(){
             if (!player){
                 //*/Sounds//
                 console.log("Now playing master sound");
-                masterSound.play();
+                // masterSound.play();
                 //*/
                 player = new Player(1, 6, "right");
             }
@@ -1778,35 +1778,47 @@ class Cube{ //The red cube
     //Rhythm beat based on speed of the cube
     displayLevelSetup(music, _x2){
         realPrevTime = realTime;
-        if (!isRealOffsetTime) {
-            let newOffsetTime = music.currentTime();
-            // currentTime() is not instantly updated. check it a few times.
-            if (realOffsetTime > newOffsetTime) { 
-                isRealOffsetTime = true;
-                console.log("TRUEEE")
-            }
-            realOffsetTime = newOffsetTime;
-            console.log(`t(offset) = ${realOffsetTime}`)
-        }
-
+    //  if (!isRealOffsetTime) {
+    //      let newOffsetTime = music.currentTime();
+    //      // currentTime() is not instantly updated. check it a few times.
+    //      // update #2: currentTime() is too off to be used for timing in general.
+    //      if (realOffsetTime > newOffsetTime) { 
+    //          isRealOffsetTime = true;
+    //          realOffsetTime = newOffsetTime;
+    //          console.log(`TRUEEE t(offset) = ${realOffsetTime}`)
+    //          masterSound.addCue(10, () => { console.log("sus"); })
+    //      } else {
+    //          realOffsetTime = newOffsetTime;
+    //          console.log(`t(offset) = ${realOffsetTime}`)
+    //          return;
+    //          console.log("Fake");
+    //      }
+    //  }
+        
         // realTime = music.currentTime();
         // p5js currentTime() is a bit buggy.
             // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
             // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
             // 3. When AFK, the cubes disappear for some time. Don't know why.
 
-        realTime = getAudioContext().currentTime;
+        
+
+
+        if (!isRealOffsetTime) {
+            isRealOffsetTime = true;
+            realOffsetTime = getAudioContext().currentTime;
+            music.play();
+            console.log(realTime + " is what I say to my basement. also not real " + realOffsetTime);
+
+            realTime = 0;
+        } else {
+            realTime = getAudioContext().currentTime - realOffsetTime;
+        }
 
         // console.log("p5js: " + music.currentTime());
         // console.log("js: " + getAudioContext().currentTime);
-        // console.log("(_x2: " + _x2 + ") (new _x2: " + x2t + ") realTime - realPrevTime = " + (realTime - realPrevTime) + " Avg: " + (tempCountTotal / tempCountTime));
-        x2t = (realTime - realPrevTime) * _x2[0][1] + realOffsetTime;
-        // if (isNaN(tempCountTotal)){
-        //     tempCountTotal = 0;
-        // }
-        // ++tempCountTime;
-        // tempCountTotal = tempCountTotal + (realTime - realPrevTime);
-        // console.log(tempCountTotal + " | " + realTime + " - " + realPrevTime);
+        x2t = (realTime - realPrevTime) * _x2[0][1]; // - realOffsetTime;
+        console.log(`realTime: ${realTime}`);
 
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
@@ -1814,7 +1826,7 @@ class Cube{ //The red cube
         if(x2[0] > widthMinusCube){
             rect(x2temp, y2, rectWidth, rectHeight);
             x2temp+=x2t;
-            console.log(_x2[0])
+            // console.log(_x2[0])
         }
 
         fill('red'); //Red boxes
@@ -1856,7 +1868,7 @@ class Cube{ //The red cube
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        masterSound.addCue(0.61, () => { console.log("sus"); })// () => ++tempoChange, )
+        // scary code (it decides to print sus over 500000 times; some cases freezing the browser :) ) --> masterSound.addCue(0.61, () => { console.log("sus"); })// () => ++tempoChange, )
         this.displayLevelSetup(masterSound, [
             [0.61, 213.25], // (213, 213.5)
             [100, 180],
