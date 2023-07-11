@@ -71,8 +71,8 @@ let widthMinusCube = boardSize - rectWidth;
 
 let realPrevTime = 0; //!!!
 let realTime = 0; //!!!
-let isRealOffsetTime = false; //!!!
-let realOffsetTime = 0; //!!!
+let isStartTime = false; //!!!
+let realStartTime = 0; //!!!
 let x2t = 0; //!!!
 let x2start = 0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
@@ -650,7 +650,6 @@ function draw(){
             buttonHide();
             if (!player){
                 //*/Sounds//
-                console.log("Now playing master sound");
                 // masterSound.play();
                 //*/
                 player = new Player(1, 6, "right");
@@ -716,8 +715,8 @@ function finished(){
         player = null; //
         realPrevTime = 0;
         realTime = 0;
-        realOffsetTime = 0;
-        isRealOffsetTime = false;
+        realStartTime = 0;
+        isStartTime = false;
         x2t = 0;
         x2temp = -rectWidth; //
         x2[0] = x2start - 100; //
@@ -767,8 +766,8 @@ function failed(){
     player = null; //
     realPrevTime = 0;
     realTime = 0;
-    realOffsetTime = 0;
-    isRealOffsetTime = false;
+    realStartTime = 0;
+    isStartTime = false;
     x2t = 0;
     x2temp = -rectWidth; //
     x2[0] = x2start - 100; //
@@ -1775,50 +1774,40 @@ class Cube{ //The red cube
         xMainMenuRobber+=3;
     }
 
+    x2calculate(offset){
+        for (let i = 0; i < x2.length; i++) {
+            x2[i] = i * 100 + offset;
+        }
+    }
+
     //Rhythm beat based on speed of the cube
-    displayLevelSetup(music, _x2){
-        realPrevTime = realTime;
-    //  if (!isRealOffsetTime) {
-    //      let newOffsetTime = music.currentTime();
-    //      // currentTime() is not instantly updated. check it a few times.
-    //      // update #2: currentTime() is too off to be used for timing in general.
-    //      if (realOffsetTime > newOffsetTime) { 
-    //          isRealOffsetTime = true;
-    //          realOffsetTime = newOffsetTime;
-    //          console.log(`TRUEEE t(offset) = ${realOffsetTime}`)
-    //          masterSound.addCue(10, () => { console.log("sus"); })
-    //      } else {
-    //          realOffsetTime = newOffsetTime;
-    //          console.log(`t(offset) = ${realOffsetTime}`)
-    //          return;
-    //          console.log("Fake");
-    //      }
-    //  }
+    displayLevelSetup(music, _x2, musicOffset = -23){
         
-        // realTime = music.currentTime();
-        // p5js currentTime() is a bit buggy.
+        // console.log("p5js: " + music.currentTime());
+        // console.log("js: " + getAudioContext().currentTime);
+        // p5js currentTime() is a bit jittery.
             // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
             // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
             // 3. When AFK, the cubes disappear for some time. Don't know why.
 
-        
 
-
-        if (!isRealOffsetTime) {
-            isRealOffsetTime = true;
-            realOffsetTime = getAudioContext().currentTime;
-            music.play();
-            console.log(realTime + " is what I say to my basement. also not real " + realOffsetTime);
-
-            realTime = 0;
+        if (isStartTime) {
+            realPrevTime = realTime;
+            realTime = getAudioContext().currentTime - realStartTime + musicOffset;
         } else {
-            realTime = getAudioContext().currentTime - realOffsetTime;
-        }
+            this.x2calculate(musicOffset);
+            isStartTime = true;
+            realStartTime = getAudioContext().currentTime;
+            music.play();
 
-        // console.log("p5js: " + music.currentTime());
-        // console.log("js: " + getAudioContext().currentTime);
-        x2t = (realTime - realPrevTime) * _x2[0][1]; // - realOffsetTime;
-        console.log(`realTime: ${realTime}`);
+            realPrevTime = musicOffset;
+            // start position based on realTime
+            realTime = musicOffset;
+        }
+        console.log(`realTime: ${realTime} startTime: ${realStartTime} musicOffset: ${musicOffset}`);
+
+        // speed of cube
+        x2t = (realTime - realPrevTime) * _x2[0][1]; 
 
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
@@ -1826,7 +1815,7 @@ class Cube{ //The red cube
         if(x2[0] > widthMinusCube){
             rect(x2temp, y2, rectWidth, rectHeight);
             x2temp+=x2t;
-            // console.log(_x2[0])
+            // console.log(_x2[0][1])
         }
 
         fill('red'); //Red boxes
@@ -1846,25 +1835,27 @@ class Cube{ //The red cube
             x2[i]+=x2t;
         }
     }
+
     displayLevel1(){ //Music:
-        // this.displayLevelSetup(10); // works for visualizing cube positions while testing
-        this.displayLevelSetup(easySound, [
+        // Temporary: Only element[0][1] is used right now
+        // eventually replace offset with element[n][0]
+        this.displayLevelSetup(easySound, [ 
             [0, 133.8], // 218 | 133.7 - 133.9 (it's possible this is wrong)
-        ]);
+        ], -22);
     }
 
     displayLevel2(){ //Music:
         this.displayLevelSetup(normalSound, [
             [0, 212.67], // (212.63, 212.7) // xpos needs to change if it's split in 3
-        ]);
+        ], -25);
     }
 
     displayLevel3(){ //Music:
         this.displayLevelSetup(hardSound, [
             [20, 205.07], // (205, 205.1) // this is based on tempo after 20ish seconds
-        ]); 
-        
-        // this changes tempo after intro (10.05 --> 120 bpm (12?)) i like it though
+        ], 
+        -280);
+        // -3280 is perfect in sync for this song .. after 20ish seconds
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
@@ -1873,7 +1864,8 @@ class Cube{ //The red cube
             [0.61, 213.25], // (213, 213.5)
             [100, 180],
             [150, 213.25],
-        ]);
+        ],
+        -165);
         // starts with 2 16th notes.
         // changes tempo mid-song: ? to about 98 bpm
     }
