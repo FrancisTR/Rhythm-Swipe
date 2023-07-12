@@ -1675,6 +1675,10 @@ class FinishBlock{
 
 //----------------------------------------------------MUSIC BEAT CLASS---------------------------------------------
 class Cube{ //The red cube
+    constructor(){
+        this.__x2 = 0;
+        this.tempoChange = 0;
+    }
  
     displayDetector(){
         fill('black');
@@ -1793,21 +1797,31 @@ class Cube{ //The red cube
 
         if (isStartTime) {
             realPrevTime = realTime;
-            realTime = getAudioContext().currentTime - realStartTime + musicOffset;
+            realTime = getAudioContext().currentTime - realStartTime;
+            if (this.tempoChange + 1 < _x2.length) {
+                if (realTime >= _x2[this.tempoChange + 1][0]) {
+                    this.tempoChange++;
+                    console.log(`new tempo! ${this.tempoChange}`);
+                } else {
+                    console.log(`nah ${this.tempoChange}`);
+                }
+            } else {
+                console.log("cap");
+            }
         } else {
-            this.x2calculate(musicOffset);
+            this.tempoChange = 0;
+            this.x2calculate(musicOffset); // x start positions
             isStartTime = true;
             realStartTime = getAudioContext().currentTime;
             music.play();
 
-            realPrevTime = musicOffset;
-            // start position based on realTime
-            realTime = musicOffset;
+            realPrevTime = 0;
+            realTime = 0;
         }
         console.log(`realTime: ${realTime} startTime: ${realStartTime} musicOffset: ${musicOffset}`);
 
         // speed of cube
-        x2t = (realTime - realPrevTime) * _x2[0][1]; 
+        x2t = (realTime - realPrevTime) * _x2[this.tempoChange][1]; 
 
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
@@ -1836,6 +1850,8 @@ class Cube{ //The red cube
         }
     }
 
+    // In console paste this to jump to a part of the song:
+// let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realStartTime = getAudioContext().currentTime - sxa; realTime += sxa;
     displayLevel1(){ //Music:
         // Temporary: Only element[0][1] is used right now
         // eventually replace offset with element[n][0]
@@ -1852,20 +1868,23 @@ class Cube{ //The red cube
 
     displayLevel3(){ //Music:
         this.displayLevelSetup(hardSound, [
-            [20, 205.07], // (205, 205.1) // this is based on tempo after 20ish seconds
+            [0, 175],
+            [11.4, 185],
+            [18.2, 205.07], // (205, 205.1) // this is based on tempo after 20ish seconds
         ], 
-        -280);
-        // -3280 is perfect in sync for this song .. after 20ish seconds
+        -435);
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
         // scary code (it decides to print sus over 500000 times; some cases freezing the browser :) ) --> masterSound.addCue(0.61, () => { console.log("sus"); })// () => ++tempoChange, )
         this.displayLevelSetup(masterSound, [
-            [0.61, 213.25], // (213, 213.5)
-            [100, 180],
-            [150, 213.25],
+            [0, 213.25], // (213, 213.5)
+            [104, 163], // (162, 164) t[102, 105] slows down
+            [145.5, 40],
+            [145.8, 213.25],
+            [235, 120],
         ],
-        -165);
+        -165); // -165px <--> -0.61s
         // starts with 2 16th notes.
         // changes tempo mid-song: ? to about 98 bpm
     }
