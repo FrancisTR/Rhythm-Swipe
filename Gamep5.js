@@ -1801,17 +1801,23 @@ class Cube{ //The red cube
             if (this.tempoChange + 1 < _x2.length) {
                 if (realTime >= _x2[this.tempoChange + 1][0]) {
                     this.tempoChange++;
-                    console.log(`new tempo! ${this.tempoChange}`);
-                } else {
-                    console.log(`nah ${this.tempoChange}`);
+                    // console.log(`new tempo! ${this.tempoChange}`);
+                    if (_x2[this.tempoChange][1] === -999) {
+                        isStartTime = false; // restart song
+                        music.stop();
+                        console.log("End of song. Restarting...")
+                    }
+        //      } else {
+        //          console.log(`nah ${this.tempoChange}`);
                 }
-            } else {
-                console.log("cap");
+        //  } else {
+        //      console.log("this should never be called from now on since it loops");
             }
         } else {
+            isStartTime = true;
+
             this.tempoChange = 0;
             this.x2calculate(musicOffset); // x start positions
-            isStartTime = true;
             realStartTime = getAudioContext().currentTime;
             music.play();
 
@@ -1850,19 +1856,21 @@ class Cube{ //The red cube
         }
     }
 
-    // In console paste this to jump to a part of the song:
-// let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realStartTime = getAudioContext().currentTime - sxa; realTime += sxa;
+    // In web broswer console, paste this to jump to a part of the song:
+    // Note: Cubes might be off.
+// let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realTime -= sxa;
     displayLevel1(){ //Music:
-        // Temporary: Only element[0][1] is used right now
-        // eventually replace offset with element[n][0]
         this.displayLevelSetup(easySound, [ 
-            [0, 133.8], // 218 | 133.7 - 133.9 (it's possible this is wrong)
+            [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
+            // sends -999 signal to restart song at duration
+            [easySound.duration(), -999],
         ], -22);
     }
 
     displayLevel2(){ //Music:
         this.displayLevelSetup(normalSound, [
-            [0, 212.67], // (212.63, 212.7) // xpos needs to change if it's split in 3
+            [0, 212.67], // (212.63, 212.7)
+            [normalSound.duration(), -999],
         ], -25);
     }
 
@@ -1870,19 +1878,24 @@ class Cube{ //The red cube
         this.displayLevelSetup(hardSound, [
             [0, 175],
             [11.4, 185],
-            [18.2, 205.07], // (205, 205.1) // this is based on tempo after 20ish seconds
+            [18.2, 205.07], // (205, 205.1)
+            [hardSound.duration(), -999],
         ], 
         -435);
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        // scary code (it decides to print sus over 500000 times; some cases freezing the browser :) ) --> masterSound.addCue(0.61, () => { console.log("sus"); })// () => ++tempoChange, )
         this.displayLevelSetup(masterSound, [
-            [0, 213.25], // (213, 213.5)
-            [104, 163], // (162, 164) t[102, 105] slows down
-            [145.5, 40],
-            [145.8, 213.25],
+            // All values are dependent on each other for correct position.
+            // Minor tweaks are time
+            // consuming rn since there's no reliable way to go to a specific
+            // point of the song right now without listening to everything.
+            [0, 213.25], // [1](213, 213.5)
+            [103.1, 163], // [1](162, 164) 
+            // below: 1.3 seconds gap (also 144.7 works in sync but it's early)
+            [146.75, 213.25], // [0](146.7, 146.8) 
             [235, 120],
+            [masterSound.duration(), -999], 
         ],
         -165); // -165px <--> -0.61s
         // starts with 2 16th notes.
