@@ -719,12 +719,6 @@ function finished(){
         isStartTime = false;
         x2t = 0;
         x2temp = -rectWidth; //
-        x2[0] = x2start - 100; //
-        x2[1] = x2start;//
-        x2[2] = x2start + 100; //
-        x2[3] = x2start + 200; //
-        x2[4] = x2start + 300;//
-        x2[5] = x2start + 400;//
         y2 = 575; //
         i = 0; //
         finishLine = []; //
@@ -770,12 +764,6 @@ function failed(){
     isStartTime = false;
     x2t = 0;
     x2temp = -rectWidth; //
-    x2[0] = x2start - 100; //
-    x2[1] = x2start;//
-    x2[2] = x2start + 100; //
-    x2[3] = x2start + 200; //
-    x2[4] = x2start + 300;//
-    x2[5] = x2start + 400;//
     y2 = 575; //
     i = 0; //
     finishLine = []; //
@@ -828,7 +816,6 @@ function intermissionSetup(_level, _button, _sound) {
     //*/Sounds//
     _sound.play();
     _sound.setVolume(0.2);
-    _sound.loop();
     //*/
 }
 
@@ -1782,6 +1769,7 @@ class Cube{ //The red cube
         for (let i = 0; i < x2.length; i++) {
             x2[i] = i * 100 + offset;
         }
+        console.log(x2);
     }
 
     //Rhythm beat based on speed of the cube
@@ -1793,7 +1781,7 @@ class Cube{ //The red cube
             // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
             // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
             // 3. When AFK, the cubes disappear for some time. Don't know why.
-
+        let tempo = _x2[this.tempoChange][1]
 
         if (isStartTime) {
             realPrevTime = realTime;
@@ -1806,7 +1794,8 @@ class Cube{ //The red cube
                         isStartTime = false; // restart song
                         music.stop();
                         console.log("End of song. Restarting...")
-                    }
+                        console.log(x2);
+                    } 
         //      } else {
         //          console.log(`nah ${this.tempoChange}`);
                 }
@@ -1814,6 +1803,7 @@ class Cube{ //The red cube
         //      console.log("this should never be called from now on since it loops");
             }
         } else {
+            console.log(`realTime: ${realTime} startTime: ${realStartTime} musicOffset: ${musicOffset}`);
             isStartTime = true;
 
             this.tempoChange = 0;
@@ -1824,52 +1814,64 @@ class Cube{ //The red cube
             realPrevTime = 0;
             realTime = 0;
         }
-        console.log(`realTime: ${realTime} startTime: ${realStartTime} musicOffset: ${musicOffset}`);
 
-        // speed of cube
-        x2t = (realTime - realPrevTime) * _x2[this.tempoChange][1]; 
 
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
-        rect(x2[0], y2, rectWidth, rectHeight);
-        if(x2[0] > widthMinusCube){
-            rect(x2temp, y2, rectWidth, rectHeight);
-            x2temp+=x2t;
-            // console.log(_x2[0][1])
-        }
+        if (tempo !== -998) {
+            // speed of cube (maybe change speed to position in future)
+            x2t = (realTime - realPrevTime) * tempo; 
+            rect(x2[0], y2, rectWidth, rectHeight);
+            if(x2[0] > widthMinusCube){
+                rect(x2temp, y2, rectWidth, rectHeight);
+                x2temp+=x2t;
+                // console.log(_x2[0][1])
+            }
 
-        fill('red'); //Red boxes
-        if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
-            rect(x2temp, y2, rectWidth, rectHeight);
-            x2temp+=x2t;
+            fill('red'); //Red boxes
+            if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
+                rect(x2temp, y2, rectWidth, rectHeight);
+                x2temp+=x2t;
+            }
+            for (let i = 0; i < x2.length; i++) {
+                if(x2[i] > width) {
+                    x2[i] %= 600;
+                    x2temp = -rectWidth;
+                }
+                x2[i]+=x2t;
+            }
+        } else { // towards end of song
+            // speed of cube (maybe change speed to position in future)
+            x2t = (realTime - realPrevTime) * _x2[this.tempoChange - 1][1]; 
+            rect(x2[0], y2, rectWidth, rectHeight);
+
+            fill('red'); //Red boxes
+
+            for (let i = 0; i < x2.length; i++) {
+                x2[i]+=x2t;
+            }
         }
 
         for (let i = 1; i < x2.length; i++) {
             rect(x2[i], y2, rectWidth, rectHeight);
         }
-        for (let i = 0; i < x2.length; i++) {
-            if(x2[i] > width) {
-                x2[i] %= 600;
-                x2temp = -rectWidth;
-            }
-            x2[i]+=x2t;
-        }
     }
 
     // In web broswer console, paste this to jump to a part of the song:
-    // Note: Cubes might be off.
+    // Note: Cubes might be off. Doesn't even seem to follow the tempo if after a tempo change.
 // let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realTime -= sxa;
-    displayLevel1(){ //Music:
-        this.displayLevelSetup(easySound, [ 
-            [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
-            // sends -999 signal to restart song at duration
-            [easySound.duration(), -999],
-        ], -22);
-    }
+//  displayLevel1(){ //Music:
+//      this.displayLevelSetup(easySound, [ 
+//          [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
+//          // sends -999 signal to restart song at duration
+//          [easySound.duration(), -999],
+//      ], -22);
+//  }
 
     displayLevel2(){ //Music:
         this.displayLevelSetup(normalSound, [
             [0, 212.67], // (212.63, 212.7)
+            [normalSound.duration() - 21.267, -998],
             [normalSound.duration(), -999],
         ], -25);
     }
@@ -1879,6 +1881,7 @@ class Cube{ //The red cube
             [0, 175],
             [11.4, 185],
             [18.2, 205.07], // (205, 205.1)
+            [hardSound.duration() - 20.507, -999], // guess
             [hardSound.duration(), -999],
         ], 
         -435);
@@ -1895,6 +1898,7 @@ class Cube{ //The red cube
             // below: 1.3 seconds gap (also 144.7 works in sync but it's early)
             [146.75, 213.25], // [0](146.7, 146.8) 
             [235, 120],
+            [masterSound.duration() - 12, -998], 
             [masterSound.duration(), -999], 
         ],
         -165); // -165px <--> -0.61s
