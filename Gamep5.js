@@ -1860,13 +1860,13 @@ class Cube{ //The red cube
     // In web broswer console, paste this to jump to a part of the song:
     // Note: Cubes might be off. Doesn't even seem to follow the tempo if after a tempo change.
 // let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realTime -= sxa;
-//  displayLevel1(){ //Music:
-//      this.displayLevelSetup(easySound, [ 
-//          [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
-//          // sends -999 signal to restart song at duration
-//          [easySound.duration(), -999],
-//      ], -22);
-//  }
+    displayLevel1(){ //Music:
+        this.displayLevelSetup(easySound, [ 
+            [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
+            // sends -999 signal to restart song at duration
+            [easySound.duration(), -999],
+        ], -22);
+    }
 
     displayLevel2(){ //Music:
         this.displayLevelSetup(normalSound, [
