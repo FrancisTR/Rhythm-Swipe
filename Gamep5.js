@@ -74,6 +74,7 @@ let realTime = 0; //!!!
 let isStartTime = false; //!!!
 let realStartTime = 0; //!!!
 let x2t = 0; //!!!
+let x2wait = 0; //!!!
 let x2start = 0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
@@ -453,6 +454,7 @@ function draw(){
                 MainMenuTheme.loop();
                 MainMenuThemeSwitch = true;
                 console.log("play")
+                realStartTime = getAudioContext().currentTime;
             }
             //*/
             background('black');
@@ -468,6 +470,25 @@ function draw(){
             text("v1.6.4", 5, 15);
 
             buttonShow();
+
+            if (!timeChangesLock) {
+                currentTime = getAudioContext().currentTime - realStartTime;
+                console.log(currentTime);
+
+                if (currentTime !== realPrevTime){
+                    timeChanges++;
+                    realPrevTime = currentTime;
+                    console.log("changed" + timeChanges)
+                } else {
+                    timeChanges--;
+                    console.log("not changed" + timeChanges)
+                }
+                if (currentTime > 10) {
+                    console.log("Final value" + timeChanges)
+                    timeChangesLock = true;
+                }
+            }
+
             break;
         //------------------------------------------
 
@@ -717,6 +738,7 @@ function finished(){
         realTime = 0;
         realStartTime = 0;
         isStartTime = false;
+        x2wait = 0; 
         x2t = 0;
         x2temp = -rectWidth; //
         y2 = 575; //
@@ -764,6 +786,7 @@ function failed(){
     isStartTime = false;
     x2t = 0;
     x2temp = -rectWidth; //
+    x2wait = 0; //
     y2 = 575; //
     i = 0; //
     finishLine = []; //
@@ -1665,15 +1688,47 @@ class Cube{ //The red cube
     constructor(){
         this.__x2 = 0;
         this.tempoChange = 0;
+
+        // music tempos
+        this.easyTempo = [ 
+            [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
+            // sends -999 signal to restart song at duration
+            [easySound.duration(), -999],
+        ]
+        this.normalTempo = [
+            [0, 212.67], // (212.63, 212.7)
+            [normalSound.duration() - 21.267, -998],
+            [normalSound.duration(), -999],
+        ]
+        this.hardTempo = [
+            [0, 175],
+            [11.4, 185],
+            [18.2, 205.07], // (205, 205.1)
+            [hardSound.duration() - 2, -998], // 20.507 is too big (2 is temporarily there) guess
+            [hardSound.duration(), -999],
+        ]
+        this.masterTempo = [
+            // All values are dependent on each other for correct position.
+            // Minor tweaks are time
+            // consuming rn since there's no reliable way to go to a specific
+            // point of the song right now without listening to everything.
+            [0, 213.25], // [1](213, 213.5)
+            [103.1, 163], // [1](162, 164) 
+            // below: 1.3 seconds gap (also 144.7 works in sync but it's early)
+            [146.75, 213.25], // [0](146.7, 146.8) 
+            [235, 120],
+            [masterSound.duration() - 12, -998], 
+            [masterSound.duration(), -999], 
+        ]
     }
- 
+
     displayDetector(){
         fill('black');
         rect(0, 540, 600 ,60); //Whole bar
         fill(pressByBeat);
         rect(480, 540, 60 , 60); //Beat detector?
         // now see if distance between two is less than sum of two radius'
-       
+
         //Show player attempts on the bar
         fill('gold');
         textSize(50);
@@ -1683,7 +1738,7 @@ class Cube{ //The red cube
         //*/Debug/
         this.beatSync();
         //*/
-        
+
         if (pressByBeat === 'red'){
             pressByBeat = 500;
         }
@@ -1772,6 +1827,24 @@ class Cube{ //The red cube
         console.log(x2);
     }
 
+    x2noskip(x2check){
+        // if 0 (or false), use previous value
+        // remove x2check by x2wait when audioContext is not 0
+        if (x2check === 0) {
+            // x2t /= 2;
+            x2t = x2check;
+            x2wait += x2t;
+        } else {
+            if (x2wait === 0) {
+                x2t = x2check;
+            } else {
+                x2t = x2check - x2wait;
+                x2wait = 0;
+            }
+        }
+        return x2t;
+    }
+
     //Rhythm beat based on speed of the cube
     displayLevelSetup(music, _x2, musicOffset = -23){
         
@@ -1803,7 +1876,7 @@ class Cube{ //The red cube
         //      console.log("this should never be called from now on since it loops");
             }
         } else {
-            console.log(`realTime: ${realTime} startTime: ${realStartTime} musicOffset: ${musicOffset}`);
+            //console.log(`realTime: ${realTime} startTime: ${realStartTime} musicOffset: ${musicOffset}`);
             isStartTime = true;
 
             this.tempoChange = 0;
@@ -1818,9 +1891,10 @@ class Cube{ //The red cube
 
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
-        if (tempo !== -998) {
+        if (tempo !== -998) { // regular loop
             // speed of cube (maybe change speed to position in future)
-            x2t = (realTime - realPrevTime) * tempo; 
+            x2t = this.x2noskip((realTime - realPrevTime) * tempo);
+            
             rect(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
                 rect(x2temp, y2, rectWidth, rectHeight);
@@ -1842,7 +1916,7 @@ class Cube{ //The red cube
             }
         } else { // towards end of song
             // speed of cube (maybe change speed to position in future)
-            x2t = (realTime - realPrevTime) * _x2[this.tempoChange - 1][1]; 
+            x2t = this.x2noskip((realTime - realPrevTime) * _x2[this.tempoChange - 1][1]);
             rect(x2[0], y2, rectWidth, rectHeight);
 
             fill('red'); //Red boxes
@@ -1861,52 +1935,25 @@ class Cube{ //The red cube
     // Note: Cubes might be off. Doesn't even seem to follow the tempo if after a tempo change.
 // let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realTime -= sxa;
     displayLevel1(){ //Music:
-        this.displayLevelSetup(easySound, [ 
-            [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
-            // sends -999 signal to restart song at duration
-            [easySound.duration(), -999],
-        ], -22);
+        this.displayLevelSetup(easySound, this.easyTempo, -22);
     }
-
     displayLevel2(){ //Music:
-        this.displayLevelSetup(normalSound, [
-            [0, 212.67], // (212.63, 212.7)
-            [normalSound.duration() - 21.267, -998],
-            [normalSound.duration(), -999],
-        ], -25);
+        this.displayLevelSetup(normalSound, this.normalTempo, -25);
     }
 
     displayLevel3(){ //Music:
-        this.displayLevelSetup(hardSound, [
-            [0, 175],
-            [11.4, 185],
-            [18.2, 205.07], // (205, 205.1)
-            [hardSound.duration() - 20.507, -999], // guess
-            [hardSound.duration(), -999],
-        ], 
-        -435);
+        this.displayLevelSetup(hardSound, this.hardTempo, -435);
     }
 
     displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(masterSound, [
-            // All values are dependent on each other for correct position.
-            // Minor tweaks are time
-            // consuming rn since there's no reliable way to go to a specific
-            // point of the song right now without listening to everything.
-            [0, 213.25], // [1](213, 213.5)
-            [103.1, 163], // [1](162, 164) 
-            // below: 1.3 seconds gap (also 144.7 works in sync but it's early)
-            [146.75, 213.25], // [0](146.7, 146.8) 
-            [235, 120],
-            [masterSound.duration() - 12, -998], 
-            [masterSound.duration(), -999], 
-        ],
-        -165); // -165px <--> -0.61s
+        this.displayLevelSetup(masterSound, this.masterTempo, -165);
+        // -165px <--> -0.61s
         // starts with 2 16th notes.
         // changes tempo mid-song: ? to about 98 bpm
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
+
 
 
 
