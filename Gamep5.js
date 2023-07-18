@@ -87,8 +87,13 @@ let x2start = 0;//!!! tileSize-(rectWidth/2);
 // All visible x values are within [0, boardSize (600 if it's not changed)].
 let x2temp = -rectWidth; //!!!
 // let x2 = x2start - 100; //!!!
-// REMOVE?
 let x2 = [
+    x2start - 100, // old x2 --> x2[0]
+    x2start, // old x22 --> x2[1]
+    x2start + 100, // old x23
+    x2start + 200, // ...
+    x2start + 300, //
+    x2start + 400 //
 ];
 
 let y2 = 575; //!!!
