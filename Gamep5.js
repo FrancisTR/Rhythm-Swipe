@@ -69,10 +69,11 @@ let widthMinusCube = boardSize - rectWidth;
 
 //position of red cubes
 
-let realPrevTime = 0; //!!!
-let realTime = 0; //!!!
+let realPrevMusicTime = 0; //!!!
+let realMusicTime = 0; //!!!
 let isStartTime = false; //!!!
 let realStartTime = 0; //!!!
+let x2tWait = 0; // no reset required
 let x2t = 0; //!!!
 let x2wait = 0; //!!!
 let x2start = 0;//!!! tileSize-(rectWidth/2);
@@ -467,7 +468,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("v1.6.4", 5, 15);
+            text("v1.6.4+nick20230710", 5, 15);
 
             buttonShow();
             break;
@@ -715,8 +716,8 @@ function finished(){
 
         //Clear everything when level complete
         player = null; //
-        realPrevTime = 0;
-        realTime = 0;
+        realPrevMusicTime = 0;
+        realMusicTime = 0;
         realStartTime = 0;
         isStartTime = false;
         x2wait = 0; 
@@ -761,8 +762,8 @@ function failed(){
     //console.log("Winner!");
     //Clear everything when level complete
     player = null; //
-    realPrevTime = 0;
-    realTime = 0;
+    realPrevMusicTime = 0;
+    realMusicTime = 0;
     realStartTime = 0;
     isStartTime = false;
     x2t = 0;
@@ -1808,20 +1809,29 @@ class Cube{ //The red cube
         console.log(x2);
     }
 
-    x2noskip(x2check){
+    x2tNoSkip(x2check, realTempo){
         // if 0 (or false), use previous value
         // remove x2check by x2wait when audioContext is not 0
+        if (realTempo === 0) {
+            return 0;
+        }
         if (x2check === 0) {
-            x2t = x2check;
+            x2t = realTempo / 60;
             x2wait += x2t;
+//            if (x2wait > 80) {
+//            }
         } else {
             if (x2wait === 0) {
                 x2t = x2check;
             } else {
                 x2t = x2check - x2wait;
+                if (x2wait > 20) {
+                    console.log(`laggier waiting: x2wait=${x2wait} original x2t=${x2check}`)
+                }
                 x2wait = 0;
             }
         }
+        
         return x2t;
     }
 
@@ -1835,13 +1845,16 @@ class Cube{ //The red cube
             // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
             // 3. When AFK, the cubes disappear for some time. Don't know why.
         if (isStartTime) {
-            realPrevTime = realTime;
-            realTime = getAudioContext().currentTime - realStartTime;
-            if ((this.tempoChange + 1 < _x2.length) && (realTime >= _x2[this.tempoChange + 1][0])) {
+            realPrevMusicTime = realMusicTime;
+            realMusicTime = getAudioContext().currentTime - realStartTime;
+            if ((this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
                 this.tempoChange++;
                 // console.log(`new tempo! ${this.tempoChange}`);
                 if (_x2[this.tempoChange][1] === -999) {
                     isStartTime = false; // restart song
+                    if (this.tempoChange == undefined) {
+                        console.log("WARNING: tempoChange is undefined. should be converted to 0. @ end of song.")
+                    }
                     this.tempoChange = 0; // prevents a rare bug.
                     music.stop();
                     console.log(`End of song. Restarting... ${this.tempoChange}`)
@@ -1852,15 +1865,18 @@ class Cube{ //The red cube
             }
         } else {
             isStartTime = true;
-            console.log(`realTime: ${realTime} startTime: ${realStartTime} musicOffset: ${musicOffset}`);
+            console.log(`realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
 
+            if (this.tempoChange == undefined) {
+                console.log("WARNING: tempoChange is undefined. should be converted to 0. @ song start")
+            }
             this.tempoChange = 0;
             this.x2calculate(musicOffset); // x start positions
             realStartTime = getAudioContext().currentTime;
             music.play();
 
-            realPrevTime = 0;
-            realTime = 0;
+            realPrevMusicTime = 0;
+            realMusicTime = 0;
         }
 
         let tempo = _x2[this.tempoChange][1]
@@ -1870,7 +1886,7 @@ class Cube{ //The red cube
         fill('cyan'); //The beat that allow the Guard to move
         if (tempo !== -998) { // regular loop
             // speed of cube (maybe change speed to position in future)
-            x2t = this.x2noskip((realTime - realPrevTime) * tempo);
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo, tempo);
             
             rect(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
@@ -1893,7 +1909,8 @@ class Cube{ //The red cube
             }
         } else { // towards end of song
             // speed of cube (maybe change speed to position in future)
-            x2t = this.x2noskip((realTime - realPrevTime) * _x2[this.tempoChange - 1][1]);
+            let realTempo = _x2[this.tempoChange - 1][1]
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * realTempo, realTempo);
             rect(x2[0], y2, rectWidth, rectHeight);
 
             fill('red'); //Red boxes
@@ -1910,7 +1927,7 @@ class Cube{ //The red cube
 
     // In web broswer console, paste this to jump to a part of the song:
     // Note: Cubes might be off. Doesn't even seem to follow the tempo if after a tempo change.
-// let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realTime -= sxa;
+// let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realMusicTime -= sxa;
     displayLevel1(){ //Music:
         this.displayLevelSetup(easySound, this.easyTempo, -22);
     }
