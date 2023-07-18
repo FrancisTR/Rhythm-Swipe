@@ -73,6 +73,8 @@ let realPrevMusicTime = 0; //!!!
 let realMusicTime = 0; //!!!
 let isStartTime = false; //!!!
 let realStartTime = 0; //!!!
+let oldMusicRate = 1;
+let musicRate = 1;
 let x2tWait = 0; // no reset required
 let x2t = 0; //!!!
 let x2wait = 0; //!!!
@@ -85,13 +87,8 @@ let x2start = 0;//!!! tileSize-(rectWidth/2);
 // All visible x values are within [0, boardSize (600 if it's not changed)].
 let x2temp = -rectWidth; //!!!
 // let x2 = x2start - 100; //!!!
+// REMOVE?
 let x2 = [
-    x2start - 100, // old x2 --> x2[0]
-    x2start, // old x22 --> x2[1]
-    x2start + 100, // old x23
-    x2start + 200, // old x24
-    x2start + 300, // old x25
-    x2start + 400 //
 ];
 
 let y2 = 575; //!!!
@@ -888,7 +885,7 @@ function visualAudio(){
     beginShape();
     for(let i=0; i<volHistory.length; i++) {
         let y = map(volHistory[i], 0, 1, height/2, 0); //position map
-  	    vertex(i, y);
+        vertex(i, y);
     }
     endShape();
   
@@ -1290,23 +1287,23 @@ function level4(){ //MASTER MODE
 //The board itself. Is used for all levels
 function board(){
     for (var x = 0; x < width; x += width / 10) {
-		for (var y = 0; y < height; y += height / 10) {
-			stroke(0);
-			strokeWeight(1.5);
-			line(x, 0, x, height);
+        for (var y = 0; y < height; y += height / 10) {
+            stroke(0);
+            strokeWeight(1.5);
+            line(x, 0, x, height);
             stroke(110);
             strokeWeight(1.5);
             line(x + 1.5, 0, x + 1.5, height);
 
             stroke(0);
-			strokeWeight(1.5);
-			line(0, y, width, y);
+            strokeWeight(1.5);
+            line(0, y, width, y);
             stroke(110);
             strokeWeight(1.5);
             line(0, y +1.5, width, y +1.5);
 
-		}
-	}
+        }
+    }
     //coins display
     for (var i = 0; i < coins.length; i++){
         coins[i].display();
@@ -1813,8 +1810,10 @@ class Cube{ //The red cube
         // if 0 (or false), use previous value
         // remove x2check by x2wait when audioContext is not 0
         if (realTempo === 0) {
-            return 0;
+            x2t = 0;
+            return;
         }
+
         if (x2check === 0) {
             x2t = realTempo / 60;
             x2wait += x2t;
@@ -1825,40 +1824,50 @@ class Cube{ //The red cube
                 x2t = x2check;
             } else {
                 x2t = x2check - x2wait;
-                if (x2wait > 20) {
-                    console.log(`laggier waiting: x2wait=${x2wait} original x2t=${x2check}`)
-                }
+                // if (x2wait > 22) {
+                //    console.log(`laggier waiting: x2wait=${x2wait} original x2t=${x2check}`)
+                // }
                 x2wait = 0;
             }
         }
-        
-        return x2t;
+    }
+
+    restartMusic(restartThis, txt = `Restarting music... tempoChange: ${this.tempoChange}`) {
+        console.log(txt);
+        isStartTime = false;
+        restartThis.stop();
+        console.log(x2);
     }
 
     //Rhythm beat based on speed of the cube
-    displayLevelSetup(music, _x2, musicOffset = -23){
+    displayLevelSetup(musicLevel, _x2, musicOffset = -23){
         
-        // console.log("p5js: " + music.currentTime());
+        // console.log("p5js: " + musicLevel.currentTime());
         // console.log("js: " + getAudioContext().currentTime);
         // p5js currentTime() is a bit jittery.
             // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
             // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
             // 3. When AFK, the cubes disappear for some time. Don't know why.
         if (isStartTime) {
+
+            // Experimental feature. Changable in browser console.
+            // It will probably stop working in the future
+            // I especially like 1.5 speed
+            if (musicRate !== oldMusicRate) {
+                oldMusicRate = musicRate;
+                musicLevel.rate(musicRate);
+            }
+            if (this.tempoChange == undefined) {
+                return this.restartMusic(music, "WARNING: tempoChange is undefined. Restarting...");
+            }
+
             realPrevMusicTime = realMusicTime;
             realMusicTime = getAudioContext().currentTime - realStartTime;
             if ((this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
                 this.tempoChange++;
                 // console.log(`new tempo! ${this.tempoChange}`);
                 if (_x2[this.tempoChange][1] === -999) {
-                    isStartTime = false; // restart song
-                    if (this.tempoChange == undefined) {
-                        console.log("WARNING: tempoChange is undefined. should be converted to 0. @ end of song.")
-                    }
-                    this.tempoChange = 0; // prevents a rare bug.
-                    music.stop();
-                    console.log(`End of song. Restarting... ${this.tempoChange}`)
-                    console.log(x2);
+                    this.restartMusic(music);
                 } 
         //  } else {
         //      console.log("this should never be called from now on since it loops");
@@ -1866,14 +1875,12 @@ class Cube{ //The red cube
         } else {
             isStartTime = true;
             console.log(`realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
-
-            if (this.tempoChange == undefined) {
-                console.log("WARNING: tempoChange is undefined. should be converted to 0. @ song start")
-            }
+            musicLevel.rate(musicRate);
+            
             this.tempoChange = 0;
             this.x2calculate(musicOffset); // x start positions
             realStartTime = getAudioContext().currentTime;
-            music.play();
+            musicLevel.play();
 
             realPrevMusicTime = 0;
             realMusicTime = 0;
@@ -1886,7 +1893,7 @@ class Cube{ //The red cube
         fill('cyan'); //The beat that allow the Guard to move
         if (tempo !== -998) { // regular loop
             // speed of cube (maybe change speed to position in future)
-            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo, tempo);
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo * musicRate, tempo);
             
             rect(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
@@ -1910,7 +1917,7 @@ class Cube{ //The red cube
         } else { // towards end of song
             // speed of cube (maybe change speed to position in future)
             let realTempo = _x2[this.tempoChange - 1][1]
-            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * realTempo, realTempo);
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * realTempo * musicRate, realTempo);
             rect(x2[0], y2, rectWidth, rectHeight);
 
             fill('red'); //Red boxes
@@ -1948,6 +1955,7 @@ class Cube{ //The red cube
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
+
 
 
 
