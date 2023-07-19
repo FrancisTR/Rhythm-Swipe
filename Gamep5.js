@@ -1351,7 +1351,7 @@ function board(){
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if(player != null){
-        if (key === "w" || key === "a" || key === "s" || key === "d"){
+        if (!isPaused && (key === "w" || key === "a" || key === "s" || key === "d")){
             if (key === "w") {
                 player.face("up");
                 player.move(0, 1);
@@ -1850,7 +1850,11 @@ class Cube{ //The red cube
     restartMusic(restartThis, txt = `Restarting music... tempoChange: ${this.tempoChange}`) {
         console.log(txt);
         isStartTime = false;
-        restartThis.stop();
+        if (restartThis) {
+            restartThis.stop();
+        } else {
+            console.log("future problem");
+        }
         console.log(x2);
     }
 
@@ -1873,16 +1877,18 @@ class Cube{ //The red cube
                 musicLevel.rate(musicRate);
             }
 
-            if (this.tempoChange == undefined) {
-                return this.restartMusic(music, "WARNING: tempoChange is undefined. Restarting...");
+            if (typeof this.tempoChange === "undefined") {
+                return this.restartMusic(false, "WARNING: tempoChange is undefined. Restarting...");
             }
 
             realPrevMusicTime = realMusicTime;
             realMusicTime = getAudioContext().currentTime - realStartTime;
             if (isPaused) {
+                // audio loses sync after pauses
                 if (pauseTime === 0) {
                     pauseTime = realMusicTime;
                     musicLevel.pause();
+                    console.log("tempoChange=" + this.tempoChange);
                 }
                 
                 background(0, 0, 0, 128);
@@ -1890,6 +1896,8 @@ class Cube{ //The red cube
                 textSize(50);
                 textAlign(CENTER);
                 text("Mission Paused", boardSize*0.5, boardSize*0.5);
+                textSize(20);
+                text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
                 textAlign(LEFT, BASELINE); // default textAlign
 
                 return;
@@ -1899,12 +1907,12 @@ class Cube{ //The red cube
                 musicLevel.play();
             }
 
-            if ((this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
+            if (!isPaused && (this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
                 this.tempoChange++;
-                // console.log(`new tempo! ${this.tempoChange}`);
+                console.log(`new tempo! ${this.tempoChange}`);
                 
                 if (_x2[this.tempoChange][1] === -999) {
-                    this.restartMusic(music);
+                    this.restartMusic(musicLevel);
                 } 
         //  } else {
         //      console.log("this should never be called from now on since it loops");
