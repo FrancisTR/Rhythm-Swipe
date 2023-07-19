@@ -1834,6 +1834,7 @@ class Cube{ //The red cube
 //            if (x2wait > 80) {
 //            }
         } else {
+
             if (x2wait === 0) {
                 x2t = x2check;
             } else {
@@ -1866,37 +1867,31 @@ class Cube{ //The red cube
 
             // Experimental feature. Changable in browser console.
             // It will probably stop working in the future
-            // I especially like 1.5 speed
+            // I especially like 1.5 speed in Master mode
             if (musicRate !== oldMusicRate) {
                 oldMusicRate = musicRate;
                 musicLevel.rate(musicRate);
             }
+
             if (this.tempoChange == undefined) {
                 return this.restartMusic(music, "WARNING: tempoChange is undefined. Restarting...");
             }
 
             realPrevMusicTime = realMusicTime;
             realMusicTime = getAudioContext().currentTime - realStartTime;
-
-            // changes are detected with isPaused
-            // currently:
-            // - keyboard shortcut "p"
-            // todo:
-            // - no pause screen yet
-
             if (isPaused) {
                 if (pauseTime === 0) {
                     pauseTime = realMusicTime;
                     musicLevel.pause();
                 }
+                
                 background(0, 0, 0, 128);
                 fill('cyan');
                 textSize(50);
                 textAlign(CENTER);
                 text("Mission Paused", boardSize*0.5, boardSize*0.5);
-                // text("Mission Paused", boardSize*0.2, boardSize*0.2, boardSize*0.8, boardSize*0.8);
                 textAlign(LEFT, BASELINE); // default textAlign
-               // textAlign(CENTER, CENTER);
+
                 return;
             } else if (!isPaused && pauseTime !== 0) {
                 realMusicTime -= pauseTime;
@@ -1907,6 +1902,7 @@ class Cube{ //The red cube
             if ((this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
                 this.tempoChange++;
                 // console.log(`new tempo! ${this.tempoChange}`);
+                
                 if (_x2[this.tempoChange][1] === -999) {
                     this.restartMusic(music);
                 } 
@@ -1948,6 +1944,7 @@ class Cube{ //The red cube
                 rect(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
             }
+
             for (let i = 0; i < x2.length; i++) {
                 if(x2[i] > width) {
                     x2[i] %= 600;
@@ -1955,6 +1952,7 @@ class Cube{ //The red cube
                 }
                 x2[i]+=x2t;
             }
+
         } else { // towards end of song
             // speed of cube (maybe change speed to position in future)
             let realTempo = _x2[this.tempoChange - 1][1]
