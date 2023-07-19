@@ -1889,6 +1889,14 @@ class Cube{ //The red cube
                     pauseTime = realMusicTime;
                     musicLevel.pause();
                 }
+                background(0, 0, 0, 128);
+                fill('cyan');
+                textSize(50);
+                textAlign(CENTER);
+                text("Mission Paused", boardSize*0.5, boardSize*0.5);
+                // text("Mission Paused", boardSize*0.2, boardSize*0.2, boardSize*0.8, boardSize*0.8);
+                textAlign(LEFT, BASELINE); // default textAlign
+               // textAlign(CENTER, CENTER);
                 return;
             } else if (!isPaused && pauseTime !== 0) {
                 realMusicTime -= pauseTime;
