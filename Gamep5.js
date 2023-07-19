@@ -1370,6 +1370,9 @@ function keyPressed() {
             }
             pressByBeat = 'red';
         }
+        if (key === "p") {
+            isPaused = !isPaused;
+        }
     }
     
 }
@@ -1877,10 +1880,9 @@ class Cube{ //The red cube
 
             // changes are detected with isPaused
             // currently:
-            // - access in browser console with: isPaused = !isPaused
+            // - keyboard shortcut "p"
             // todo:
             // - no pause screen yet
-            // - no keyboard shortcut yet
 
             if (isPaused) {
                 if (pauseTime === 0) {
