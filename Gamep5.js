@@ -58,6 +58,10 @@ let lockPatternUsed = false; //!!! In reset enemies
 
 
 
+//------------------Pause-----------------------------
+let pauseTime = 0.0;
+let isPaused = false;
+
 //---------The bar that detects the beat in game------
 let pressByBeat = 500;
 var cubeDetector; //The box that detects the red cube
@@ -67,18 +71,20 @@ let rectWidth = 30;
 let rectHeight = 500;
 let widthMinusCube = boardSize - rectWidth;
 
-//position of red cubes
-
-let realPrevMusicTime = 0; //!!!
-let realMusicTime = 0; //!!!
+// time for cubes and music
+let realPrevMusicTime = 0.0; //!!!
+let realMusicTime = 0.0; //!!!
 let isStartTime = false; //!!!
-let realStartTime = 0; //!!!
+let realStartTime = 0.0; //!!!
+
 let oldMusicRate = 1;
 let musicRate = 1;
-let x2tWait = 0; // no reset required
-let x2t = 0; //!!!
-let x2wait = 0; //!!!
-let x2start = 0;//!!! tileSize-(rectWidth/2);
+
+//position of red cubes
+let x2tWait = 0.0; // no reset required
+let x2t = 0.0; //!!!
+let x2wait = 0.0; //!!!
+let x2start = 0.0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
 // let x2start = tileSize*2+((tileSize-rectWidth)/2);
@@ -1868,6 +1874,26 @@ class Cube{ //The red cube
 
             realPrevMusicTime = realMusicTime;
             realMusicTime = getAudioContext().currentTime - realStartTime;
+
+            // changes are detected with isPaused
+            // currently:
+            // - access in browser console with: isPaused = !isPaused
+            // todo:
+            // - no pause screen yet
+            // - no keyboard shortcut yet
+
+            if (isPaused) {
+                if (pauseTime === 0) {
+                    pauseTime = realMusicTime;
+                    musicLevel.pause();
+                }
+                return;
+            } else if (!isPaused && pauseTime !== 0) {
+                realMusicTime -= pauseTime;
+                pauseTime = 0;
+                musicLevel.play();
+            }
+
             if ((this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
                 this.tempoChange++;
                 // console.log(`new tempo! ${this.tempoChange}`);
