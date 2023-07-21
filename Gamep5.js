@@ -60,6 +60,7 @@ let lockPatternUsed = false; //!!! In reset enemies
 
 //------------------Pause-----------------------------
 let pauseTime = 0.0;
+let pauseTimeLag = 0.0;
 let isPaused = false;
 
 //---------The bar that detects the beat in game------
@@ -77,7 +78,7 @@ let realMusicTime = 0.0; //!!!
 let isStartTime = false; //!!!
 let realStartTime = 0.0; //!!!
 
-let oldMusicRate = 1;
+let oldMusicRate = 1; //!!!
 let musicRate = 1;
 
 //position of red cubes
@@ -727,6 +728,7 @@ function finished(){
         realPrevMusicTime = 0;
         realMusicTime = 0;
         realStartTime = 0;
+        oldMusicRate = 1; // not perfect. fixes some situations.
         isStartTime = false;
         x2wait = 0; 
         x2t = 0;
@@ -773,6 +775,7 @@ function failed(){
     realPrevMusicTime = 0;
     realMusicTime = 0;
     realStartTime = 0;
+    oldMusicRate = 1; // not perfect. fixes some situations.
     isStartTime = false;
     x2t = 0;
     x2temp = -rectWidth; //
@@ -1372,6 +1375,7 @@ function keyPressed() {
         }
         if (key === "p") {
             isPaused = !isPaused;
+            // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
         }
     }
     
@@ -1869,28 +1873,50 @@ class Cube{ //The red cube
             // 3. When AFK, the cubes disappear for some time. Don't know why.
         if (isStartTime) {
 
-            // Experimental feature. Changable in browser console.
-            // It will probably stop working in the future
-            // I especially like 1.5 speed in Master mode
-            if (musicRate !== oldMusicRate) {
-                oldMusicRate = musicRate;
-                musicLevel.rate(musicRate);
-            }
-
             if (typeof this.tempoChange === "undefined") {
                 return this.restartMusic(false, "WARNING: tempoChange is undefined. Restarting...");
             }
 
             realPrevMusicTime = realMusicTime;
-            realMusicTime = getAudioContext().currentTime - realStartTime;
-            if (isPaused) {
-                // audio loses sync after pauses
-                if (pauseTime === 0) {
-                    pauseTime = realMusicTime;
-                    musicLevel.pause();
-                    console.log("tempoChange=" + this.tempoChange);
+            // fake Note: tempoChange doesn't work if musicRate changed mid-song
+            realMusicTime = getAudioContext().currentTime * musicRate - realStartTime;
+            if (!isPaused && pauseTime === 0) {
+
+                // Experimental feature. Changable in browser console.
+                // It will probably stop working in the future
+                // I especially like 1.5 speed in Master mode
+                // Currently out of sync on music restart.
+                // For some reason decreasing musicRate breaks the cubes right now.
+                // Workaround for above: Set musicRate to 0.5 when song starts. Offset out of sync though.
+                if (musicRate !== oldMusicRate) {
+                    oldMusicRate = musicRate;
+                    musicLevel.rate(musicRate);
+                    console.log("jump to realMusicTime or 0 (scary), whichever is bigger. realMusicTime=" + realMusicTime);
+                    if (realMusicTime > 0) {
+                        musicLevel.jump(realMusicTime);
+                    } else {
+                        musicLevel.jump(0);
+                    }
                 }
+            }
+
+            if (isPaused) {
+                // audio loses slight sync offset after pause
+                if (pauseTime === 0) {
+                    console.log("Paused")
+                    // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
+                    // p5js is about -0.07 seconds behind every pause,
+                    // so sync with p5js duration
+                    pauseTime = musicLevel.currentTime() * musicRate;
+                    // pauseTime = realMusicTime * musicRate // - (musicLevel.currentTime() - realStartTime);
+                    // offset is very messy pauseTime = getAudioContext().currentTime * musicRate;
+                    musicLevel.pause();
+                    console.log(`(Paused) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+                    console.log(x2);
+                }
+                // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
                 
+                console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
                 background(0, 0, 0, 128);
                 fill('cyan');
                 textSize(50);
@@ -1899,12 +1925,37 @@ class Cube{ //The red cube
                 textSize(20);
                 text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
                 textAlign(LEFT, BASELINE); // default textAlign
-
+                // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
                 return;
             } else if (!isPaused && pauseTime !== 0) {
-                realMusicTime -= pauseTime;
+                // realMusicTime -= pauseTime;
+                // maybe w/ live multiplayer? --> realStartTime -= realMusicTime - pauseTime;
+                
+                //console.log(`realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+                //console.log(`realMusicTime - pausedTime: ${realMusicTime} - ${pauseTime}`);
+                
+                // let pauseDuration = realMusicTime - pauseTime
+                // let pauseLag = musicLevel.currentTime() - pauseTimeLag
+                // let pauseLag = musicLevel.currentTime() - pauseTime
+                let pauseDuration = realMusicTime - pauseTime // not used rn except console log will error
+                // let pauseDuration = -(musicLevel.currentTime() - realMusicTime); // not used rn except console log will error
+                
+                realStartTime += pauseDuration;
+                realMusicTime -= pauseDuration;
+                realPrevMusicTime -= pauseDuration;
+                // realStartTime += pauseLag;
+                // realMusicTime -= pauseLag;
+                // realPrevMusicTime -= pauseLag;
+                //
+                // console.log(`(Resumed) pauseDuration: ${pauseDuration} oldPauseDuration: ${realMusicTime - pauseTime}`);
+                // console.log(`(Resumed) x2 values below; pauseTimeLag: ${pauseTimeLag} realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseDuration: ${pauseDuration}`);
+                console.log(x2);
                 pauseTime = 0;
+                // musicLevel.jump(realMusicTime);
                 musicLevel.play();
+                console.log(`(Resumed) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            // } else {
+            //     console.log(`offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
             }
 
             if (!isPaused && (this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
@@ -1919,7 +1970,7 @@ class Cube{ //The red cube
             }
         } else {
             isStartTime = true;
-            console.log(`realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
+            console.log(`Restarted song. realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
             musicLevel.rate(musicRate);
             
             this.tempoChange = 0;
@@ -1938,7 +1989,7 @@ class Cube{ //The red cube
         fill('cyan'); //The beat that allow the Guard to move
         if (tempo !== -998) { // regular loop
             // speed of cube (maybe change speed to position in future)
-            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo * musicRate, tempo);
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo, tempo);
             
             rect(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
