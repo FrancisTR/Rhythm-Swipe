@@ -193,7 +193,7 @@ a:hover{
     color: gray;
     /* border: 1px solid red; */
 }
-@media only screen and (max-width: 1150px){
+@media only screen and (max-width: 1250px){
     .profiles{
         grid-template-columns: repeat(4, 1fr);
     }
@@ -205,7 +205,7 @@ a:hover{
     }
 }
 
-@media only screen and (max-width: 900px){
+@media only screen and (max-width: 975px){
     .heading{
         font-size: 40px;
         color: white;
@@ -217,7 +217,7 @@ a:hover{
     }
 }
 
-@media only screen and (max-width: 700px){
+@media only screen and (max-width: 775px){
     .heading{
         font-size: 40px;
         color: white;
@@ -229,7 +229,7 @@ a:hover{
     }
 }
 
-@media only screen and (max-width: 500px){
+@media only screen and (max-width: 620px){
     .heading{
         font-size: 40px;
         color: white;
