@@ -532,7 +532,6 @@ function draw(){
             break;
         //---------------Main Menu------------------
         case 0:
-            setup();
             buttonBack.hide();
             StartGameButton.hide();
             buttonW.hide();
@@ -556,6 +555,7 @@ function draw(){
 
             //*/Sounds//
             if (MainMenuThemeSwitch === false && !MainMenuTheme.isPlaying()){
+		setup();
                 MainMenuTheme.play();
                 MainMenuTheme.setVolume(0.4);
                 MainMenuTheme.loop();
