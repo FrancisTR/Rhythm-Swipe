@@ -583,6 +583,7 @@ function draw(){
 
         //--------------Easy Mode-------------------
         case 0.5: //Level 1 Overview
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -647,6 +648,7 @@ function draw(){
 
         //-------------Normal Mode-----------------
         case 1.5: //Level 2 overview
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -714,6 +716,7 @@ function draw(){
 
         //---------------Hard Mode-----------------
         case 2.5: //Hard intermission
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -850,6 +853,7 @@ function draw(){
 
         //--------------Master Mode-------------------
         case 5.5: //Master Mode Intermssion
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -1078,12 +1082,11 @@ function failed(){
 //--------------------------------------------------------------------LEVEL Intermission => Actual Level-------------------------------------------------------------------------------
 //Transition to different levels. Used in a button
 function intermissionSetup(_level, _button, _sound) {
-    setup();
     level = _level;
     _button.show();
     //*/Sounds//
-    _sound.play();
     _sound.setVolume(0.3);
+    _sound.play();
     _sound.loop();
 
     ButtonSound.setVolume(1);
