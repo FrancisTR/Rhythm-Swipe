@@ -1088,7 +1088,7 @@ function intermissionSetup(_level, _button, _sound) {
     level = _level;
     _button.show();
     //*/Sounds//
-    if (IntermissionThemeSwitch = false && !_sound.isPlaying()){
+    if (IntermissionThemeSwitch === false && !_sound.isPlaying()){
     	_sound.setVolume(0.3);
     	_sound.play();
 	_sound.loop();
