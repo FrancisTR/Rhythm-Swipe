@@ -358,7 +358,7 @@ function setup() {
         //-----------------------------------
 
         //------------Hard button------------
-        button3 = createButton('💎💎💎 Hard 💎💎💎');
+        button3 = createButton('💰 Hard 💰');
         button3.style('color', 'red');
         button3.style('font-size', 'large');
         button3.style('border', '5px solid red');
@@ -376,7 +376,7 @@ function setup() {
         //------------------------------------
 
         //-----------Master button (Used to see the world record)----------
-        button4 = createButton('💎🥷💎 Master 💎🥷💎');
+        button4 = createButton('💰👑 Master 👑💰');
         button4.style('color', 'blueviolet');
         button4.style('font-size', 'large');
         button4.style('border', '5px solid blueviolet');
