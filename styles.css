@@ -193,7 +193,7 @@ a:hover{
     color: gray;
     /* border: 1px solid red; */
 }
-@media only screen and (max-width: 1250px){
+@media only screen and (max-width: 1290px){
     .profiles{
         grid-template-columns: repeat(4, 1fr);
     }
@@ -205,7 +205,7 @@ a:hover{
     }
 }
 
-@media only screen and (max-width: 975px){
+@media only screen and (max-width: 1175px){
     .heading{
         font-size: 40px;
         color: white;
@@ -217,7 +217,7 @@ a:hover{
     }
 }
 
-@media only screen and (max-width: 775px){
+@media only screen and (max-width: 855px){
     .heading{
         font-size: 40px;
         color: white;
