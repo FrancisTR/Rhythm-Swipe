@@ -1078,6 +1078,7 @@ function failed(){
 //--------------------------------------------------------------------LEVEL Intermission => Actual Level-------------------------------------------------------------------------------
 //Transition to different levels. Used in a button
 function intermissionSetup(_level, _button, _sound) {
+    setup();
     level = _level;
     _button.show();
     //*/Sounds//
