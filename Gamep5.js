@@ -27,6 +27,8 @@ let yMainMenu = 575;
 //Audio for the Main Menu
 let MainMenuTheme;
 let MainMenuThemeSwitch = false;
+
+let IntermissionThemeSwitch = false;
 //----------------------------------------------------
 
 //---------------Creating the Board-------------------
@@ -532,6 +534,7 @@ function draw(){
             break;
         //---------------Main Menu------------------
         case 0:
+	    IntermissionThemeSwitch = false;
             buttonBack.hide();
             StartGameButton.hide();
             buttonW.hide();
@@ -1085,10 +1088,11 @@ function intermissionSetup(_level, _button, _sound) {
     level = _level;
     _button.show();
     //*/Sounds//
-    if (!_sound.isPlaying()){
+    if (IntermissionThemeSwitch = false && !_sound.isPlaying()){
     	_sound.setVolume(0.3);
     	_sound.play();
 	_sound.loop();
+	IntermissionThemeSwitch = true;
     }
 
     ButtonSound.setVolume(1);
