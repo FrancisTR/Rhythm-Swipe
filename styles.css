@@ -291,6 +291,12 @@ ul{
     font-style: italic!important;
     list-style-type: upper-roman;
 }
+
+ul{
+    margin-left: 8px!important;
+}
+
+
 .RhythmParagraph,
 li,
 .OtherParagraph{
