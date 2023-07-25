@@ -5,13 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!--p5.js Library-->
-    <script src="/lib/p5.min.js"></script>
-    <script src="/lib/p5.sound.min.js"></script>
+    <!--p5.js Library--> 
+    <script src="/lib/p5.js"></script>
+    <script src="/lib/p5.sound.js"></script>
 
     <link rel="shortcut icon" type="x-icon" href="../asset/gems/gem0.png"> 
     <link rel="stylesheet" href="styles.css">
-    <title>Rhythm Swipe Game</title>
+    <title>Rhythm Swipe</title>
 </head>
 
 
@@ -20,16 +20,30 @@
     - Used p5.js Libraries
 -->
 <body>
+
+    <header class="HeaderNav">
+        <a href="index.html" class="HeaderLogo">Rhythm Swipe</a>
+        <nav class="Navbar">
+            <a href="index.html">Home</a>
+            <a href="./Tutorial.html">Tutorial</a>
+            <a href="./DevLogs.html">DevLogs</a>
+        </nav>
+    </header>
+
+
+
+
+
+
     <div class="container">
 
         <!--The Game-->
         <section class="GamePresentation">
             <center>
                 <h1 id="Error">
-                    This Game is not supported in this window size. 
-                    Please expand your browser window. 
-                    This game only supports Desktop. 
-                    Mobile version coming soon.
+                    This game is not supported in this window size. 
+                    Please expand your browser window and make sure you are playing on a Computer.
+                    This game does not support Mobile. 
                 </h1>
             </center>
 
@@ -38,12 +52,57 @@
                 <center>
                     <p>Sandboa Presents</p>
                     <br>
-                    <img src="./asset/Loading.gif" width="25%">
-                
+                    <img src="./asset/Loading.gif" width="25%" draggable="false" />
                 </center>
             </div>
+
+            <!--The Game itself-->
             <script src="Gamep5.js"></script>
         </section>
+
+
+
+
+
+
+        <!--Description-->
+        <section class="Description">
+            <div class="GameDescription">
+                <h1 class="heading">Game Description</h1>
+                <p>
+                    Rhythm Swipe is a 2D game where the goal is to 
+                    collect all the Jewels and to reach the end without 
+                    missing the beat of the rhythm. This game is inspired 
+                    by "Cadence of Hyrule - Crypt of the Necrodancer" for 
+                    the Nintendo Switch!
+                </p>
+
+                <br>
+
+                <p>
+                    This game is made using HTML, CSS, Javascript, and p5.js!
+                    <Font color="red">All music are not owned by us and is being credited to the
+                    respected owners in-game.</Font>
+                </p>
+
+                <br>
+
+                <p>
+                    Check out our demo of another version of Rhythm Swipe
+                    made using Processing and Arduino as the controller below:
+                </p>
+
+                <video controls>
+                    <source src="../WebpageItems/GameDemo.mp4" type="video/mp4">
+                </video>
+                <p>
+                    <i>Video recorded and edited by John</i>
+                </p>
+            </div>
+        </section>
+
+
+
 
 
 
@@ -55,56 +114,104 @@
                 <div class="profiles">
 
                     <div class="profile">
-                        <img src="./asset/Francis.jpg" class="profile-img">
+                        <img src="./asset/ContributeImg/Francis.jpg" class="profile-img" draggable="false" />
                         <h3 class="user-name">Francis</h3>
-                        <h5>Co-Founder/Programmer</h5>
-                        <p></p>
+                        <h5>Co-Founder/Programmer/Level-Designer</h5>
+                        <i>"You can't contradict yourself unless you contradict the contradiction"</i>
                     </div>
 
 
                     <div class="profile">
-                        <img src="./asset/John.jpg" class="profile-img">
+                        <img src="./asset/ContributeImg/John.jpg" class="profile-img" draggable="false" />
                         <h3 class="user-name">John</h3>
                         <h5>Co-Founder/Programmer/Asset-Designer</h5>
-                        <p></p>
+                        <i>"Not too shabby of a coder&lt/p&gt"</i>
                     </div>
 
 
                     <div class="profile">
-                        <img src="./asset/Nick.png" class="profile-img">
+                        <img src="./asset/ContributeImg/Nick.jpg" class="profile-img" draggable="false" />
                         <h3 class="user-name">Nick</h3>
-                        <h5>Programmer</h5>
-                        <p></p>
+                        <h5>Programmer/Music-Designer</h5>
+                        <i>"How many calories are there in this game?"</i>
                     </div>
 
 
                     <div class="profile">
-                        <img src="./asset/Jasper.jpg" class="profile-img">
+                        <img src="./asset/ContributeImg/Ben.png" class="profile-img" draggable="false" />
+                        <h3 class="user-name">Ben</h3>
+                        <h5>Content-Writer/Game-Tester</h5>
+                        <i>"There are, unfortunately, no talking pigeons in this story." - Hoid (Tress of the Emerald Sea)</i>
+                    </div>
+
+
+                    <div class="profile">
+                        <img src="./asset/ContributeImg/Jasper.jpg" class="profile-img" draggable="false" />
                         <h3 class="user-name">Jasper</h3>
-                        <h5>Game Tester</h5>
-                        <p></p>
+                        <h5>Game-Tester</h5>
+                        <i>"Wake me up when I care" - Squidward Tentacles</i>
                     </div>
 
 
                     <div class="profile">
-                        <img src="./asset/Jon.jpg" class="profile-img">
+                        <img src="./asset/ContributeImg/Jon.jpg" class="profile-img" draggable="false" />
                         <h3 class="user-name">Jon</h3>
-                        <h5>Game Tester</h5>
-                        <p></p>
+                        <h5>Game-Tester</h5>
+                        <i>"What am I supposed to put here?"</i>
                     </div>
 
 
                     <div class="profile">
-                        <img src="./asset/Jack.png" class="profile-img">
+                        <img src="./asset/ContributeImg/Jack.png" class="profile-img" draggable="false" />
                         <h3 class="user-name">Jack</h3>
-                        <h5>Game Tester</h5>
-                        <p></p>
+                        <h5>Game-Tester</h5>
+                        <i>“Shadow Tester Money Gang. We love testing games.”</i>
+                    </div>
+
+
+                    <div class="profile">
+                        <img src="./asset/ContributeImg/Rose.png" class="profile-img" draggable="false" />
+                        <h3 class="user-name">Michelle</h3>
+                        <h5>Game-Tester</h5>
+                        <i>"I Ain't Got Rhythm" - Sherman</i>
+                    </div>
+
+
+                    <div class="profile">
+                        <img src="./asset/ContributeImg/Anastasia.jpg" class="profile-img" draggable="false" />
+                        <h3 class="user-name">Anastasia</h3>
+                        <h5>Game-Tester</h5>
+                        <i>"You miss 100% of the shots you don't take. - Wayne Gretzky" - Michael Scott</i>
+                    </div>
+
+
+                    <div class="profile">
+                        <img src="./asset/ContributeImg/Thien.png" class="profile-img" draggable="false" />
+                        <h3 class="user-name">Thien</h3>
+                        <h5>Game-Tester</h5>
+                        <i>"Success, so clearly in view. Or is it merely a trick of the light?" - The Narrator, Darkest Dungeon</i>
                     </div>
 
 
                 </div>
             </div>
         </section>
+
+
+
+
+
+
+        <!--Footer-->
+        <div class="MainFooter">
+            <footer>
+                <p>Last Updated: July 24, 2023</p>
+                <div class="SiteCredit">
+                    <p>This site is hosted using <a href="https://www.netlify.com/" target="_blank">Netlify</a></p>
+                </div>
+            </footer>
+        </div>
+
 
     </div>
 </body>
