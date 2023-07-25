@@ -289,12 +289,11 @@ ul{
     margin-top: 15px!important;
     margin-bottom: 30px!important;
     font-style: italic!important;
-    list-style-type: upper-roman;
 }
 
 ul{
-    margin-left: 8px!important;
     list-style: inside;
+    list-style-type: upper-roman;
 }
 
 
