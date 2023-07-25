@@ -549,7 +549,7 @@ function draw(){
             break;
         //---------------Main Menu------------------
         case 0:
-	    IntermissionThemeSwitch = false;
+            IntermissionThemeSwitch = false;
             buttonBack.hide();
             StartGameButton.hide();
             buttonW.hide();
@@ -573,7 +573,7 @@ function draw(){
 
             //*/Sounds//
             if (MainMenuThemeSwitch === false && !MainMenuTheme.isPlaying()){
-		setup();
+                setup();
                 MainMenuTheme.play();
                 MainMenuTheme.setVolume(0.4);
                 MainMenuTheme.loop();
@@ -807,7 +807,7 @@ function draw(){
             image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
 
             fill('cyan');
-            textSize(50);
+            textSize(45);
             text("M i s s i o n  S u c c e s s", boardSize/25, 100);
 
             //Timers
@@ -2464,19 +2464,19 @@ class Cube{ //The red cube
     // Note: Cubes might be off. Doesn't even seem to follow the tempo if after a tempo change.
 // let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realMusicTime -= sxa;
     displayLevel1(){
-        this.displayLevelSetup(easySound, this.easyTempo, -22);
+        this.displayLevelSetup(easySound, this.easyTempo, -12);
     }
 
     displayLevel2(){
-        this.displayLevelSetup(normalSound, this.normalTempo, -25);
+        this.displayLevelSetup(normalSound, this.normalTempo, -15);
     }
 
     displayLevel3(){
-        this.displayLevelSetup(hardSound, this.hardTempo, -435);
+        this.displayLevelSetup(hardSound, this.hardTempo, -425);
     }
 
     displayLevel4(){
-        this.displayLevelSetup(masterSound, this.masterTempo, -165);
+        this.displayLevelSetup(masterSound, this.masterTempo, -155);
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
