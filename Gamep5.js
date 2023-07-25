@@ -1750,35 +1750,50 @@ function board(){
 
 
 
+function playJumpSound() {
+    PlayerJumpSound.setVolume(0.4);
+    PlayerJumpSound.play();
+    pressByBeat = 'red';
+}
+
+
+
 
 //Moving correlates to Canvas size. Ex: If Canvas is 600x600, then the
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if(player != null){
-        if (key === "w" || key === "a" || key === "s" || key === "d" || key === "i" || key === "j" || key === "k" || key === "l"){
-            if (key === "w" || key === "i") {
+        // if (key === "p") {
+        //     isPaused = !isPaused;
+        //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
+        // }
+        // if (isPaused) return;
+        
+        switch (key) {
+            case "w":
+            case "i":
                 player.face("up");
                 player.move(0, 1);
-            }
-            if (key === "a" || key === "j") {
+                playJumpSound();
+                break;
+            case "a":
+            case "j":
                 player.face("left");
                 player.move(-1, 0);
-            }
-            if (key === "s" || key === "k") {
+                playJumpSound();
+                break;
+            case "s":
+            case "k":
                 player.face("down");
                 player.move(0, -1);
-            }
-            if (key === "d" || key === "l") {
+                playJumpSound();
+                break;
+            case "d":
+            case "l":
                 player.face("right");
                 player.move(1, 0);
-            }
-            PlayerJumpSound.setVolume(0.4);
-            PlayerJumpSound.play();
-            pressByBeat = 'red';
-        }
-        if (key === "p") {
-            isPaused = !isPaused;
-            // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
+                playJumpSound();
+                break;
         }
     }
     
@@ -2277,7 +2292,6 @@ class Cube{ //The red cube
             }
 
             realPrevMusicTime = realMusicTime;
-            // fake Note: tempoChange doesn't work if musicRate changed mid-song
             realMusicTime = getAudioContext().currentTime * musicRate - realStartTime;
             if (!isPaused && pauseTime === 0) {
 
@@ -2299,65 +2313,65 @@ class Cube{ //The red cube
                 }
             }
 
-            if (isPaused) {
-                // audio loses slight sync offset after pause
-                if (pauseTime === 0) {
-                    // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
-                    // p5js is about -0.07 seconds behind every pause,
-                    // so sync with p5js duration
-                    // MAIN pauseTime = musicLevel.currentTime() * musicRate;
-                    pauseTime = realMusicTime; // - (musicLevel.currentTime() - realStartTime);
-                    // offset is very messy pauseTime = getAudioContext().currentTime * musicRate;
+            // if (isPaused) {
+// Postponed du to audio losing sync offset after pause
+            //    if (pauseTime === 0) {
+            //        // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
+            //        // p5js is about -0.07 seconds behind every pause,
+            //        // so sync with p5js duration
+            //        // MAIN pauseTime = musicLevel.currentTime() * musicRate;
+            //        pauseTime = realMusicTime; // - (musicLevel.currentTime() - realStartTime);
+            //        // offset is very messy pauseTime = getAudioContext().currentTime * musicRate;
 
-                    musicLevel.pause();
-                    console.log(`(Paused) realMusicTime vs realMusicTime after pause: ${realMusicTime} vs ${(getAudioContext().currentTime * musicRate - realStartTime)} `)
-                    console.log(`(Paused) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-                    // console.log(x2);
+            //        musicLevel.pause();
+            //        console.log(`(Paused) realMusicTime vs realMusicTime after pause: ${realMusicTime} vs ${(getAudioContext().currentTime * musicRate - realStartTime)} `)
+            //        console.log(`(Paused) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //        // console.log(x2);
 
-                }
-                // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-                
-                console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-                background(0, 0, 0, 128);
-                fill('cyan');
-                textSize(50);
-                textAlign(CENTER);
-                text("Mission Paused", boardSize*0.5, boardSize*0.5);
-                textSize(20);
-                text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
-                textAlign(LEFT, BASELINE); // default textAlign
-                // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-                return;
-            } else if (!isPaused && pauseTime !== 0) {
-                // realMusicTime -= pauseTime;
-                // maybe w/ live multiplayer? --> realStartTime -= realMusicTime - pauseTime;
-                
-                //console.log(`realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-                //console.log(`realMusicTime - pausedTime: ${realMusicTime} - ${pauseTime}`);
-                
-                // let pauseDuration = realMusicTime - pauseTime
-                // let pauseLag = musicLevel.currentTime() - pauseTimeLag
-                // let pauseLag = musicLevel.currentTime() - pauseTime
-                let pauseDuration = realMusicTime - pauseTime; // not used rn except console log will error
-                // let pauseDuration = -(musicLevel.currentTime() - realMusicTime); // not used rn except console log will error
-                
-                realStartTime += pauseDuration;
-                realMusicTime -= pauseDuration;
-                realPrevMusicTime -= pauseDuration;
-                // realStartTime += pauseLag;
-                // realMusicTime -= pauseLag;
-                // realPrevMusicTime -= pauseLag;
-                //
-                // console.log(`(Resumed) pauseDuration: ${pauseDuration} oldPauseDuration: ${realMusicTime - pauseTime}`);
-                // console.log(`(Resumed) x2 values below; pauseTimeLag: ${pauseTimeLag} realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseDuration: ${pauseDuration}`);
-                console.log(x2);
-                pauseTime = 0;
-                // musicLevel.jump(realMusicTime);
-                musicLevel.play();
-                console.log(`(Resumed) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    }
+            //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    
+            //    console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    background(0, 0, 0, 128);
+            //    fill('cyan');
+            //    textSize(50);
+            //    textAlign(CENTER);
+            //    text("Mission Paused", boardSize*0.5, boardSize*0.5);
+            //    textSize(20);
+            //    text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
+            //    textAlign(LEFT, BASELINE); // default textAlign
+            //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    return;
+            // } else if (!isPaused && pauseTime !== 0) {
+            //    // realMusicTime -= pauseTime;
+            //    // maybe w/ live multiplayer? --> realStartTime -= realMusicTime - pauseTime;
+            //    
+            //    //console.log(`realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    //console.log(`realMusicTime - pausedTime: ${realMusicTime} - ${pauseTime}`);
+            //    
+            //    // let pauseDuration = realMusicTime - pauseTime
+            //    // let pauseLag = musicLevel.currentTime() - pauseTimeLag
+            //    // let pauseLag = musicLevel.currentTime() - pauseTime
+            //    let pauseDuration = realMusicTime - pauseTime; // not used rn except console log will error
+            //    // let pauseDuration = -(musicLevel.currentTime() - realMusicTime); // not used rn except console log will error
+            //    
+            //    realStartTime += pauseDuration;
+            //    realMusicTime -= pauseDuration;
+            //    realPrevMusicTime -= pauseDuration;
+            //    // realStartTime += pauseLag;
+            //    // realMusicTime -= pauseLag;
+            //    // realPrevMusicTime -= pauseLag;
+            //    //
+            //    // console.log(`(Resumed) pauseDuration: ${pauseDuration} oldPauseDuration: ${realMusicTime - pauseTime}`);
+            //    // console.log(`(Resumed) x2 values below; pauseTimeLag: ${pauseTimeLag} realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseDuration: ${pauseDuration}`);
+            //    console.log(x2);
+            //    pauseTime = 0;
+            //    // musicLevel.jump(realMusicTime);
+            //    musicLevel.play();
+            //    console.log(`(Resumed) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
             // } else {
             //     console.log(`offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            }
+            // }
 
             if (!isPaused && (this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
                 this.tempoChange++;
@@ -2449,23 +2463,20 @@ class Cube{ //The red cube
     // In web broswer console, paste this to jump to a part of the song:
     // Note: Cubes might be off. Doesn't even seem to follow the tempo if after a tempo change.
 // let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realMusicTime -= sxa;
-    displayLevel1(){ //Music:
+    displayLevel1(){
         this.displayLevelSetup(easySound, this.easyTempo, -22);
     }
 
-    displayLevel2(){ //Music:
+    displayLevel2(){
         this.displayLevelSetup(normalSound, this.normalTempo, -25);
     }
 
-    displayLevel3(){ //Music:
+    displayLevel3(){
         this.displayLevelSetup(hardSound, this.hardTempo, -435);
     }
 
-    displayLevel4(){ //Music: Super Mario Galaxy 2 
+    displayLevel4(){
         this.displayLevelSetup(masterSound, this.masterTempo, -165);
-        // -165px <--> -0.61s
-        // starts with 2 16th notes.
-        // changes tempo mid-song: ? to about 98 bpm
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
