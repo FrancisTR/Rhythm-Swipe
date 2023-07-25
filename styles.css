@@ -282,6 +282,7 @@ a:hover{
     font-weight: 700;
 }
 
+.RhythmParagraph,
 .RhythmParagraph ul li{
     border-left: 5px solid cyan;
     padding-left: 5px;
@@ -289,6 +290,7 @@ a:hover{
     margin-bottom: 30px;
     font-style: italic;
 }
+.RhythmParagraph,
 .RhythmParagraph ul li,
 .OtherParagraph{
     color: white;
