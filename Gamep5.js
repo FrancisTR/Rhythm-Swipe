@@ -2,6 +2,8 @@
 Game Project
 Rhythm Swipe
 
+This game is protected under the AGPL-3.0 license.
+
 Legends:
 - //!!!: Variable restart in Finish or Failed function
 /*/
@@ -25,6 +27,8 @@ let yMainMenu = 575;
 //Audio for the Main Menu
 let MainMenuTheme;
 let MainMenuThemeSwitch = false;
+
+let IntermissionThemeSwitch = false;
 //----------------------------------------------------
 
 //---------------Creating the Board-------------------
@@ -40,7 +44,7 @@ let moveHeight = 0; //!!!
 let player; //The player //!!!
 let playerAnimation = []; //List of images to use for the character
 var playerCounter = 0; //!!!
-let backgroundColor = 210; //The background color of the board. //!!!
+let backgroundColor = 250; //The background color of the board. //!!!
 let playerAttempts = 3; //!!!
 let beatColorBoolean = false; //!!!
 //----------------------------------------------------
@@ -110,12 +114,20 @@ let y2 = 575; //!!!
 
 
 
-//--------------------Timer for Master Mode---------------------------
+//--------------------Timer for all levels---------------------------
 //Timer used to see how long the player takes to complete a level.
-//Will be used in the Master Mode!!!!!
 let timer = 0; //!!!
-let worldRecord = null;
+
+let easyworldRecord = null;
+let normalworldRecord = null;
+let hardworldRecord = null;
+let masterworldRecord = null;
+
+let easyModeTimer = false; //!!!
+let normalModeTimer = false; //!!!
+let hardModeTimer = false; //!!!
 let masterModeTimer = false; //!!!
+let trophies = [];
 //--------------------------------------------------------------------
 
 
@@ -128,6 +140,7 @@ let blocks = []; //!!!
 let points = 0; //!!!
 let i = 0; //!!!
 let level = -1; //Can change any level for testing purposes (Default: -1)
+let levelRetry; //Retry Level
 //--------------------------------------------------------------------
 
 
@@ -147,6 +160,13 @@ var masterSound;
 
 var amplitude;
 let volHistory = []; //!!! in main menu
+
+//Sound effects
+var coinSound; //!!!
+var VictorySound;
+var FailSound;
+var PlayerJumpSound; //!!!
+var ButtonSound;
 //--------------------------------------------------------------------
 
 
@@ -173,29 +193,42 @@ let button4Start;
 
 let buttonBack;
 let buttonW;
+let buttonRetry;
 //--------------------------------------------------------------------
 var messageError = document.getElementById("Error");
 let resizeLock = false;
 
 //--------------------------------------------------------------PRELOAD----------------------------------------------------------------------------
 function preload() {
+
+    //Level Sounds
+
     //*/Sounds//
-    easySound = loadSound('sounds/A_Punchup_at_a_Wedding_8-bit.mp3');
+    easySound = loadSound('sounds/LevelSounds/A_Punchup_at_a_Wedding_8-bit.mp3');
     //*/
     //*/Sounds//
-    normalSound = loadSound('sounds/There_There_8-bit.mp3');
+    normalSound = loadSound('sounds/LevelSounds/There_There_8-bit.mp3');
     //*/
     //*/Sounds//
-    hardSound = loadSound('sounds/Where_I_End_You_Begin_8-bit.mp3');
+    hardSound = loadSound('sounds/LevelSounds/Where_I_End_You_Begin_8-bit.mp3');
     //*/
     //*/Sounds//
-    masterSound = loadSound('sounds/Super_Mario_Galaxy.mp3');
+    masterSound = loadSound('sounds/LevelSounds/Super_Smash_Bros.mp3');
     //*/
 
     //*/Sounds//
     MainMenuTheme = loadSound('sounds/Main8-bit.mp3');
     //*/
 
+
+    //Sound Effects
+    //*/Sounds//
+    coinSound = loadSound('sounds/SoundEffects/CoinSound.mp3');
+    VictorySound = loadSound('sounds/SoundEffects/VictorySound.mp3');
+    FailSound = loadSound('sounds/SoundEffects/FailSound.mp3');
+    PlayerJumpSound = loadSound('sounds/SoundEffects/PlayerJumpSound.mp3');
+    ButtonSound = loadSound('sounds/SoundEffects/ButtonSound.mp3');
+    //*/
 
 
     //Thief Images
@@ -231,8 +264,29 @@ function preload() {
         OtherImg[i] = loadImage("asset/OtherImg/OtherImg"+i+".gif");
     }
 
+    //Trophies
+    for (let i = 0; i < 3; i++){
+        trophies[i] = loadImage("asset/Trophies/Trophy"+i+".png");
+    }
+
     //Main Menu
     BackgroundImage = loadImage('asset/MainMenu.gif');
+
+    //Start
+    StartBackgroundImage = loadImage('asset/Start.gif');
+
+    //TESTING Master Mode background specifically
+    MasterModeBackgroundImage = loadImage('asset/MasterModeBackground.jpg');
+
+    //TESTING level background
+    LevelBackgroundImage = loadImage('asset/LevelBackground.jpg');
+
+    //TESTING music background
+    MusicBackgroundImage = loadImage('asset/Music.gif');
+
+
+    MissionFailedBackground = loadImage('asset/MissionFailedBackground.jpg');
+    MissionSuccessBackground = loadImage('asset/MissionSuccessBackground.jpg');
 }
 
 
@@ -247,6 +301,7 @@ function setup() {
     let div = createCanvas(boardSize, boardSize);
     div.position(100, 101);
     div.center('horizontal');
+    div.style("border", "5px solid cyan");
 
     //Check to see if it supports the game
     if ((windowWidth <= 620)){
@@ -267,70 +322,90 @@ function setup() {
         StartGameButton = createButton('Start');
         StartGameButton.style('color', 'blueviolet');
         StartGameButton.style('font-size', 'large');
+        StartGameButton.style('border', '5px solid cyan');
+        StartGameButton.style('cursor', 'pointer');
         StartGameButton.size(200, 75);
         StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
 
 
         //-------------Back button-----------
         buttonBack = createButton('Back');
-        buttonBack.style('color', 'white');
+        buttonBack.style('color', 'black');
         buttonBack.style('font-size', 'large');
+        buttonBack.style('border', '5px solid cyan');
+        buttonBack.style('cursor', 'pointer');
         buttonBack.size(200, 75);
         buttonBack.mousePressed(mainMenu); //Goes to Main Menu
         //-----------------------------------
 
         //-----------Easy Button-------------
-        button = createButton('Easy');
+        button = createButton('💎 Easy 💎');
         button.style('color', 'green');
         button.style('font-size', 'large');
+        button.style('border', '5px solid green');
+        button.style('cursor', 'pointer');
         button.size(200, 75);
         button.mousePressed(easyIntermission); //Goes to Intermission
 
         buttonStart = createButton('Start');
         buttonStart.style('color', 'green');
         buttonStart.style('font-size', 'large');
+        buttonStart.style('border', '5px solid green');
+        buttonStart.style('cursor', 'pointer');
         buttonStart.size(200, 75);
         buttonStart.mousePressed(easyLevel); //Play Easy Mode
         //-----------------------------------
 
         //-----------Normal Button-----------
-        button2 = createButton('Normal');
+        button2 = createButton('💎💎 Normal 💎💎');
         button2.style('color', 'orange');
         button2.style('font-size', 'large');
+        button2.style('border', '5px solid orange');
+        button2.style('cursor', 'pointer');
         button2.size(200, 75);
         button2.mousePressed(normalIntermission); //Goes to Intermission
 
         button2Start = createButton('Start');
         button2Start.style('color', 'orange');
         button2Start.style('font-size', 'large');
+        button2Start.style('border', '5px solid orange');
+        button2Start.style('cursor', 'pointer');
         button2Start.size(200, 75);
         button2Start.mousePressed(normalLevel); //Play Normal Mode
         //-----------------------------------
 
         //------------Hard button------------
-        button3 = createButton('Hard');
+        button3 = createButton('💰 Hard 💰');
         button3.style('color', 'red');
         button3.style('font-size', 'large');
+        button3.style('border', '5px solid red');
+        button3.style('cursor', 'pointer');
         button3.size(200, 75);
         button3.mousePressed(hardIntermission); //Goes to Intermission
 
         button3Start = createButton('Start');
         button3Start.style('color', 'red');
         button3Start.style('font-size', 'large');
+        button3Start.style('border', '5px solid red');
+        button3Start.style('cursor', 'pointer');
         button3Start.size(200, 75);
         button3Start.mousePressed(hardLevel); //Play Hard Mode
         //------------------------------------
 
         //-----------Master button (Used to see the world record)----------
-        button4 = createButton('Master');
+        button4 = createButton('💰👑 Master 👑💰');
         button4.style('color', 'blueviolet');
         button4.style('font-size', 'large');
+        button4.style('border', '5px solid blueviolet');
+        button4.style('cursor', 'pointer');
         button4.size(200, 75);
         button4.mousePressed(masterIntermission); //Goes to Intermission
 
         button4Start = createButton('Start');
         button4Start.style('color', 'blueviolet');
         button4Start.style('font-size', 'large');
+        button4Start.style('border', '5px solid blueviolet');
+        button4Start.style('cursor', 'pointer');
         button4Start.size(200, 75);
         button4Start.mousePressed(masterLevel); //Play Master Mode
         //-----------------------------------------------------------------
@@ -338,12 +413,27 @@ function setup() {
 
         //---------Return button (For Finish and Fail level)---------------
         buttonW = createButton('Return');
-        buttonW.style('color', 'white');
+        buttonW.style('color', 'black');
         buttonW.style('font-size', 'large');
+        buttonW.style('border', '5px solid cyan');
+        buttonW.style('cursor', 'pointer');
         buttonW.size(200, 75);
 
         buttonW.mousePressed(mainMenu); //Main menu
         buttonW.hide();
+
+        //-----------------------------------------------------------------
+
+        //---------Retry button (For Fail level)---------------
+        buttonRetry = createButton('Retry');
+        buttonRetry.style('color', 'black');
+        buttonRetry.style('font-size', 'large');
+        buttonRetry.style('border', '5px solid cyan');
+        buttonRetry.style('cursor', 'pointer');
+        buttonRetry.size(200, 75);
+
+        buttonRetry.mousePressed(mainMenuRetry); //Main menu
+        buttonRetry.hide();
 
         //-----------------------------------------------------------------
 
@@ -400,8 +490,11 @@ function draw(){
 
     buttonBack.position(250, 552);
     buttonBack.center('horizontal');
-    buttonW.position(250, 552);
+    buttonW.position(250, 590);
     buttonW.center('horizontal');
+
+    buttonRetry.position(250, 505);
+    buttonRetry.center('horizontal');
     
 
     //Switch through rooms based on the 'level' variable. Functionality for buttons mainly
@@ -411,6 +504,7 @@ function draw(){
             buttonHide();
             buttonBack.hide();
             buttonW.hide();
+            buttonRetry.hide();
             buttonStart.hide();
             button2Start.hide();
             button3Start.hide();
@@ -434,6 +528,14 @@ function draw(){
             MainMenuTheme.stop();
             MainMenuThemeSwitch = false;
             //*/
+
+            //*/Sounds//
+            coinSound.stop();
+            VictorySound.stop();
+            FailSound.stop();
+            PlayerJumpSound.stop();
+            //*/
+
             //Reset everything
             failed();
             break;
@@ -442,44 +544,57 @@ function draw(){
             buttonHide();
             buttonBack.hide();
             StartGameButton.show();
-
+            tint(200);
+            image(StartBackgroundImage, 0, 0, boardSize, boardSize);
             break;
         //---------------Main Menu------------------
         case 0:
+	    IntermissionThemeSwitch = false;
             buttonBack.hide();
             StartGameButton.hide();
             buttonW.hide();
+            buttonRetry.hide();
             buttonStart.hide();
             button2Start.hide();
             button3Start.hide();
             button4Start.hide();
+
             //*/Sounds//
             easySound.stop();
             normalSound.stop();
             hardSound.stop();
             masterSound.stop();
+
+            coinSound.stop();
+            VictorySound.stop();
+            FailSound.stop();
+            PlayerJumpSound.stop();
             //*/
+
             //*/Sounds//
             if (MainMenuThemeSwitch === false && !MainMenuTheme.isPlaying()){
+		setup();
                 MainMenuTheme.play();
-                MainMenuTheme.setVolume(0.2);
+                MainMenuTheme.setVolume(0.4);
                 MainMenuTheme.loop();
                 MainMenuThemeSwitch = true;
                 console.log("play")
+// below line might not be needed. git merge v1.0.0 + my PR
                 realStartTime = getAudioContext().currentTime;
             }
             //*/
-            background('black');
+            //background('black');
+            tint(200);
             image(BackgroundImage, 0, 0, boardSize, boardSize);
             showNPC(); //A nice seeing of a cop running to the robber
-            fill('gold');
+            fill('cyan');
             textSize(50);
-            text("Rhythm Swipe", 140, 100);
+            text("R h y t h m  S w i p e", 77, 100);
             textSize(15);
 
             //*/VERSION/
             fill("white");
-            text("v1.6.4+nick20230710", 5, 15);
+            text("Alpha v1.1.0", 5, 15);
 
             buttonShow();
             break;
@@ -489,11 +604,15 @@ function draw(){
 
         //--------------Easy Mode-------------------
         case 0.5: //Level 1 Overview
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
             MainMenuThemeSwitch = false;
-            background('gray');
+
+            tint(100);
+            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            //background('gray');
             buttonHide();
             //Show the Start and Back button
             buttonBack.show();
@@ -501,20 +620,44 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Easy", 25, 100);
-            textSize(20);
+            textSize(17);
             text("Music: A Punch Up at a Wedding 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
+
+            if (easyworldRecord === null){
+                text("Current Record Time: ???", 20, 570);
+            }else{
+                //Display appropriate Trophy (Need Refining)
+                if (easyworldRecord <= 100){
+                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[0], 185, 50, 75, 75);
+                }else if (easyworldRecord > 100 && easyworldRecord < 150){
+                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[1], 185, 50, 75, 75);
+                }else{
+                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[2], 185, 50, 75, 75);
+                }
+            }
             visualAudio(); //Show the audio visually
             break;
         case 1: //Easy Mode Game
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // easySound.play();
                 //*/
                 player = new Player(1, 6, "right");
             }
-            background(backgroundColor);
+
+            tint(backgroundColor);
+            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            levelRetry = level;
+            //background(backgroundColor);
             level1();
             board();
             level1Beat();
@@ -526,24 +669,48 @@ function draw(){
 
         //-------------Normal Mode-----------------
         case 1.5: //Level 2 overview
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
             MainMenuThemeSwitch = false;
-            background('gray');
+
+            tint(100);
+            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            //background('gray');
             buttonHide();
             buttonBack.show();
             button2Start.show();
             fill('white');
             textSize(25);
             text("Difficulty: Normal", 25, 100);
-            textSize(20);
+            textSize(17);
             text("Music: There There 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
+
+            if (normalworldRecord === null){
+                text("Current Record Time: ???", 20, 570);
+            }else{
+                //Display appropriate Trophy (Need Refining)
+                if (normalworldRecord <= 100){
+                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[0], 205, 50, 75, 75);
+                }else if (normalworldRecord > 100 && normalworldRecord < 150){
+                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[1], 205, 50, 75, 75);
+                }else{
+                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[2], 205, 50, 75, 75);
+                }
+            }
             visualAudio();
             break;
         case 2: //Normal Mode Game
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // normalSound.play();
@@ -552,7 +719,11 @@ function draw(){
                 playerCounter = 1;
                 // player.turn(90);
             }
-            background(backgroundColor);
+
+            tint(backgroundColor);
+            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            //background(backgroundColor);
+            levelRetry = level;
             level2();
             board();
             level2Beat();
@@ -566,24 +737,49 @@ function draw(){
 
         //---------------Hard Mode-----------------
         case 2.5: //Hard intermission
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
             MainMenuThemeSwitch = false;
-            background('gray');
+
+            tint(100);
+            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            //background('gray');
             buttonHide();
             buttonBack.show();
             button3Start.show();
             fill('white');
             textSize(25);
             text("Difficulty: Hard", 25, 100);
-            textSize(20);
+            textSize(17);
             text("Music: Where I End and You Begin 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
+
+            if (hardworldRecord === null){
+                text("Current Record Time: ???", 20, 570);
+            }else{
+                //Display appropriate Trophy (Need Refining)
+                if (hardworldRecord <= 100){
+                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[0], 180, 50, 75, 75);
+                }else if (hardworldRecord > 100 && hardworldRecord < 150){
+                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[1], 180, 50, 75, 75);
+                }else{
+                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[2], 180, 50, 75, 75);
+                }
+            }
+
             visualAudio();
             break;
         case 3: //Hard Mode
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // hardSound.play();
@@ -592,43 +788,82 @@ function draw(){
                 // playerCounter = 3;
                 // player.turn(-90);
             }
-            background(backgroundColor);
+
+            tint(backgroundColor);
+            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            levelRetry = level;
+            //background(backgroundColor);
             level3();
             board();
-            level3Beat()
+            level3Beat();
             finished();
             break;
          //----------------------------------------
 
         //Either win or lose
         case 4: //Mission accomplished with Stats (Competition used Testing)
-            background('green');
+            //background('green');
+            tint(100);
+            image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
+
             fill('cyan');
             textSize(50);
-            text("Mission Success", boardSize/5.1, 100);
-            if (!masterModeTimer){
-                image(OtherImg[2], 104, 125);
-            }
-            //Master code
-            if (masterModeTimer === true){
+            text("M i s s i o n  S u c c e s s", boardSize/25, 100);
+
+            //Timers
+            if (easyModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
-                if (worldRecord > timer || worldRecord === null){
+                if (easyworldRecord > timer || easyworldRecord === null){
                     text("New World Record!", boardSize/6.5, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+worldRecord+"s", boardSize/12, 300);
+                    text("World Record: "+easyworldRecord+"s", boardSize/12, 300);
                 }
+            }else if (normalModeTimer === true){
+                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                if (normalworldRecord > timer || normalworldRecord === null){
+                    text("New World Record!", boardSize/6.5, 300);
+                }else{
+                    textSize(25);
+                    text("World Record: "+normalworldRecord+"s", boardSize/12, 300);
+                }
+            }else if (hardModeTimer === true){
+                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                if (hardworldRecord > timer || hardworldRecord === null){
+                    text("New World Record!", boardSize/6.5, 300);
+                }else{
+                    textSize(25);
+                    text("World Record: "+hardworldRecord+"s", boardSize/12, 300);
+                }
+            }else if (masterModeTimer === true){
+                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                if (masterworldRecord > timer || masterworldRecord === null){
+                    text("New World Record!", boardSize/6.5, 300);
+                }else{
+                    textSize(25);
+                    text("World Record: "+masterworldRecord+"s", boardSize/12, 300);
+                }
+            }else{
+                tint(255);
+                image(OtherImg[2], 102, 125);
             }
             //----
+
+
             buttonW.show();
             buttonHide();
             break;
         case 5: //Mission Failed
-            background('#D9544D');
-            fill('black');
+            //background('#D9544D');
+            tint(100);
+            image(MissionFailedBackground, 0, 0, boardSize, boardSize);
+            fill('red');
             textSize(50);
-            text("Mission Failed", boardSize/4.3, 100);
-            image(OtherImg[1], 50, 125);
+            text("M i s s i o n  F a i l e d", boardSize/10.3, 100);
+
+            tint(255);
+            image(OtherImg[1], 54.5, 125);
+            buttonRetry.show(); //Retry option
             buttonW.show();
             buttonHide();
             failed();
@@ -639,36 +874,60 @@ function draw(){
 
         //--------------Master Mode-------------------
         case 5.5: //Master Mode Intermssion
+	    setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
             MainMenuThemeSwitch = false;
-            background('gray');
+
+            tint(100);
+            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            //background('gray');
             buttonHide();
             buttonBack.show();
             button4Start.show();
             fill('white');
             textSize(25);
             text("Difficulty: Master", 25, 100);
-            textSize(20);
-            text("Music: Super Mario Galaxy: Staff Roll 8 Bit Remix", 25, 150);
-            text("By Vahkiti", 25, 200);
-            if (worldRecord === null){
-                text("World Record Time: None", 20, 570);
+            textSize(17);
+            text("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
+            text("By Tater-Tot Tunes", 25, 200);
+            if (masterworldRecord === null){
+                text("Current Record Time: ???", 20, 570);
             }else{
-                text("World Record Time: "+worldRecord+"s", 20, 570);
+                //Display appropriate Trophy (Need Refining)
+                if (masterworldRecord <= 100){
+                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[0], 205, 50, 75, 75);
+                }else if (masterworldRecord > 100 && masterworldRecord < 150){
+                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[1], 205, 50, 75, 75);
+                }else{
+                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
+                    tint(230);
+                    image(trophies[2], 205, 50, 75, 75);
+                }
             }
             visualAudio();
             break;
         case 6: //Master Mode Game
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // masterSound.play();
                 //*/
                 player = new Player(1, 6, "right");
             }
-            background(backgroundColor);
+
+            //TESTING Image
+            tint(backgroundColor);
+            image(MasterModeBackgroundImage, 0, 0, boardSize, boardSize);
+            //background(backgroundColor);
+            levelRetry = level;
+
             level4();
             board();
             level4Beat();
@@ -679,14 +938,12 @@ function draw(){
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
 //Refresh everything
 function windowResized() {
     setup();
 }
-
-
-
-
 
 
 
@@ -723,6 +980,8 @@ function finished(){
     if (coins.length === points && finishedPos.x == tilePos.x && finishedPos.y == tilePos.y){ //If it collides with the endBlock
         console.log("Winner!");
         level = 4;
+        VictorySound.setVolume(0.3);
+        VictorySound.play();
 
 
         //Clear everything when level complete
@@ -744,7 +1003,8 @@ function finished(){
         moveWidth = 0; //
         moveHeight = 0; //
         points = 0; //
-        backgroundColor = 210; //
+        backgroundColor = 250; //
+        tint(backgroundColor) //
         playerAttempts = 3; //
         beatColorBoolean = false; //
         //*/Sounds//
@@ -759,6 +1019,12 @@ function finished(){
         //*/Sounds//
         masterSound.stop();
         //*/
+        
+        //*/Sounds//
+        coinSound.stop();
+        PlayerJumpSound.stop();
+        //*/
+
         playerCounter = 0; //
         // enemyMovingX = 0; //Incrment 60 for moving;
         // enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
@@ -793,7 +1059,8 @@ function failed(){
     // enemy = []; //
     // enemy2 = []; //
     points = 0; //
-    backgroundColor = 210; //
+    backgroundColor = 250; //
+    tint(backgroundColor) //
     playerAttempts = 3; //
     beatColorBoolean = false; //
     //*/Sounds//
@@ -808,6 +1075,12 @@ function failed(){
     //*/Sounds//
     masterSound.stop();
     //*/
+
+    //*/Sounds//
+    coinSound.stop();
+    PlayerJumpSound.stop();
+    //*/
+
     playerCounter = 0; //
     // enemyMovingX = 0; //Incrment 60 for moving;
     // enemyMoveMaxLockX = false; //Lock the increment and decrement back to its original position
@@ -821,6 +1094,9 @@ function failed(){
 
     //Do not record the time if failed
     masterModeTimer = false;
+    easyModeTimer = false; 
+    normalModeTimer = false; 
+    hardModeTimer = false; 
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -832,8 +1108,15 @@ function intermissionSetup(_level, _button, _sound) {
     level = _level;
     _button.show();
     //*/Sounds//
-    _sound.play();
-    _sound.setVolume(0.2);
+    if (IntermissionThemeSwitch === false && !_sound.isPlaying()){
+    	_sound.setVolume(0.3);
+    	_sound.play();
+	_sound.loop();
+	IntermissionThemeSwitch = true;
+    }
+
+    ButtonSound.setVolume(1);
+    ButtonSound.play();
     //*/
 }
 
@@ -842,6 +1125,9 @@ function easyLevel() {
     level = 1;
     //*/Sounds//
     easySound.stop();
+
+    ButtonSound.setVolume(1);
+    ButtonSound.play();
     //*/
 }
 function easyIntermission(){
@@ -854,6 +1140,9 @@ function normalLevel() {
     level = 2;
     //*/Sounds//
     normalSound.stop();
+
+    ButtonSound.setVolume(1);
+    ButtonSound.play();
     //*/
 }
 function normalIntermission(){
@@ -866,6 +1155,9 @@ function hardLevel() {
     level = 3;
     //*/Sounds//
     hardSound.stop();
+
+    ButtonSound.setVolume(1);
+    ButtonSound.play();
     //*/
 }
 function hardIntermission(){
@@ -880,6 +1172,9 @@ function masterLevel() {
     level = 6;
     //*/Sounds//
     masterSound.stop();
+
+    ButtonSound.setVolume(1);
+    ButtonSound.play();
     //*/
 }
 function masterIntermission(){
@@ -915,19 +1210,73 @@ function visualAudio(){
 //----------------------------------------------------------------BUTTON HIDE AND SHOW--------------------------------------------------------------
 function mainMenu(){
     volHistory = [] //Reset the visual for music
-    level = 0;
+    level = 0; //Main Menu
     buttonW.hide();
+    buttonRetry.hide();
     buttonBack.hide();
     resetEnemies();
     //Temporary for now
-    if (masterModeTimer === true){
-        if (worldRecord > timer || worldRecord === null){
-            worldRecord = timer;
+    if (easyModeTimer === true){
+        if (easyworldRecord > timer || easyworldRecord === null){
+            easyworldRecord = timer;
+        }
+    }else if (normalModeTimer === true){
+        if (normalworldRecord > timer || normalworldRecord === null){
+            normalworldRecord = timer;
+        }
+    }else if (hardModeTimer === true){
+        if (hardworldRecord > timer || hardworldRecord === null){
+            hardworldRecord = timer;
+        }
+    }else if (masterModeTimer === true){
+        if (masterworldRecord > timer || masterworldRecord === null){
+            masterworldRecord = timer;
         }
     }
+    easyModeTimer = false; 
+    normalModeTimer = false; 
+    hardModeTimer = false; 
     masterModeTimer = false;
     timer = 0;
     //-----------------
+    ButtonSound.setVolume(1);
+    ButtonSound.play();
+}
+
+function mainMenuRetry(){
+    volHistory = [] //Reset the visual for music
+    level = levelRetry; //Retry the level
+    buttonW.hide();
+    buttonRetry.hide();
+    buttonBack.hide();
+    resetEnemies();
+    //Temporary for now
+    if (easyModeTimer === true){
+        if (easyworldRecord > timer || easyworldRecord === null){
+            easyworldRecord = timer;
+        }
+    }else if (normalModeTimer === true){
+        if (normalworldRecord > timer || normalworldRecord === null){
+            normalworldRecord = timer;
+        }
+    }else if (hardModeTimer === true){
+        if (hardworldRecord > timer || hardworldRecord === null){
+            hardworldRecord = timer;
+        }
+    }else if (masterModeTimer === true){
+        if (masterworldRecord > timer || masterworldRecord === null){
+            masterworldRecord = timer;
+        }
+    }
+
+    easyModeTimer = false; 
+    normalModeTimer = false; 
+    hardModeTimer = false; 
+    masterModeTimer = false;
+    timer = 0;
+    //-----------------
+    ButtonSound.setVolume(1);
+    ButtonSound.play();
 }
 
 //----------Hide the Buttons-----------
@@ -952,7 +1301,7 @@ function buttonHide(){
 }
 
 //Win or Lose button RETURN
-function buttonHideW(){
+function buttonHideW(){ //Not used?
     buttonW.hide();
 }
 //------------------------------------
@@ -983,7 +1332,7 @@ function resetEnemies(){
 //Shows all the levels on screen when button is clicked!
 function level1(){ //Done
     finishLine[0] = 540;
-    finishLine[1] = 300;
+    finishLine[1] = 240;
     
     //randomCoinX = random([30, 90, 150, 210, 270, 330, 390, 450, 510, 570]);
     //randomCoinY = random([30, 90, 150, 210, 270, 330, 390, 450, 510, 570]);
@@ -997,9 +1346,10 @@ function level1(){ //Done
     //The player needs to collect the coins and the coins will position
     //else where.
     while(i != 1){
-        coins[0] = new Coins(150, 210, random(0,3));
-        coins[1] = new Coins(150, 330, random(0,3));
-        coins[2] = new Coins(570, 270, random(0,3));
+        coins[0] = new Coins(90, 90, random(0,3));
+        coins[1] = new Coins(150, 390, random(0,3));
+        coins[2] = new Coins(570, 90, random(0,3));
+        coins[3] = new Coins(570, 510, random(0,3));
         i++;
     }
 
@@ -1009,23 +1359,60 @@ function level1(){ //Done
     blocks[1] = new Block(90, 30);
     blocks[2] = new Block(150, 30);
 
-    //Borders
-    blocks[3] = new Block(570, 210);
-    blocks[4] = new Block(90, 270);
-    blocks[5] = new Block(150, 270);
-    blocks[6] = new Block(210, 270);
-    blocks[7] = new Block(270, 270);
-    blocks[8] = new Block(330, 270);
-    blocks[9] = new Block(390, 270);
-    blocks[10] = new Block(450, 270);
-    blocks[11] = new Block(510, 270);
-    blocks[12] = new Block(510, 210);
-    blocks[13] = new Block(510, 330);
-    blocks[14] = new Block(90, 210);
-    blocks[15] = new Block(90, 330);
+
+
+    //Borders [30, 90, 150, 210, 270, 330, 390, 450, 510, 570]
+    blocks[3] = new Block(30, 210);
+    blocks[4] = new Block(30, 330);
+    blocks[5] = new Block(90, 330);
+    blocks[6] = new Block(150, 330);
+    blocks[7] = new Block(210, 330);
+    blocks[8] = new Block(390, 330);
+    blocks[9] = new Block(450, 330);
+    blocks[10] = new Block(510, 330);
+    blocks[11] = new Block(570, 330);
+
+    blocks[12] = new Block(90, 210);
+    blocks[13] = new Block(150, 210);
+    blocks[14] = new Block(210, 210);
+    blocks[15] = new Block(390, 210);
+
+    blocks[16] = new Block(450, 210);
+    blocks[17] = new Block(510, 210);
+    blocks[18] = new Block(570, 210);
+
+    blocks[19] = new Block(210, 390);
+    blocks[20] = new Block(210, 450);
+    blocks[21] = new Block(150, 450);
+    blocks[22] = new Block(90, 450);
+
+    blocks[23] = new Block(390, 390);
+    blocks[24] = new Block(390, 510);
+
+    blocks[25] = new Block(330, 390);
+    blocks[26] = new Block(510, 510);
+    blocks[27] = new Block(510, 450);
+
+    //Borders [30, 90, 150, 210, 270, 330, 390, 450, 510, 570]
+    blocks[28] = new Block(390, 150);
+    blocks[29] = new Block(210, 150);
+    blocks[30] = new Block(210, 30);
+    blocks[31] = new Block(90, 150);
+
+    blocks[32] = new Block(570, 150);
+    blocks[33] = new Block(390, 90);
+
+
 
     //The goal line
     endBlock = new FinishBlock(finishLine[0], finishLine[1]);
+
+    //We time the player
+    easyModeTimer = true;
+    if (frameCount % 60 == 0 && timer >= 0) {
+        timer++;
+    }
+
 }
 
 
@@ -1116,6 +1503,12 @@ function level2(){ //Normal mode
 
     endBlock = new FinishBlock(finishLine[0], finishLine[1]);
 
+    //We time the player
+    normalModeTimer = true;
+    if (frameCount % 60 == 0 && timer >= 0) {
+        timer++;
+    }
+
 
 }
 
@@ -1203,6 +1596,12 @@ function level3(){ // Hard Mode
 
     //The goal line
     endBlock = new FinishBlock(finishLine[0], finishLine[1]);
+
+    //We time the player
+    hardModeTimer = true;
+    if (frameCount % 60 == 0 && timer >= 0) {
+        timer++;
+    }
 
 
 }
@@ -1356,23 +1755,25 @@ function board(){
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if(player != null){
-        if (!isPaused && (key === "w" || key === "a" || key === "s" || key === "d")){
-            if (key === "w") {
+        if (key === "w" || key === "a" || key === "s" || key === "d" || key === "i" || key === "j" || key === "k" || key === "l"){
+            if (key === "w" || key === "i") {
                 player.face("up");
                 player.move(0, 1);
             }
-            if (key === "a") {
+            if (key === "a" || key === "j") {
                 player.face("left");
                 player.move(-1, 0);
             }
-            if (key === "s") {
+            if (key === "s" || key === "k") {
                 player.face("down");
                 player.move(0, -1);
             }
-            if (key === "d") {
+            if (key === "d" || key === "l") {
                 player.face("right");
                 player.move(1, 0);
             }
+            PlayerJumpSound.setVolume(0.4);
+            PlayerJumpSound.play();
             pressByBeat = 'red';
         }
         if (key === "p") {
@@ -1521,6 +1922,8 @@ class Player{
                 coins[i].rpos = 1;
                 coins[i].rpos2 = 1;
                 points++;
+                coinSound.setVolume(0.2);
+                coinSound.play();
             }
         }
     }
@@ -1607,6 +2010,8 @@ class EnemyJ{
         let playerPos = {x: player.x, y: player.y};
         if (this.x == playerPos.x && this.y == playerPos.y){
             level = 5; //Mission Failed
+            FailSound.setVolume(0.3);
+            FailSound.play();
         }
     }
 
@@ -1709,23 +2114,10 @@ class Cube{ //The red cube
             // [0 || -1, -999],
         ]
         // New music: Super_Smash_Bros.mp3
-        // this.masterTempo = [
-        //     [0, 236], // (236, 236.?) // tempo might be changing
-        //     [masterSound.duration() - 2, -998],
-        //     [masterSound.duration() || -1, -999],
-        // ]
         this.masterTempo = [
-            // All values are dependent on each other for correct position.
-            // Minor tweaks are time
-            // consuming rn since there's no reliable way to go to a specific
-            // point of the song right now without listening to everything.
-            [0, 213.25], // [1](213, 213.5)
-            [103.1, 163], // [1](162, 164) 
-            // below: 1.3 seconds gap (also 144.7 works in sync but it's early)
-            [146.75, 213.25], // [0](146.7, 146.8) 
-            [235, 120],
-            [masterSound.duration() - 12, -998], 
-            [masterSound.duration(), -999], 
+            [0, 236], // (236, 236.?) // tempo might be changing
+            [masterSound.duration() - 2, -998],
+            [masterSound.duration() || -1, -999],
         ]
     }
 
@@ -1733,7 +2125,7 @@ class Cube{ //The red cube
         fill('black');
         rect(0, 540, 600 ,60); //Whole bar
         fill(pressByBeat);
-        rect(480, 540, 60 , 60); //Beat detector?
+        rect(470, 540, 80 , 60); //Beat detector?
         // now see if distance between two is less than sum of two radius'
 
         //Show player attempts on the bar
@@ -1779,9 +2171,9 @@ class Cube{ //The red cube
         // x2[4] = -rectWidth;
         // x2[5] = -rectWidth;
 
-        beatColorBoolean = (x2[0] > 540 || x2[0] < 480) && (x2[1] > 540 || x2[1] < 480) && (x2[2] > 540 || x2[2] < 480) && (x2[3] > 540 || x2[3] < 480) && (x2[4] > 540 || x2[4] < 480) && (x2[5] > 540 || x2[5] < 480)
+        beatColorBoolean = (x2[0] > 540 || x2[0] < 470) && (x2[1] > 540 || x2[1] < 470) && (x2[2] > 540 || x2[2] < 470) && (x2[3] > 540 || x2[3] < 470) && (x2[4] > 540 || x2[4] < 470) && (x2[5] > 540 || x2[5] < 470)
         if (pressByBeat === 'red'){
-            if ((x2[0] > 540 || x2[0] < 480) && (x2[1] > 540 || x2[1] < 480) && (x2[2] > 540 || x2[2] < 480) && (x2[3] > 540 || x2[3] < 480) && (x2[4] > 540 || x2[4] < 480) && (x2[5] > 540 || x2[5] < 480)){ //If you miss the beat
+            if ((x2[0] > 540 || x2[0] < 470) && (x2[1] > 540 || x2[1] < 470) && (x2[2] > 540 || x2[2] < 470) && (x2[3] > 540 || x2[3] < 470) && (x2[4] > 540 || x2[4] < 470) && (x2[5] > 540 || x2[5] < 470)){ //If you miss the beat
                 backgroundColor -= 50;
                 playerAttempts -= 1;
                 y2 -= 12;
@@ -1792,6 +2184,8 @@ class Cube{ //The red cube
 
         if (playerAttempts === 0){
             level = 5;
+            FailSound.setVolume(0.3);
+            FailSound.play();
         }
     }
 
@@ -2075,10 +2469,4 @@ class Cube{ //The red cube
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
 
