@@ -289,7 +289,7 @@ ul {
 }
 
 .RhythmParagraph,
-.RhythmParagraph ul li{
+.RhythmParagraph ul{
     border-left: 5px solid cyan!important;
     padding-left: 5px!important;
     margin-top: 15px!important;
@@ -297,7 +297,7 @@ ul {
     font-style: italic!important;
 }
 .RhythmParagraph,
-.RhythmParagraph ul li,
+.RhythmParagraph li,
 .OtherParagraph{
     color: white!important;
 }
