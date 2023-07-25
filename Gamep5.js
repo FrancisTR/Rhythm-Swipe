@@ -62,6 +62,11 @@ let lockPatternUsed = false; //!!! In reset enemies
 
 
 
+//------------------Pause-----------------------------
+let pauseTime = 0.0;
+let pauseTimeLag = 0.0;
+let isPaused = false;
+
 //---------The bar that detects the beat in game------
 let pressByBeat = 500;
 var cubeDetector; //The box that detects the red cube
@@ -71,12 +76,22 @@ let rectWidth = 30;
 let rectHeight = 500;
 let widthMinusCube = boardSize - rectWidth;
 
-//position of red cubes
+// time for cubes and music
+let realPrevMusicTime = 0.0; //!!!
+let realMusicTime = 0.0; //!!!
+let isStartTime = false; //!!!
+let realStartTime = 0.0; //!!!
 
-let realPrevTime = 0;
-let realTime = 0;
-let x2t = 0;
-let x2start = 100;// tileSize-(rectWidth/2);
+let oldMusicRate = 1; //!!!
+let musicRate = 1;
+
+//position of red cubes
+let x2tWait = 0.0; // no reset required
+let x2t = 0.0; //!!!
+let x2totalDistance = 0.0;
+let x2totalTime = 0.0;
+let x2wait = 0.0; //!!!
+let x2start = 0.0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
 // let x2start = tileSize*2+((tileSize-rectWidth)/2);
@@ -89,9 +104,9 @@ let x2 = [
     x2start - 100, // old x2 --> x2[0]
     x2start, // old x22 --> x2[1]
     x2start + 100, // old x23
-    x2start + 200, // old x24
-    x2start + 300, // old x25
-    x2start + 400 // old x26
+    x2start + 200, // ...
+    x2start + 300, //
+    x2start + 400 //
 ];
 
 let y2 = 575; //!!!
@@ -534,7 +549,7 @@ function draw(){
             break;
         //---------------Main Menu------------------
         case 0:
-	    IntermissionThemeSwitch = false;
+            IntermissionThemeSwitch = false;
             buttonBack.hide();
             StartGameButton.hide();
             buttonW.hide();
@@ -558,11 +573,14 @@ function draw(){
 
             //*/Sounds//
             if (MainMenuThemeSwitch === false && !MainMenuTheme.isPlaying()){
-		setup();
+                setup();
                 MainMenuTheme.play();
                 MainMenuTheme.setVolume(0.4);
                 MainMenuTheme.loop();
                 MainMenuThemeSwitch = true;
+                console.log("play")
+// below line might not be needed. git merge v1.0.0 + my PR
+                realStartTime = getAudioContext().currentTime;
             }
             //*/
             //background('black');
@@ -576,7 +594,7 @@ function draw(){
 
             //*/VERSION/
             fill("white");
-            text("Alpha v1.0.0", 5, 15);
+            text("Alpha v1.1.0", 5, 15);
 
             buttonShow();
             break;
@@ -630,10 +648,10 @@ function draw(){
             buttonHide();
             FailSound.stop();
             if (!player){
-                player = new Player(1, 6, "right");
                 //*/Sounds//
-                easySound.play();
+                // easySound.play();
                 //*/
+                player = new Player(1, 6, "right");
             }
 
             tint(backgroundColor);
@@ -694,12 +712,12 @@ function draw(){
             buttonHide();
             FailSound.stop();
             if (!player){
+                //*/Sounds//
+                // normalSound.play();
+                //*/
                 player = new Player(2, 2, "up");
                 playerCounter = 1;
                 // player.turn(90);
-                //*/Sounds//
-                normalSound.play();
-                //*/
             }
 
             tint(backgroundColor);
@@ -763,12 +781,12 @@ function draw(){
             buttonHide();
             FailSound.stop();
             if (!player){
+                //*/Sounds//
+                // hardSound.play();
+                //*/
                 player = new Player(6, 9, "down");
                 // playerCounter = 3;
                 // player.turn(-90);
-                //*/Sounds//
-                hardSound.play();
-                //*/
             }
 
             tint(backgroundColor);
@@ -789,7 +807,7 @@ function draw(){
             image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
 
             fill('cyan');
-            textSize(50);
+            textSize(45);
             text("M i s s i o n  S u c c e s s", boardSize/25, 100);
 
             //Timers
@@ -898,10 +916,10 @@ function draw(){
             buttonHide();
             FailSound.stop();
             if (!player){
-                player = new Player(1, 6, "right");
                 //*/Sounds//
-                masterSound.play();
+                // masterSound.play();
                 //*/
+                player = new Player(1, 6, "right");
             }
 
             //TESTING Image
@@ -968,13 +986,14 @@ function finished(){
 
         //Clear everything when level complete
         player = null; //
-        x2[0] = x2start - 100; //
+        realPrevMusicTime = 0;
+        realMusicTime = 0;
+        realStartTime = 0;
+        oldMusicRate = 1; // not perfect. fixes some situations.
+        isStartTime = false;
+        x2wait = 0; 
+        x2t = 0;
         x2temp = -rectWidth; //
-        x2[1] = x2start;//
-        x2[2] = x2start + 100; //
-        x2[3] = x2start + 200; //
-        x2[4] = x2start + 300;//
-        x2[5] = x2start + 400;//
         y2 = 575; //
         i = 0; //
         finishLine = []; //
@@ -1021,13 +1040,14 @@ function failed(){
     //console.log("Winner!");
     //Clear everything when level complete
     player = null; //
+    realPrevMusicTime = 0;
+    realMusicTime = 0;
+    realStartTime = 0;
+    oldMusicRate = 1; // not perfect. fixes some situations.
+    isStartTime = false;
+    x2t = 0;
     x2temp = -rectWidth; //
-    x2[0] = x2start - 100; //
-    x2[1] = x2start;//
-    x2[2] = x2start + 100; //
-    x2[3] = x2start + 200; //
-    x2[4] = x2start + 300;//
-    x2[5] = x2start + 400;//
+    x2wait = 0; //
     y2 = 575; //
     i = 0; //
     finishLine = []; //
@@ -1176,7 +1196,7 @@ function visualAudio(){
     beginShape();
     for(let i=0; i<volHistory.length; i++) {
         let y = map(volHistory[i], 0, 1, height/2, 0); //position map
-  	    vertex(i, y);
+        vertex(i, y);
     }
     endShape();
   
@@ -1682,23 +1702,23 @@ function level4(){ //MASTER MODE
 //The board itself. Is used for all levels
 function board(){
     for (var x = 0; x < width; x += width / 10) {
-		for (var y = 0; y < height; y += height / 10) {
-			stroke(0);
-			strokeWeight(1.5);
-			line(x, 0, x, height);
+        for (var y = 0; y < height; y += height / 10) {
+            stroke(0);
+            strokeWeight(1.5);
+            line(x, 0, x, height);
             stroke(110);
             strokeWeight(1.5);
             line(x + 1.5, 0, x + 1.5, height);
 
             stroke(0);
-			strokeWeight(1.5);
-			line(0, y, width, y);
+            strokeWeight(1.5);
+            line(0, y, width, y);
             stroke(110);
             strokeWeight(1.5);
             line(0, y +1.5, width, y +1.5);
 
-		}
-	}
+        }
+    }
     //coins display
     for (var i = 0; i < coins.length; i++){
         coins[i].display();
@@ -1730,31 +1750,50 @@ function board(){
 
 
 
+function playJumpSound() {
+    PlayerJumpSound.setVolume(0.4);
+    PlayerJumpSound.play();
+    pressByBeat = 'red';
+}
+
+
+
 
 //Moving correlates to Canvas size. Ex: If Canvas is 600x600, then the
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if(player != null){
-        if (key === "w" || key === "a" || key === "s" || key === "d" || key === "i" || key === "j" || key === "k" || key === "l"){
-            if (key === "w" || key === "i") {
+        // if (key === "p") {
+        //     isPaused = !isPaused;
+        //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
+        // }
+        // if (isPaused) return;
+        
+        switch (key) {
+            case "w":
+            case "i":
                 player.face("up");
                 player.move(0, 1);
-            }
-            if (key === "a" || key === "j") {
+                playJumpSound();
+                break;
+            case "a":
+            case "j":
                 player.face("left");
                 player.move(-1, 0);
-            }
-            if (key === "s" || key === "k") {
+                playJumpSound();
+                break;
+            case "s":
+            case "k":
                 player.face("down");
                 player.move(0, -1);
-            }
-            if (key === "d" || key === "l") {
+                playJumpSound();
+                break;
+            case "d":
+            case "l":
                 player.face("right");
                 player.move(1, 0);
-            }
-            PlayerJumpSound.setVolume(0.4);
-            PlayerJumpSound.play();
-            pressByBeat = 'red';
+                playJumpSound();
+                break;
         }
     }
     
@@ -2065,14 +2104,45 @@ class FinishBlock{
 
 //----------------------------------------------------MUSIC BEAT CLASS---------------------------------------------
 class Cube{ //The red cube
- 
+    constructor(){
+        this.__x2 = 0;
+        this.tempoChange = 0;
+
+        // music tempos
+        this.easyTempo = [ 
+            [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
+            // sends -999 signal to restart song at duration
+            [easySound.duration() || -1, -999],
+        ]
+        this.normalTempo = [
+            [0, 212.67], // (212.63, 212.7)
+            [normalSound.duration() - 21.267, -998],
+            [normalSound.duration() || -1, -999],
+        ]
+        this.hardTempo = [
+            [0, 175],
+            [11.4, 185],
+            [18.2, 205.07], // (205, 205.1)
+            [hardSound.duration(), -998], // 20.507 is too big (2 is temporarily there) guess
+            [hardSound.duration() || -1, -999],
+            // [-2, -998], // game will auto set these values
+            // [0 || -1, -999],
+        ]
+        // New music: Super_Smash_Bros.mp3
+        this.masterTempo = [
+            [0, 236], // (236, 236.?) // tempo might be changing
+            [masterSound.duration() - 2, -998],
+            [masterSound.duration() || -1, -999],
+        ]
+    }
+
     displayDetector(){
         fill('black');
         rect(0, 540, 600 ,60); //Whole bar
         fill(pressByBeat);
         rect(470, 540, 80 , 60); //Beat detector?
         // now see if distance between two is less than sum of two radius'
-       
+
         //Show player attempts on the bar
         fill('gold');
         textSize(50);
@@ -2082,7 +2152,7 @@ class Cube{ //The red cube
         //*/Debug/
         this.beatSync();
         //*/
-        
+
         if (pressByBeat === 'red'){
             pressByBeat = 500;
         }
@@ -2166,65 +2236,247 @@ class Cube{ //The red cube
         xMainMenuRobber+=3;
     }
 
+    x2calculate(offset){
+        for (let i = 0; i < x2.length; i++) {
+            x2[i] = i * 100 + offset;
+        }
+        console.log(x2);
+    }
+
+    x2tNoSkip(x2check, realTempo, _offset = 0){
+        // if 0 (or false), use previous value
+        // remove x2check by x2wait when audioContext is not 0
+        if (realTempo === 0) {
+            x2t = 0;
+            return;
+        }
+
+        if (x2check === 0) {
+            x2t = realTempo / 60;
+            x2wait += x2t;
+//            if (x2wait > 80) {
+//            }
+        } else {
+
+            if (x2wait === 0) {
+                x2t = x2check;
+            } else {
+                x2t = x2check - x2wait;
+                // if (x2wait > 22) {
+                //    console.log(`laggier waiting: x2wait=${x2wait} original x2t=${x2check}`)
+                // }
+                x2wait = 0;
+            }
+        }
+    }
+
+    restartMusic(restartThis, txt = `Restarting music... tempoChange: ${this.tempoChange}`) {
+        console.log(txt);
+        isStartTime = false;
+        restartThis.stop();
+    }
+
     //Rhythm beat based on speed of the cube
-    displayLevelSetup(_x2){
-        realPrevTime = realTime;
-        realTime = getAudioContext().currentTime;
+    displayLevelSetup(musicLevel, _x2, musicOffset = -23){
         
-        // console.log("(_x2: " + _x2 + ") (new _x2: " + x2t + ") realTime - realPrevTime = " + (realTime - realPrevTime) + " Avg: " + (tempCountTotal / tempCountTime));
-        x2t = (realTime - realPrevTime) * _x2;
-        // if (isNaN(tempCountTotal)){
-        //     tempCountTotal = 0;
-        // }
-        // ++tempCountTime;
-        // tempCountTotal = tempCountTotal + (realTime - realPrevTime);
-        // console.log(tempCountTotal + " | " + realTime + " - " + realPrevTime);
+        // console.log("p5js: " + musicLevel.currentTime());
+        // console.log("js: " + getAudioContext().currentTime);
+        // p5js currentTime() is a bit jittery.
+            // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
+            // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
+            // 3. When AFK, the cubes disappear for some time. Don't know why.
+        if (isStartTime) {
+
+            if (typeof this.tempoChange === "undefined") {
+                return this.restartMusic(false, "WARNING: tempoChange is undefined. Restarting...");
+            }
+
+            realPrevMusicTime = realMusicTime;
+            realMusicTime = getAudioContext().currentTime * musicRate - realStartTime;
+            if (!isPaused && pauseTime === 0) {
+
+                // Experimental feature. Changable in browser console.
+                // It will probably stop working in the future
+                // I especially like 1.5 speed in Master mode
+                // Currently out of sync on music restart.
+                // For some reason decreasing musicRate breaks the cubes right now.
+                // Workaround for above: Set musicRate to 0.5 when song starts. Offset out of sync though.
+                if (musicRate !== oldMusicRate) {
+                    oldMusicRate = musicRate;
+                    musicLevel.rate(musicRate);
+                    console.log("jump to realMusicTime or 0 (scary), whichever is bigger. realMusicTime=" + realMusicTime);
+                    if (realMusicTime > 0) {
+                        musicLevel.jump(realMusicTime);
+                    } else {
+                        musicLevel.jump(0);
+                    }
+                }
+            }
+
+            // if (isPaused) {
+// Postponed du to audio losing sync offset after pause
+            //    if (pauseTime === 0) {
+            //        // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
+            //        // p5js is about -0.07 seconds behind every pause,
+            //        // so sync with p5js duration
+            //        // MAIN pauseTime = musicLevel.currentTime() * musicRate;
+            //        pauseTime = realMusicTime; // - (musicLevel.currentTime() - realStartTime);
+            //        // offset is very messy pauseTime = getAudioContext().currentTime * musicRate;
+
+            //        musicLevel.pause();
+            //        console.log(`(Paused) realMusicTime vs realMusicTime after pause: ${realMusicTime} vs ${(getAudioContext().currentTime * musicRate - realStartTime)} `)
+            //        console.log(`(Paused) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //        // console.log(x2);
+
+            //    }
+            //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    
+            //    console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    background(0, 0, 0, 128);
+            //    fill('cyan');
+            //    textSize(50);
+            //    textAlign(CENTER);
+            //    text("Mission Paused", boardSize*0.5, boardSize*0.5);
+            //    textSize(20);
+            //    text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
+            //    textAlign(LEFT, BASELINE); // default textAlign
+            //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    return;
+            // } else if (!isPaused && pauseTime !== 0) {
+            //    // realMusicTime -= pauseTime;
+            //    // maybe w/ live multiplayer? --> realStartTime -= realMusicTime - pauseTime;
+            //    
+            //    //console.log(`realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            //    //console.log(`realMusicTime - pausedTime: ${realMusicTime} - ${pauseTime}`);
+            //    
+            //    // let pauseDuration = realMusicTime - pauseTime
+            //    // let pauseLag = musicLevel.currentTime() - pauseTimeLag
+            //    // let pauseLag = musicLevel.currentTime() - pauseTime
+            //    let pauseDuration = realMusicTime - pauseTime; // not used rn except console log will error
+            //    // let pauseDuration = -(musicLevel.currentTime() - realMusicTime); // not used rn except console log will error
+            //    
+            //    realStartTime += pauseDuration;
+            //    realMusicTime -= pauseDuration;
+            //    realPrevMusicTime -= pauseDuration;
+            //    // realStartTime += pauseLag;
+            //    // realMusicTime -= pauseLag;
+            //    // realPrevMusicTime -= pauseLag;
+            //    //
+            //    // console.log(`(Resumed) pauseDuration: ${pauseDuration} oldPauseDuration: ${realMusicTime - pauseTime}`);
+            //    // console.log(`(Resumed) x2 values below; pauseTimeLag: ${pauseTimeLag} realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseDuration: ${pauseDuration}`);
+            //    console.log(x2);
+            //    pauseTime = 0;
+            //    // musicLevel.jump(realMusicTime);
+            //    musicLevel.play();
+            //    console.log(`(Resumed) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            // } else {
+            //     console.log(`offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            // }
+
+            if (!isPaused && (this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
+                this.tempoChange++;
+                console.log(`new tempo! ${this.tempoChange}`);
+                
+                if (_x2[this.tempoChange][1] === -999) {
+                    this.restartMusic(musicLevel);
+                } 
+        //  } else {
+        //      console.log("this should never be called from now on since it loops");
+            }
+        } else {
+            isStartTime = true;
+
+            // rarely: musicLevel.duration() can return 0
+            if (_x2[_x2.length - 1][0] === -1) {
+                isStartTime = false;
+                let durationFix = musicLevel.duration() || -1;
+                _x2[_x2.length - 2][0] += durationFix;
+                _x2[_x2.length - 1][0] = durationFix;
+                console.log(`Failed to set song length earlier. Value now set to ${durationFix}`)
+                return;
+            }
+            console.log(`Restarted song. realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
+            musicLevel.rate(musicRate);
+            
+            this.tempoChange = 0;
+            this.x2calculate(musicOffset); // x start positions
+            realStartTime = getAudioContext().currentTime;
+            musicLevel.play();
+
+            realPrevMusicTime = 0;
+            realMusicTime = 0;
+        }
+
+        let tempo = _x2[this.tempoChange][1]
+
 
         noStroke();
         fill('cyan'); //The beat that allow the Guard to move
-        rect(x2[0], y2, rectWidth, rectHeight);
-        if(x2[0] > widthMinusCube){
-            rect(x2temp, y2, rectWidth, rectHeight);
-            x2temp+=x2t;
-        }
+        if (tempo !== -998) { // regular loop
+            // speed of cube (maybe change speed to position in future)
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo * musicRate, tempo);
+            // in theory: this.x2tNoSkip(x2totalTime * tempo, tempo, musicOffset);
+            
+            rect(x2[0], y2, rectWidth, rectHeight);
+            if(x2[0] > widthMinusCube){
+                rect(x2temp, y2, rectWidth, rectHeight);
+                x2temp+=x2t;
+                // console.log(_x2[0][1])
+            }
 
-        fill('red'); //Red boxes
-        if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
-            rect(x2temp, y2, rectWidth, rectHeight);
-            x2temp+=x2t;
+            fill('red'); //Red boxes
+            if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
+                rect(x2temp, y2, rectWidth, rectHeight);
+                x2temp+=x2t;
+            }
+
+            for (let i = 0; i < x2.length; i++) {
+                if(x2[i] > width) {
+                    x2[i] %= 600;
+                    x2temp = -rectWidth;
+                }
+                x2[i]+=x2t;
+            }
+
+        } else { // towards end of song
+            // speed of cube (maybe change speed to position in future)
+            let realTempo = _x2[this.tempoChange - 1][1]
+            // this.x2tNoSkip(x2totalTime * realTempo * musicRate, realTempo, musicOffset);
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * realTempo * musicRate, realTempo);
+            rect(x2[0], y2, rectWidth, rectHeight);
+
+            fill('red'); //Red boxes
+
+            for (let i = 0; i < x2.length; i++) {
+                x2[i]+=x2t; // replace with x2[i] = x2totalTime * x2[this.tempoChange][1] - offsetForLastTimeTempoChanged
+            }
         }
+        // x2totalDistance+=x2t;
+        // x2totalTime=realMusicTime;
+        // console.log(x2totalDistance + " t*60=" + x2totalTime * _x2[this.tempoChange][1]);
 
         for (let i = 1; i < x2.length; i++) {
             rect(x2[i], y2, rectWidth, rectHeight);
         }
-        for (let i = 0; i < x2.length; i++) {
-            if(x2[i] > width) {
-                x2[i] %= 600;
-                x2temp = -rectWidth;
-            }
-            x2[i]+=x2t;
-        }
-    }
-    displayLevel1(){ //Music:
-        // this.displayLevelSetup(10); // works for visualizing cube positions while testing
-        this.displayLevelSetup(133.8);
-        // 218 | 133.7 - 133.9 (it's possible this is wrong)
     }
 
-    displayLevel2(){ //Music:
-        this.displayLevelSetup(212.67); // (212.63, 212.7) // xpos needs to change if it's split in 3
+    // In web broswer console, paste this to jump to a part of the song:
+    // Note: Cubes might be off. Doesn't even seem to follow the tempo if after a tempo change.
+// let sxa = 95; let sxaSound = masterSound; sxaSound.jump(sxa); realMusicTime -= sxa;
+    displayLevel1(){
+        this.displayLevelSetup(easySound, this.easyTempo, -12);
     }
 
-    displayLevel3(){ //Music:
-        this.displayLevelSetup(205.07); // (205, 205.1)
-        // this is based on tempo after 20ish seconds
-        // this changes tempo after intro (10.05 --> 120 bpm (12?)) i like it though
+    displayLevel2(){
+        this.displayLevelSetup(normalSound, this.normalTempo, -15);
     }
 
-    displayLevel4(){ //Music: Super Mario Galaxy 2 
-        this.displayLevelSetup(213.25); // (213, 213.5)
-        // starts with 2 16th notes.
-        // changes tempo mid-song: ? to about 98 bpm
+    displayLevel3(){
+        this.displayLevelSetup(hardSound, this.hardTempo, -425);
+    }
+
+    displayLevel4(){
+        this.displayLevelSetup(masterSound, this.masterTempo, -155);
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
