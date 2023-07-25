@@ -84,6 +84,8 @@ let musicRate = 1;
 //position of red cubes
 let x2tWait = 0.0; // no reset required
 let x2t = 0.0; //!!!
+let x2totalDistance = 0.0;
+let x2totalTime = 0.0;
 let x2wait = 0.0; //!!!
 let x2start = 0.0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
@@ -1690,20 +1692,28 @@ class Cube{ //The red cube
         this.easyTempo = [ 
             [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
             // sends -999 signal to restart song at duration
-            [easySound.duration(), -999],
+            [easySound.duration() || -1, -999],
         ]
         this.normalTempo = [
             [0, 212.67], // (212.63, 212.7)
             [normalSound.duration() - 21.267, -998],
-            [normalSound.duration(), -999],
+            [normalSound.duration() || -1, -999],
         ]
         this.hardTempo = [
             [0, 175],
             [11.4, 185],
             [18.2, 205.07], // (205, 205.1)
-            [hardSound.duration() - 2, -998], // 20.507 is too big (2 is temporarily there) guess
-            [hardSound.duration(), -999],
+            [hardSound.duration(), -998], // 20.507 is too big (2 is temporarily there) guess
+            [hardSound.duration() || -1, -999],
+            // [-2, -998], // game will auto set these values
+            // [0 || -1, -999],
         ]
+        // New music: Super_Smash_Bros.mp3
+        // this.masterTempo = [
+        //     [0, 236], // (236, 236.?) // tempo might be changing
+        //     [masterSound.duration() - 2, -998],
+        //     [masterSound.duration() || -1, -999],
+        // ]
         this.masterTempo = [
             // All values are dependent on each other for correct position.
             // Minor tweaks are time
@@ -1824,7 +1834,7 @@ class Cube{ //The red cube
         console.log(x2);
     }
 
-    x2tNoSkip(x2check, realTempo){
+    x2tNoSkip(x2check, realTempo, _offset = 0){
         // if 0 (or false), use previous value
         // remove x2check by x2wait when audioContext is not 0
         if (realTempo === 0) {
@@ -1854,12 +1864,7 @@ class Cube{ //The red cube
     restartMusic(restartThis, txt = `Restarting music... tempoChange: ${this.tempoChange}`) {
         console.log(txt);
         isStartTime = false;
-        if (restartThis) {
-            restartThis.stop();
-        } else {
-            console.log("future problem");
-        }
-        console.log(x2);
+        restartThis.stop();
     }
 
     //Rhythm beat based on speed of the cube
@@ -1903,16 +1908,18 @@ class Cube{ //The red cube
             if (isPaused) {
                 // audio loses slight sync offset after pause
                 if (pauseTime === 0) {
-                    console.log("Paused")
                     // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
                     // p5js is about -0.07 seconds behind every pause,
                     // so sync with p5js duration
-                    pauseTime = musicLevel.currentTime() * musicRate;
-                    // pauseTime = realMusicTime * musicRate // - (musicLevel.currentTime() - realStartTime);
+                    // MAIN pauseTime = musicLevel.currentTime() * musicRate;
+                    pauseTime = realMusicTime; // - (musicLevel.currentTime() - realStartTime);
                     // offset is very messy pauseTime = getAudioContext().currentTime * musicRate;
+
                     musicLevel.pause();
+                    console.log(`(Paused) realMusicTime vs realMusicTime after pause: ${realMusicTime} vs ${(getAudioContext().currentTime * musicRate - realStartTime)} `)
                     console.log(`(Paused) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-                    console.log(x2);
+                    // console.log(x2);
+
                 }
                 // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
                 
@@ -1937,7 +1944,7 @@ class Cube{ //The red cube
                 // let pauseDuration = realMusicTime - pauseTime
                 // let pauseLag = musicLevel.currentTime() - pauseTimeLag
                 // let pauseLag = musicLevel.currentTime() - pauseTime
-                let pauseDuration = realMusicTime - pauseTime // not used rn except console log will error
+                let pauseDuration = realMusicTime - pauseTime; // not used rn except console log will error
                 // let pauseDuration = -(musicLevel.currentTime() - realMusicTime); // not used rn except console log will error
                 
                 realStartTime += pauseDuration;
@@ -1970,6 +1977,16 @@ class Cube{ //The red cube
             }
         } else {
             isStartTime = true;
+
+            // rarely: musicLevel.duration() can return 0
+            if (_x2[_x2.length - 1][0] === -1) {
+                isStartTime = false;
+                let durationFix = musicLevel.duration() || -1;
+                _x2[_x2.length - 2][0] += durationFix;
+                _x2[_x2.length - 1][0] = durationFix;
+                console.log(`Failed to set song length earlier. Value now set to ${durationFix}`)
+                return;
+            }
             console.log(`Restarted song. realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
             musicLevel.rate(musicRate);
             
@@ -1989,7 +2006,8 @@ class Cube{ //The red cube
         fill('cyan'); //The beat that allow the Guard to move
         if (tempo !== -998) { // regular loop
             // speed of cube (maybe change speed to position in future)
-            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo, tempo);
+            this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo * musicRate, tempo);
+            // in theory: this.x2tNoSkip(x2totalTime * tempo, tempo, musicOffset);
             
             rect(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
@@ -2015,15 +2033,19 @@ class Cube{ //The red cube
         } else { // towards end of song
             // speed of cube (maybe change speed to position in future)
             let realTempo = _x2[this.tempoChange - 1][1]
+            // this.x2tNoSkip(x2totalTime * realTempo * musicRate, realTempo, musicOffset);
             this.x2tNoSkip((realMusicTime - realPrevMusicTime) * realTempo * musicRate, realTempo);
             rect(x2[0], y2, rectWidth, rectHeight);
 
             fill('red'); //Red boxes
 
             for (let i = 0; i < x2.length; i++) {
-                x2[i]+=x2t;
+                x2[i]+=x2t; // replace with x2[i] = x2totalTime * x2[this.tempoChange][1] - offsetForLastTimeTempoChanged
             }
         }
+        // x2totalDistance+=x2t;
+        // x2totalTime=realMusicTime;
+        // console.log(x2totalDistance + " t*60=" + x2totalTime * _x2[this.tempoChange][1]);
 
         for (let i = 1; i < x2.length; i++) {
             rect(x2[i], y2, rectWidth, rectHeight);
