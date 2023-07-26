@@ -574,12 +574,10 @@ function draw(){
             //*/Sounds//
             if (MainMenuThemeSwitch === false && !MainMenuTheme.isPlaying()){
                 setup();
-                MainMenuTheme.play();
                 MainMenuTheme.setVolume(0.4);
                 MainMenuTheme.loop();
                 MainMenuThemeSwitch = true;
                 console.log("play")
-// below line might not be needed. git merge v1.0.0 + my PR
                 realStartTime = getAudioContext().currentTime;
             }
             //*/
@@ -1109,10 +1107,9 @@ function intermissionSetup(_level, _button, _sound) {
     _button.show();
     //*/Sounds//
     if (IntermissionThemeSwitch === false && !_sound.isPlaying()){
-    	_sound.setVolume(0.3);
-    	_sound.play();
-	_sound.loop();
-	IntermissionThemeSwitch = true;
+        _sound.setVolume(0.3);
+        _sound.loop(); // implicitly calls .play()
+        IntermissionThemeSwitch = true;
     }
 
     ButtonSound.setVolume(1);
