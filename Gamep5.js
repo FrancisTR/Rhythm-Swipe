@@ -2185,13 +2185,29 @@ class Cube{ //The red cube
 
         beatColorBoolean = (x2[0] > 540 || x2[0] < 470) && (x2[1] > 540 || x2[1] < 470) && (x2[2] > 540 || x2[2] < 470) && (x2[3] > 540 || x2[3] < 470) && (x2[4] > 540 || x2[4] < 470) && (x2[5] > 540 || x2[5] < 470)
         if (pressByBeat === 'red'){
-            if ((x2[0] > 540 || x2[0] < 470) && (x2[1] > 540 || x2[1] < 470) && (x2[2] > 540 || x2[2] < 470) && (x2[3] > 540 || x2[3] < 470) && (x2[4] > 540 || x2[4] < 470) && (x2[5] > 540 || x2[5] < 470)){ //If you miss the beat
+            let killMe = true;
+            let j = 0;
+            for (j = 0; j < x2.length; j++){
+                if (x2[j] <= 540 && x2[j] >= 470){ //If you miss the beat
+                    killMe = false;
+                    break;
+                }
+            }
+            if (killMe) {
                 backgroundColor -= 50;
                 playerAttempts -= 1;
                 y2 -= 12;
-            }else{
+            } else {
                 console.log("Perfect!");
+                if (j !== 0) {
+                    x2[j] -= 600;
+                } else {
+                    console.log("Doesn't work with blue cube yet");
+                    // cops don't move if blue cube doesn't move rn
+                }
             }
+        }else{
+            console.log("Still perfect!");
         }
 
         if (playerAttempts === 0){
