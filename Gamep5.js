@@ -805,7 +805,7 @@ function draw(){
             image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
 
             fill('cyan');
-            textSize(45);
+            textSize(50);
             text("M i s s i o n  S u c c e s s", boardSize/25, 100);
 
             //Timers
