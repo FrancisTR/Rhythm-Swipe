@@ -194,6 +194,8 @@ let button4Start;
 let buttonBack;
 let buttonW;
 let buttonRetry;
+
+let pixelFont;
 //--------------------------------------------------------------------
 var messageError = document.getElementById("Error");
 let resizeLock = false;
@@ -201,6 +203,9 @@ let resizeLock = false;
 //--------------------------------------------------------------PRELOAD----------------------------------------------------------------------------
 function preload() {
 
+    //Font(s)
+    
+    pixelFont = loadFont('asset/PixeloidSans-mLxMm.ttf');
     //Level Sounds
 
     //*/Sounds//
@@ -460,6 +465,9 @@ function setup() {
 //--------------------------------------------------------------------DRAW----------------------------------------------------------------------------------
 function draw(){
 
+    
+
+    textFont(pixelFont);
     StartGameButton.position(250, 356.5);
     StartGameButton.center('horizontal');
 
