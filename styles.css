@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: 'PixeloidSans', Arial, sans-serif;
 }
 body{
     background-color: rgb(11, 37, 52);
@@ -38,6 +38,10 @@ a:hover{
 .preloadClass p{
     font-size: 40px;
     color: white;
+}
+@font-face {
+    font-family: "PixeloidSans";
+    src: url("./asset/PixeloidSans-mLxMm.ttf") format("opentype");
 }
 
 

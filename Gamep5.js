@@ -204,8 +204,9 @@ let resizeLock = false;
 function preload() {
 
     //Font(s)
-    
+    //https://www.fontspace.com/pixeloid-font-f69232
     pixelFont = loadFont('asset/PixeloidSans-mLxMm.ttf');
+
     //Level Sounds
 
     //*/Sounds//
@@ -594,11 +595,11 @@ function draw(){
             image(BackgroundImage, 0, 0, boardSize, boardSize);
             showNPC(); //A nice seeing of a cop running to the robber
             fill('cyan');
-            textSize(50);
+            textSize(43);
             text("R h y t h m  S w i p e", 77, 100);
-            textSize(15);
 
             //*/VERSION/
+            textSize(15);
             fill("white");
             text("Alpha v1.1.0", 5, 15);
 
@@ -626,7 +627,7 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Easy", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: A Punch Up at a Wedding 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
 
@@ -690,7 +691,7 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Normal", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: There There 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
 
@@ -758,7 +759,7 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Hard", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: Where I End and You Begin 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
 
@@ -813,7 +814,7 @@ function draw(){
             image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
 
             fill('cyan');
-            textSize(50);
+            textSize(42);
             text("M i s s i o n  S u c c e s s", boardSize/25, 100);
 
             //Timers
@@ -895,7 +896,7 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Master", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
             text("By Tater-Tot Tunes", 25, 200);
             if (masterworldRecord === null){
@@ -1745,7 +1746,7 @@ function board(){
     strokeWeight(2);
     rect(0, 0, 180 ,60);
     fill('cyan');
-    textSize(35);
+    textSize(33);
     text(" Jewels: "+points, 0, 45);
 
 
@@ -1768,11 +1769,11 @@ function playJumpSound() {
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if(player != null){
-        // if (key === "p") {
-        //     isPaused = !isPaused;
-        //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
-        // }
-        // if (isPaused) return;
+        if (key === "p") {
+            isPaused = !isPaused;
+            // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
+        }
+        if (isPaused) return;
         
         switch (key) {
             case "w":
@@ -2318,65 +2319,65 @@ class Cube{ //The red cube
                 }
             }
 
-            // if (isPaused) {
-// Postponed du to audio losing sync offset after pause
-            //    if (pauseTime === 0) {
-            //        // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
-            //        // p5js is about -0.07 seconds behind every pause,
-            //        // so sync with p5js duration
-            //        // MAIN pauseTime = musicLevel.currentTime() * musicRate;
-            //        pauseTime = realMusicTime; // - (musicLevel.currentTime() - realStartTime);
-            //        // offset is very messy pauseTime = getAudioContext().currentTime * musicRate;
+            if (isPaused) {
+// Postponed to audio losing sync offset after pause
+                if (pauseTime === 0) {
+                   // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
+                   // p5js is about -0.07 seconds behind every pause,
+                   // so sync with p5js duration
+                   // MAIN pauseTime = musicLevel.currentTime() * musicRate;
+                   pauseTime = realMusicTime; // - (musicLevel.currentTime() - realStartTime);
+                   // offset is very messy pauseTime = getAudioContext().currentTime * musicRate;
 
-            //        musicLevel.pause();
-            //        console.log(`(Paused) realMusicTime vs realMusicTime after pause: ${realMusicTime} vs ${(getAudioContext().currentTime * musicRate - realStartTime)} `)
-            //        console.log(`(Paused) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            //        // console.log(x2);
+                   musicLevel.pause();
+                   console.log(`(Paused) realMusicTime vs realMusicTime after pause: ${realMusicTime} vs ${(getAudioContext().currentTime * musicRate - realStartTime)} `)
+                   console.log(`(Paused) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+                   // console.log(x2);
 
-            //    }
-            //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            //    
-            //    console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            //    background(0, 0, 0, 128);
-            //    fill('cyan');
-            //    textSize(50);
-            //    textAlign(CENTER);
-            //    text("Mission Paused", boardSize*0.5, boardSize*0.5);
-            //    textSize(20);
-            //    text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
-            //    textAlign(LEFT, BASELINE); // default textAlign
-            //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            //    return;
-            // } else if (!isPaused && pauseTime !== 0) {
-            //    // realMusicTime -= pauseTime;
-            //    // maybe w/ live multiplayer? --> realStartTime -= realMusicTime - pauseTime;
-            //    
-            //    //console.log(`realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            //    //console.log(`realMusicTime - pausedTime: ${realMusicTime} - ${pauseTime}`);
-            //    
-            //    // let pauseDuration = realMusicTime - pauseTime
-            //    // let pauseLag = musicLevel.currentTime() - pauseTimeLag
-            //    // let pauseLag = musicLevel.currentTime() - pauseTime
-            //    let pauseDuration = realMusicTime - pauseTime; // not used rn except console log will error
-            //    // let pauseDuration = -(musicLevel.currentTime() - realMusicTime); // not used rn except console log will error
-            //    
-            //    realStartTime += pauseDuration;
-            //    realMusicTime -= pauseDuration;
-            //    realPrevMusicTime -= pauseDuration;
-            //    // realStartTime += pauseLag;
-            //    // realMusicTime -= pauseLag;
-            //    // realPrevMusicTime -= pauseLag;
-            //    //
-            //    // console.log(`(Resumed) pauseDuration: ${pauseDuration} oldPauseDuration: ${realMusicTime - pauseTime}`);
-            //    // console.log(`(Resumed) x2 values below; pauseTimeLag: ${pauseTimeLag} realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseDuration: ${pauseDuration}`);
-            //    console.log(x2);
-            //    pauseTime = 0;
-            //    // musicLevel.jump(realMusicTime);
-            //    musicLevel.play();
-            //    console.log(`(Resumed) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            // } else {
-            //     console.log(`offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
-            // }
+               }
+               // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+               
+               console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+               background(0, 0, 0, 128);
+               fill('cyan');
+               textSize(50);
+               textAlign(CENTER);
+               text("Mission Paused", boardSize*0.5, boardSize*0.5);
+               textSize(20);
+               text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
+               textAlign(LEFT, BASELINE); // default textAlign
+               // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+               return;
+            } else if (!isPaused && pauseTime !== 0) {
+               // realMusicTime -= pauseTime;
+               // maybe w/ live multiplayer? --> realStartTime -= realMusicTime - pauseTime;
+               
+               //console.log(`realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+               //console.log(`realMusicTime - pausedTime: ${realMusicTime} - ${pauseTime}`);
+               
+               // let pauseDuration = realMusicTime - pauseTime
+               // let pauseLag = musicLevel.currentTime() - pauseTimeLag
+               // let pauseLag = musicLevel.currentTime() - pauseTime
+               let pauseDuration = realMusicTime - pauseTime; // not used rn except console log will error
+               // let pauseDuration = -(musicLevel.currentTime() - realMusicTime); // not used rn except console log will error
+               
+               realStartTime += pauseDuration;
+               realMusicTime -= pauseDuration;
+               realPrevMusicTime -= pauseDuration;
+               // realStartTime += pauseLag;
+               // realMusicTime -= pauseLag;
+               // realPrevMusicTime -= pauseLag;
+               //
+               // console.log(`(Resumed) pauseDuration: ${pauseDuration} oldPauseDuration: ${realMusicTime - pauseTime}`);
+               // console.log(`(Resumed) x2 values below; pauseTimeLag: ${pauseTimeLag} realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseDuration: ${pauseDuration}`);
+               console.log(x2);
+               pauseTime = 0;
+               // musicLevel.jump(realMusicTime);
+               musicLevel.play();
+               console.log(`(Resumed) offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            } else {
+                console.log(`offset f musicobj: ${musicLevel.currentTime() - realMusicTime}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
+            }
 
             if (!isPaused && (this.tempoChange + 1 < _x2.length) && (realMusicTime >= _x2[this.tempoChange + 1][0])) {
                 this.tempoChange++;
