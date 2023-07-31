@@ -865,7 +865,7 @@ function draw(){
             tint(100);
             image(MissionFailedBackground, 0, 0, boardSize, boardSize);
             fill('red');
-            textSize(50);
+            textSize(42);
             text("M i s s i o n  F a i l e d", boardSize/10.3, 100);
 
             tint(255);
