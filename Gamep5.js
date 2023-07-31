@@ -815,7 +815,9 @@ function draw(){
 
             fill('cyan');
             textSize(42);
-            text("M i s s i o n  S u c c e s s", boardSize/25, 100);
+            textAlign(CENTER, BASELINE);
+            text("M i s s i o n  S u c c e s s", boardSize/2, 100);
+            textAlign(LEFT, BASELINE);
 
             //Timers
             if (easyModeTimer === true){
@@ -852,7 +854,7 @@ function draw(){
                 }
             }else{
                 tint(255);
-                image(OtherImg[2], 102, 125);
+                image(OtherImg[2], 102, 115);
             }
             //----
 
@@ -866,10 +868,12 @@ function draw(){
             image(MissionFailedBackground, 0, 0, boardSize, boardSize);
             fill('red');
             textSize(42);
-            text("M i s s i o n  F a i l e d", boardSize/10.3, 100);
+            textAlign(CENTER, BASELINE);
+            text("M i s s i o n  F a i l e d", boardSize/2, 100);
 
+            textAlign(LEFT, BASELINE); // default textAlign
             tint(255);
-            image(OtherImg[1], 54.5, 125);
+            image(OtherImg[1], 51, 115);
             buttonRetry.show(); //Retry option
             buttonW.show();
             buttonHide();
