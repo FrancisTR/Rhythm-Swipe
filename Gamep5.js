@@ -1773,11 +1773,11 @@ function playJumpSound() {
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
     if(player != null){
-        if (key === "p") {
-            isPaused = !isPaused;
-            // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
-        }
-        if (isPaused) return;
+        // if (key === "p") {
+        //     isPaused = !isPaused;
+        //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
+        // }
+        // if (isPaused) return;
         
         switch (key) {
             case "w":
