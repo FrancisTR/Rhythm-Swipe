@@ -638,15 +638,15 @@ function draw(){
                 if (easyworldRecord <= 100){
                     text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[0], 185, 50, 75, 75);
+                    image(trophies[0], 215, 50, 75, 75);
                 }else if (easyworldRecord > 100 && easyworldRecord < 150){
                     text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[1], 185, 50, 75, 75);
+                    image(trophies[1], 215, 50, 75, 75);
                 }else{
                     text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[2], 185, 50, 75, 75);
+                    image(trophies[2], 215, 50, 75, 75);
                 }
             }
             visualAudio(); //Show the audio visually
@@ -702,11 +702,11 @@ function draw(){
                 text("Personal Best: "+normalworldRecord+"s", 20, 570);
                 tint(230);
                 if (normalworldRecord <= 100){
-                    image(trophies[0], 205, 50, 75, 75);
+                    image(trophies[0], 245, 50, 75, 75);
                 }else if (normalworldRecord > 100 && normalworldRecord < 150){
-                    image(trophies[1], 205, 50, 75, 75);
+                    image(trophies[1], 245, 50, 75, 75);
                 }else{
-                    image(trophies[2], 205, 50, 75, 75);
+                    image(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
@@ -766,11 +766,11 @@ function draw(){
                 text("Personal Best: "+hardworldRecord+"s", 20, 570);
                 tint(230);
                 if (hardworldRecord <= 100){
-                    image(trophies[0], 180, 50, 75, 75);
+                    image(trophies[0], 214, 50, 75, 75);
                 }else if (hardworldRecord > 100 && hardworldRecord < 150){
-                    image(trophies[1], 180, 50, 75, 75);
+                    image(trophies[1], 214, 50, 75, 75);
                 }else{
-                    image(trophies[2], 180, 50, 75, 75);
+                    image(trophies[2], 214, 50, 75, 75);
                 }
             }
 
@@ -907,11 +907,11 @@ function draw(){
                 text("Personal Best: "+masterworldRecord+"s", 20, 570);
                 tint(230);
                 if (masterworldRecord <= 100){
-                    image(trophies[0], 205, 50, 75, 75);
+                    image(trophies[0], 245, 50, 75, 75);
                 }else if (masterworldRecord > 100 && masterworldRecord < 150){
-                    image(trophies[1], 205, 50, 75, 75);
+                    image(trophies[1], 245, 50, 75, 75);
                 }else{
-                    image(trophies[2], 205, 50, 75, 75);
+                    image(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
