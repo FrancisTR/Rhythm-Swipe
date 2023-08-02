@@ -823,7 +823,9 @@ function draw(){
             if (easyModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (easyworldRecord > timer || easyworldRecord === null){
-                    text("New High Score!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
+                    textAlign(LEFT, BASELINE);
                 }else{
                     textSize(25);
                     text("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
@@ -831,7 +833,9 @@ function draw(){
             }else if (normalModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (normalworldRecord > timer || normalworldRecord === null){
-                    text("New High Score!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
+                    textAlign(LEFT, BASELINE);
                 }else{
                     textSize(25);
                     text("Personal Best: "+normalworldRecord+"s", boardSize/12, 300);
@@ -839,7 +843,9 @@ function draw(){
             }else if (hardModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (hardworldRecord > timer || hardworldRecord === null){
-                    text("New High Score!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
+                    textAlign(LEFT, BASELINE);
                 }else{
                     textSize(25);
                     text("Personal Best: "+hardworldRecord+"s", boardSize/12, 300);
@@ -847,7 +853,9 @@ function draw(){
             }else if (masterModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (masterworldRecord > timer || masterworldRecord === null){
-                    text("New High Score!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
+                    textAlign(LEFT, BASELINE);
                 }else{
                     textSize(25);
                     text("Personal Best: "+masterworldRecord+"s", boardSize/12, 300);
@@ -907,17 +915,13 @@ function draw(){
                 text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
+                text("Personal Best: "+masterworldRecord+"s", 20, 570);
+                tint(230);
                 if (masterworldRecord <= 100){
-                    text("Personal Best: "+masterworldRecord+"s", 20, 570);
-                    tint(230);
                     image(trophies[0], 205, 50, 75, 75);
                 }else if (masterworldRecord > 100 && masterworldRecord < 150){
-                    text("Personal Best: "+masterworldRecord+"s", 20, 570);
-                    tint(230);
                     image(trophies[1], 205, 50, 75, 75);
                 }else{
-                    text("Personal Best: "+masterworldRecord+"s", 20, 570);
-                    tint(230);
                     image(trophies[2], 205, 50, 75, 75);
                 }
             }
