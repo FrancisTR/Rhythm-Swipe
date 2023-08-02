@@ -823,7 +823,7 @@ function draw(){
             if (easyModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (easyworldRecord > timer || easyworldRecord === null){
-                    text("New Current Record!", boardSize/6.5, 300);
+                    text("New High Score!", boardSize/6.5, 300);
                 }else{
                     textSize(25);
                     text("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
