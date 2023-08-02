@@ -398,7 +398,7 @@ function setup() {
         button3Start.mousePressed(hardLevel); //Play Hard Mode
         //------------------------------------
 
-        //-----------Master button (Used to see the world record)----------
+        //-----------Master button (Used to see the High Score)----------
         button4 = createButton('💰👑 Master 👑💰');
         button4.style('color', 'blueviolet');
         button4.style('font-size', 'large');
@@ -632,19 +632,19 @@ function draw(){
             text("By RGYDK", 25, 200);
 
             if (easyworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
                 if (easyworldRecord <= 100){
-                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[0], 185, 50, 75, 75);
                 }else if (easyworldRecord > 100 && easyworldRecord < 150){
-                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[1], 185, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[2], 185, 50, 75, 75);
                 }
@@ -696,19 +696,19 @@ function draw(){
             text("By RGYDK", 25, 200);
 
             if (normalworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
                 if (normalworldRecord <= 100){
-                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
+                    text("Personal Best: "+normalworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[0], 205, 50, 75, 75);
                 }else if (normalworldRecord > 100 && normalworldRecord < 150){
-                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
+                    text("Personal Best: "+normalworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[1], 205, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
+                    text("Personal Best: "+normalworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[2], 205, 50, 75, 75);
                 }
@@ -764,19 +764,19 @@ function draw(){
             text("By RGYDK", 25, 200);
 
             if (hardworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
                 if (hardworldRecord <= 100){
-                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
+                    text("Personal Best: "+hardworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[0], 180, 50, 75, 75);
                 }else if (hardworldRecord > 100 && hardworldRecord < 150){
-                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
+                    text("Personal Best: "+hardworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[1], 180, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
+                    text("Personal Best: "+hardworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[2], 180, 50, 75, 75);
                 }
@@ -823,34 +823,34 @@ function draw(){
             if (easyModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (easyworldRecord > timer || easyworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    text("New Current Record!", boardSize/6.5, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+easyworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
                 }
             }else if (normalModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (normalworldRecord > timer || normalworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    text("New High Score!", boardSize/6.5, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+normalworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+normalworldRecord+"s", boardSize/12, 300);
                 }
             }else if (hardModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (hardworldRecord > timer || hardworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    text("New High Score!", boardSize/6.5, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+hardworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+hardworldRecord+"s", boardSize/12, 300);
                 }
             }else if (masterModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (masterworldRecord > timer || masterworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    text("New High Score!", boardSize/6.5, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+masterworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+masterworldRecord+"s", boardSize/12, 300);
                 }
             }else{
                 tint(255);
@@ -904,19 +904,19 @@ function draw(){
             text("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
             text("By Tater-Tot Tunes", 25, 200);
             if (masterworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
                 if (masterworldRecord <= 100){
-                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
+                    text("Personal Best: "+masterworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[0], 205, 50, 75, 75);
                 }else if (masterworldRecord > 100 && masterworldRecord < 150){
-                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
+                    text("Personal Best: "+masterworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[1], 205, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
+                    text("Personal Best: "+masterworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[2], 205, 50, 75, 75);
                 }
