@@ -2285,9 +2285,6 @@ class Cube{ //The red cube
         // console.log("p5js: " + musicLevel.currentTime());
         // console.log("js: " + getAudioContext().currentTime);
         // p5js currentTime() is a bit jittery.
-            // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
-            // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
-            // 3. When AFK, the cubes disappear for some time. Don't know why.
         if (isStartTime) {
 
             if (typeof this.tempoChange === "undefined") {
