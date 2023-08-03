@@ -194,12 +194,18 @@ let button4Start;
 let buttonBack;
 let buttonW;
 let buttonRetry;
+
+let pixelFont;
 //--------------------------------------------------------------------
 var messageError = document.getElementById("Error");
 let resizeLock = false;
 
 //--------------------------------------------------------------PRELOAD----------------------------------------------------------------------------
 function preload() {
+
+    //Font(s)
+    //https://www.fontspace.com/pixeloid-font-f69232
+    pixelFont = loadFont('asset/PixeloidSans-mLxMm.ttf');
 
     //Level Sounds
 
@@ -392,7 +398,7 @@ function setup() {
         button3Start.mousePressed(hardLevel); //Play Hard Mode
         //------------------------------------
 
-        //-----------Master button (Used to see the world record)----------
+        //-----------Master button (Used to see the High Score)----------
         button4 = createButton('💰👑 Master 👑💰');
         button4.style('color', 'blueviolet');
         button4.style('font-size', 'large');
@@ -460,6 +466,9 @@ function setup() {
 //--------------------------------------------------------------------DRAW----------------------------------------------------------------------------------
 function draw(){
 
+    
+
+    textFont(pixelFont);
     StartGameButton.position(250, 356.5);
     StartGameButton.center('horizontal');
 
@@ -586,13 +595,13 @@ function draw(){
             image(BackgroundImage, 0, 0, boardSize, boardSize);
             showNPC(); //A nice seeing of a cop running to the robber
             fill('cyan');
-            textSize(50);
+            textSize(43);
             text("R h y t h m  S w i p e", 77, 100);
-            textSize(15);
 
             //*/VERSION/
+            textSize(15);
             fill("white");
-            text("Alpha v1.1.0", 5, 15);
+            text("Alpha v1.1.1", 5, 15);
 
             buttonShow();
             break;
@@ -618,26 +627,26 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Easy", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: A Punch Up at a Wedding 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
 
             if (easyworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
                 if (easyworldRecord <= 100){
-                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[0], 185, 50, 75, 75);
+                    image(trophies[0], 215, 50, 75, 75);
                 }else if (easyworldRecord > 100 && easyworldRecord < 150){
-                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[1], 185, 50, 75, 75);
+                    image(trophies[1], 215, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+easyworldRecord+"s", 20, 570);
+                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[2], 185, 50, 75, 75);
+                    image(trophies[2], 215, 50, 75, 75);
                 }
             }
             visualAudio(); //Show the audio visually
@@ -682,26 +691,22 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Normal", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: There There 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
 
             if (normalworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
+                text("Personal Best: "+normalworldRecord+"s", 20, 570);
+                tint(230);
                 if (normalworldRecord <= 100){
-                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[0], 205, 50, 75, 75);
+                    image(trophies[0], 245, 50, 75, 75);
                 }else if (normalworldRecord > 100 && normalworldRecord < 150){
-                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[1], 205, 50, 75, 75);
+                    image(trophies[1], 245, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+normalworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[2], 205, 50, 75, 75);
+                    image(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
@@ -750,26 +755,22 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Hard", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: Where I End and You Begin 8-bit", 25, 150);
             text("By RGYDK", 25, 200);
 
             if (hardworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
+                text("Personal Best: "+hardworldRecord+"s", 20, 570);
+                tint(230);
                 if (hardworldRecord <= 100){
-                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[0], 180, 50, 75, 75);
+                    image(trophies[0], 214, 50, 75, 75);
                 }else if (hardworldRecord > 100 && hardworldRecord < 150){
-                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[1], 180, 50, 75, 75);
+                    image(trophies[1], 214, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+hardworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[2], 180, 50, 75, 75);
+                    image(trophies[2], 214, 50, 75, 75);
                 }
             }
 
@@ -805,49 +806,56 @@ function draw(){
             image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
 
             fill('cyan');
-            textSize(50);
-            text("M i s s i o n  S u c c e s s", boardSize/25, 100);
+            textSize(42);
+            textAlign(CENTER, BASELINE);
+            text("M i s s i o n  S u c c e s s", boardSize/2, 100);
+            textAlign(LEFT, BASELINE);
 
             //Timers
             if (easyModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (easyworldRecord > timer || easyworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+easyworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
                 }
             }else if (normalModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (normalworldRecord > timer || normalworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+normalworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+normalworldRecord+"s", boardSize/12, 300);
                 }
             }else if (hardModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (hardworldRecord > timer || hardworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+hardworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+hardworldRecord+"s", boardSize/12, 300);
                 }
             }else if (masterModeTimer === true){
                 text("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (masterworldRecord > timer || masterworldRecord === null){
-                    text("New World Record!", boardSize/6.5, 300);
+                    textAlign(CENTER, BASELINE);
+                    text("New High Score!", boardSize/2, 300);
                 }else{
                     textSize(25);
-                    text("World Record: "+masterworldRecord+"s", boardSize/12, 300);
+                    text("Personal Best: "+masterworldRecord+"s", boardSize/12, 300);
                 }
             }else{
                 tint(255);
-                image(OtherImg[2], 102, 125);
+                image(OtherImg[2], 102, 115);
             }
             //----
 
 
+            textAlign(LEFT, BASELINE);
             buttonW.show();
             buttonHide();
             break;
@@ -856,11 +864,13 @@ function draw(){
             tint(100);
             image(MissionFailedBackground, 0, 0, boardSize, boardSize);
             fill('red');
-            textSize(50);
-            text("M i s s i o n  F a i l e d", boardSize/10.3, 100);
+            textSize(42);
+            textAlign(CENTER, BASELINE);
+            text("M i s s i o n  F a i l e d", boardSize/2, 100);
 
+            textAlign(LEFT, BASELINE); // default textAlign
             tint(255);
-            image(OtherImg[1], 54.5, 125);
+            image(OtherImg[1], 51, 115);
             buttonRetry.show(); //Retry option
             buttonW.show();
             buttonHide();
@@ -887,25 +897,21 @@ function draw(){
             fill('white');
             textSize(25);
             text("Difficulty: Master", 25, 100);
-            textSize(17);
+            textSize(15);
             text("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
             text("By Tater-Tot Tunes", 25, 200);
             if (masterworldRecord === null){
-                text("Current Record Time: ???", 20, 570);
+                text("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
+                text("Personal Best: "+masterworldRecord+"s", 20, 570);
+                tint(230);
                 if (masterworldRecord <= 100){
-                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[0], 205, 50, 75, 75);
+                    image(trophies[0], 245, 50, 75, 75);
                 }else if (masterworldRecord > 100 && masterworldRecord < 150){
-                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[1], 205, 50, 75, 75);
+                    image(trophies[1], 245, 50, 75, 75);
                 }else{
-                    text("Current Record Time: "+masterworldRecord+"s", 20, 570);
-                    tint(230);
-                    image(trophies[2], 205, 50, 75, 75);
+                    image(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
@@ -1737,7 +1743,7 @@ function board(){
     strokeWeight(2);
     rect(0, 0, 180 ,60);
     fill('cyan');
-    textSize(35);
+    textSize(33);
     text(" Jewels: "+points, 0, 45);
 
 
@@ -2311,8 +2317,8 @@ class Cube{ //The red cube
             }
 
             // if (isPaused) {
-// Postponed du to audio losing sync offset after pause
-            //    if (pauseTime === 0) {
+// Postponed//  to audio losing sync offset after pause
+            //     if (pauseTime === 0) {
             //        // pauseTime = realMusicTime; // -0.06 - -0.07, -0.12 - -0.13
             //        // p5js is about -0.07 seconds behind every pause,
             //        // so sync with p5js duration
