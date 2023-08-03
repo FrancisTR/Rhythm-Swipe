@@ -2165,7 +2165,7 @@ class Cube{ //The red cube
         if (lockPattern) {
             lockPattern = false;
             lockPatternUsed = true;
-        }else if(x2[0] <= 530 || x2[0] > 560) {
+        }else if(x2[0] <= -70 || (x2[0] <= 530 && x2[0] > -40) || x2[0] > 560) {
             lockPattern = false;
             lockPatternUsed = false;
         }else if(!lockPatternUsed) { 
@@ -2205,12 +2205,7 @@ class Cube{ //The red cube
                 y2 -= 12;
             }else{
                 console.log("Perfect!");
-                if (j !== 0) {
-                    x2[j] -= 600;
-                } else {
-                    console.log("Doesn't work with blue cube yet");
-                    // cops don't move if blue cube doesn't move rn
-                }
+                x2[j] -= 600;
             }
         }else{
             console.log("Still perfect!");
