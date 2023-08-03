@@ -601,7 +601,7 @@ function draw(){
             //*/VERSION/
             textSize(15);
             fill("white");
-            text("Alpha v1.1.1", 5, 15);
+            text("Alpha v1.1.2", 5, 15);
 
             buttonShow();
             break;
@@ -2165,7 +2165,7 @@ class Cube{ //The red cube
         if (lockPattern) {
             lockPattern = false;
             lockPatternUsed = true;
-        }else if(x2[0] <= 530 || x2[0] > 560) {
+        }else if(x2[0] <= -70 || (x2[0] <= 530 && x2[0] > -40) || x2[0] > 560) {
             lockPattern = false;
             lockPatternUsed = false;
         }else if(!lockPatternUsed) { 
@@ -2191,13 +2191,24 @@ class Cube{ //The red cube
 
         beatColorBoolean = (x2[0] > 540 || x2[0] < 470) && (x2[1] > 540 || x2[1] < 470) && (x2[2] > 540 || x2[2] < 470) && (x2[3] > 540 || x2[3] < 470) && (x2[4] > 540 || x2[4] < 470) && (x2[5] > 540 || x2[5] < 470)
         if (pressByBeat === 'red'){
-            if ((x2[0] > 540 || x2[0] < 470) && (x2[1] > 540 || x2[1] < 470) && (x2[2] > 540 || x2[2] < 470) && (x2[3] > 540 || x2[3] < 470) && (x2[4] > 540 || x2[4] < 470) && (x2[5] > 540 || x2[5] < 470)){ //If you miss the beat
+            let killMe = true;
+            let j = 0;
+            for (j = 0; j < x2.length; j++){
+                if (x2[j] <= 540 && x2[j] >= 470){ //If you miss the beat
+                    killMe = false;
+                    break;
+                }
+            }
+            if (killMe){
                 backgroundColor -= 50;
                 playerAttempts -= 1;
                 y2 -= 12;
             }else{
                 console.log("Perfect!");
+                x2[j] -= 600;
             }
+        }else{
+            console.log("Still perfect!");
         }
 
         if (playerAttempts === 0){
@@ -2285,9 +2296,6 @@ class Cube{ //The red cube
         // console.log("p5js: " + musicLevel.currentTime());
         // console.log("js: " + getAudioContext().currentTime);
         // p5js currentTime() is a bit jittery.
-            // 1. Cubes are gone and reappear for short gists of time when switching songs. Not usable.
-            // 2. When using it the first time, the cubes for short periods of times switch to a very different position; about 80 secounds foreward and back.
-            // 3. When AFK, the cubes disappear for some time. Don't know why.
         if (isStartTime) {
 
             if (typeof this.tempoChange === "undefined") {

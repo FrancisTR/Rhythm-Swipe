@@ -5,10 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!--p5.js Library--> 
-    <script src="/lib/p5.js"></script>
-    <script src="/lib/p5.sound.js"></script>
-
     <link rel="shortcut icon" type="x-icon" href="asset/gems/gem0.png"> 
     <link rel="stylesheet" href="styles.css">
     <title>Rhythm Swipe</title>
@@ -52,12 +48,16 @@
                 <center>
                     <p>Sandboa Presents</p>
                     <br>
-                    <img src="asset/Loading.gif" width="25%" draggable="false"/>
+                    <img rel="preload" src="asset/Loading.gif" width="25%" draggable="false"/>
+                    <!--p5.js Library--> 
+                    <script src="/lib/p5.js"></script>
+                    <script src="/lib/p5.sound.js"></script>
+
+                    <!--The Game itself-->
+                    <script src="Gamep5.js"></script>
                 </center>
             </div>
 
-            <!--The Game itself-->
-            <script src="Gamep5.js"></script>
         </section>
 
 
