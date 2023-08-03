@@ -601,7 +601,7 @@ function draw(){
             //*/VERSION/
             textSize(15);
             fill("white");
-            text("Alpha v1.1.1", 5, 15);
+            text("Alpha v1.1.2", 5, 15);
 
             buttonShow();
             break;
