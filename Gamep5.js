@@ -32,8 +32,11 @@ let IntermissionThemeSwitch = false;
 //----------------------------------------------------
 
 //---------------Creating the Board-------------------
-var boardSize = 600; //How big the board is
+var boardSize = 300; //How big the board is
 let tileSize = boardSize/10; //The grid
+let boardZoom = boardSize / 600;
+let boardXPos = 490;
+let boardYPos = 101;
 //----------------------------------------------------
 
 
@@ -305,7 +308,7 @@ function setup() {
     //Center the game on the page
 
     let div = createCanvas(boardSize, boardSize);
-    div.position(100, 101);
+    div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
 
@@ -327,7 +330,8 @@ function setup() {
     if (redrawLock == false){
         StartGameButton = createButton('Start');
         StartGameButton.style('color', 'blueviolet');
-        StartGameButton.style('font-size', 'large');
+        // minimum font 10px
+        StartGameButton.style('font-size', ((18 * boardZoom) && 10) + 'px');
         StartGameButton.style('border', '5px solid cyan');
         StartGameButton.style('cursor', 'pointer');
         StartGameButton.size(200, 75);
@@ -337,7 +341,7 @@ function setup() {
         //-------------Back button-----------
         buttonBack = createButton('Back');
         buttonBack.style('color', 'black');
-        buttonBack.style('font-size', 'large');
+        buttonBack.style('font-size', '18px');
         buttonBack.style('border', '5px solid cyan');
         buttonBack.style('cursor', 'pointer');
         buttonBack.size(200, 75);
@@ -347,72 +351,73 @@ function setup() {
         //-----------Easy Button-------------
         button = createButton('💎 Easy 💎');
         button.style('color', 'green');
-        button.style('font-size', 'large');
+        // button.style('font-size', '18px');
+        button.style('font-size', ((18 * boardZoom) && 10) + 'px');
         button.style('border', '5px solid green');
         button.style('cursor', 'pointer');
-        button.size(200, 75);
+        button.size(200*boardZoom, 75*boardZoom);
         button.mousePressed(easyIntermission); //Goes to Intermission
 
         buttonStart = createButton('Start');
         buttonStart.style('color', 'green');
-        buttonStart.style('font-size', 'large');
+        buttonStart.style('font-size', '18px');
         buttonStart.style('border', '5px solid green');
         buttonStart.style('cursor', 'pointer');
-        buttonStart.size(200, 75);
+        buttonStart.size(200*boardZoom, 75*boardZoom);
         buttonStart.mousePressed(easyLevel); //Play Easy Mode
         //-----------------------------------
 
         //-----------Normal Button-----------
         button2 = createButton('💎💎 Normal 💎💎');
         button2.style('color', 'orange');
-        button2.style('font-size', 'large');
+        button2.style('font-size', '18px');
         button2.style('border', '5px solid orange');
         button2.style('cursor', 'pointer');
-        button2.size(200, 75);
+        button2.size(200*boardZoom, 75*boardZoom);
         button2.mousePressed(normalIntermission); //Goes to Intermission
 
         button2Start = createButton('Start');
         button2Start.style('color', 'orange');
-        button2Start.style('font-size', 'large');
+        button2Start.style('font-size', '18px');
         button2Start.style('border', '5px solid orange');
         button2Start.style('cursor', 'pointer');
-        button2Start.size(200, 75);
+        button2Start.size(200*boardZoom, 75*boardZoom);
         button2Start.mousePressed(normalLevel); //Play Normal Mode
         //-----------------------------------
 
         //------------Hard button------------
         button3 = createButton('💰 Hard 💰');
         button3.style('color', 'red');
-        button3.style('font-size', 'large');
+        button3.style('font-size', '18px');
         button3.style('border', '5px solid red');
         button3.style('cursor', 'pointer');
-        button3.size(200, 75);
+        button3.size(200*boardZoom, 75*boardZoom);
         button3.mousePressed(hardIntermission); //Goes to Intermission
 
         button3Start = createButton('Start');
         button3Start.style('color', 'red');
-        button3Start.style('font-size', 'large');
+        button3Start.style('font-size', '18px');
         button3Start.style('border', '5px solid red');
         button3Start.style('cursor', 'pointer');
-        button3Start.size(200, 75);
+        button3Start.size(200*boardZoom, 75*boardZoom);
         button3Start.mousePressed(hardLevel); //Play Hard Mode
         //------------------------------------
 
         //-----------Master button (Used to see the High Score)----------
         button4 = createButton('💰👑 Master 👑💰');
         button4.style('color', 'blueviolet');
-        button4.style('font-size', 'large');
+        button4.style('font-size', '18px');
         button4.style('border', '5px solid blueviolet');
         button4.style('cursor', 'pointer');
-        button4.size(200, 75);
+        button4.size(200*boardZoom, 75*boardZoom);
         button4.mousePressed(masterIntermission); //Goes to Intermission
 
         button4Start = createButton('Start');
         button4Start.style('color', 'blueviolet');
-        button4Start.style('font-size', 'large');
+        button4Start.style('font-size', '18px');
         button4Start.style('border', '5px solid blueviolet');
         button4Start.style('cursor', 'pointer');
-        button4Start.size(200, 75);
+        button4Start.size(200*boardZoom, 75*boardZoom);
         button4Start.mousePressed(masterLevel); //Play Master Mode
         //-----------------------------------------------------------------
 
@@ -420,10 +425,10 @@ function setup() {
         //---------Return button (For Finish and Fail level)---------------
         buttonW = createButton('Return');
         buttonW.style('color', 'black');
-        buttonW.style('font-size', 'large');
+        buttonW.style('font-size', '18px');
         buttonW.style('border', '5px solid cyan');
         buttonW.style('cursor', 'pointer');
-        buttonW.size(200, 75);
+        buttonW.size(200*boardZoom, 75*boardZoom);
 
         buttonW.mousePressed(mainMenu); //Main menu
         buttonW.hide();
@@ -433,10 +438,10 @@ function setup() {
         //---------Retry button (For Fail level)---------------
         buttonRetry = createButton('Retry');
         buttonRetry.style('color', 'black');
-        buttonRetry.style('font-size', 'large');
+        buttonRetry.style('font-size', '18px');
         buttonRetry.style('border', '5px solid cyan');
         buttonRetry.style('cursor', 'pointer');
-        buttonRetry.size(200, 75);
+        buttonRetry.size(200*boardZoom, 75*boardZoom);
 
         buttonRetry.mousePressed(mainMenuRetry); //Main menu
         buttonRetry.hide();
@@ -472,37 +477,39 @@ function draw(){
     StartGameButton.position(250, 356.5);
     StartGameButton.center('horizontal');
 
-    button.position(250, 237.66);
+    button.position(0, boardYPos+136.66*boardZoom);
+    // This is visible barely button.position(0, 237.66*boardZoom*boardZoom);
     button.center('horizontal');
 
-    button2.position(250, 324);
+    button2.position(250, boardYPos+223*boardZoom);
+    // button2.position(250, 324); // subtract literal by boardYPos, then *
     button2.center('horizontal');
 
-    button3.position(250, 409.7);
+    button3.position(250, boardYPos+308.7*boardZoom);
     button3.center('horizontal');
 
-    button4.position(250, 498.6);
+    button4.position(250, boardYPos+397.6*boardZoom);
     button4.center('horizontal');
 
-    buttonStart.position(250, 469);
+    buttonStart.position(250, boardYPos+368*boardZoom);
     buttonStart.center('horizontal');
 
-    button2Start.position(250, 469);
+    button2Start.position(250, boardYPos+368*boardZoom);
     button2Start.center('horizontal');
  
-    button3Start.position(250, 469);
+    button3Start.position(250, boardYPos+368*boardZoom);
     button3Start.center('horizontal');
 
-    button4Start.position(250, 469);
+    button4Start.position(250, boardYPos+368*boardZoom);
     button4Start.center('horizontal');
 
 
-    buttonBack.position(250, 552);
+    buttonBack.position(250, boardYPos+451*boardZoom);
     buttonBack.center('horizontal');
     buttonW.position(250, 590);
     buttonW.center('horizontal');
 
-    buttonRetry.position(250, 505);
+    buttonRetry.position(250, boardYPos+404*boardZoom);
     buttonRetry.center('horizontal');
     
 
@@ -595,8 +602,8 @@ function draw(){
             image(BackgroundImage, 0, 0, boardSize, boardSize);
             showNPC(); //A nice seeing of a cop running to the robber
             fill('cyan');
-            textSize(43);
-            text("R h y t h m  S w i p e", 77, 100);
+            textSize(43*boardZoom);
+            text("R h y t h m  S w i p e", 77*boardZoom, 100*boardZoom);
 
             //*/VERSION/
             textSize(15);
