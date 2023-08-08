@@ -10,11 +10,22 @@ Legends:
 
 
 
+//---------------Creating the Board-------------------
+let boardSize = 600; //How big the board is
+let boardSizeZoomed = 400; //How big the board will be displayed in pixels
+let tileSize = boardSize/10; //The grid
+let boardZoom = boardSizeZoomed / boardSize;
+let boardXPos = 490;
+let boardYPos = 101;
+//----------------------------------------------------
+
+
+
 //----------------------MainMenu----------------------
 let BackgroundImage; //Main menu background
 var NPCS; 
 let rectWidthMainMenu = 30;
-let rectHeightMainMenu = 500;
+let rectHeightMainMenu = 500*boardZoom;
 
 //Characters in the Main Menu (Decoration)
 let xMainMenu = rectWidthMainMenu; 
@@ -22,21 +33,13 @@ let xMainMenu = rectWidthMainMenu;
 let xMainMenuCop = rectWidthMainMenu; 
 let xMainMenuRobber = rectWidthMainMenu; 
 
-let yMainMenu = 575;
+let yMainMenu = 575*boardZoom;
 
 //Audio for the Main Menu
 let MainMenuTheme;
 let MainMenuThemeSwitch = false;
 
 let IntermissionThemeSwitch = false;
-//----------------------------------------------------
-
-//---------------Creating the Board-------------------
-var boardSize = 300; //How big the board is
-let tileSize = boardSize/10; //The grid
-let boardZoom = boardSize / 600;
-let boardXPos = 490;
-let boardYPos = 101;
 //----------------------------------------------------
 
 
@@ -304,10 +307,29 @@ function preload() {
 
 //--------------------------------------------------------------------SETUP---------------------------------------------------------------------------------
 //Creation of the Canvas, the buttons, and the sounds
+function textZoomed(txt, x=0, y=0) {
+    text(txt, x * boardZoom, y * boardZoom);
+}
+
+function textSizeZoomed(n) {
+    textSize(Math.max(n * boardZoom, 9));
+}
+
+function createTemplateButton(txt/*, properties*/) {
+    let tempButton = createButton(txt);
+    
+    // minimum font 9px
+    tempButton.style('font-size', Math.max((18 * boardZoom), 9) + 'px');
+
+    tempButton.style('cursor', 'pointer');
+    tempButton.size(200 * boardZoom, 75 * boardZoom);
+    return tempButton;
+}
+
 function setup() {
     //Center the game on the page
 
-    let div = createCanvas(boardSize, boardSize);
+    let div = createCanvas(boardSizeZoomed, boardSizeZoomed);
     div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
@@ -327,136 +349,102 @@ function setup() {
 
     //StartGame
     background("darkgray");
-    if (redrawLock == false){
-        StartGameButton = createButton('Start');
-        StartGameButton.style('color', 'blueviolet');
-        // minimum font 10px
-        StartGameButton.style('font-size', ((18 * boardZoom) && 10) + 'px');
-        StartGameButton.style('border', '5px solid cyan');
-        StartGameButton.style('cursor', 'pointer');
-        StartGameButton.size(200, 75);
-        StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
-
-
-        //-------------Back button-----------
-        buttonBack = createButton('Back');
-        buttonBack.style('color', 'black');
-        buttonBack.style('font-size', '18px');
-        buttonBack.style('border', '5px solid cyan');
-        buttonBack.style('cursor', 'pointer');
-        buttonBack.size(200, 75);
-        buttonBack.mousePressed(mainMenu); //Goes to Main Menu
-        //-----------------------------------
-
-        //-----------Easy Button-------------
-        button = createButton('💎 Easy 💎');
-        button.style('color', 'green');
-        // button.style('font-size', '18px');
-        button.style('font-size', ((18 * boardZoom) && 10) + 'px');
-        button.style('border', '5px solid green');
-        button.style('cursor', 'pointer');
-        button.size(200*boardZoom, 75*boardZoom);
-        button.mousePressed(easyIntermission); //Goes to Intermission
-
-        buttonStart = createButton('Start');
-        buttonStart.style('color', 'green');
-        buttonStart.style('font-size', '18px');
-        buttonStart.style('border', '5px solid green');
-        buttonStart.style('cursor', 'pointer');
-        buttonStart.size(200*boardZoom, 75*boardZoom);
-        buttonStart.mousePressed(easyLevel); //Play Easy Mode
-        //-----------------------------------
-
-        //-----------Normal Button-----------
-        button2 = createButton('💎💎 Normal 💎💎');
-        button2.style('color', 'orange');
-        button2.style('font-size', '18px');
-        button2.style('border', '5px solid orange');
-        button2.style('cursor', 'pointer');
-        button2.size(200*boardZoom, 75*boardZoom);
-        button2.mousePressed(normalIntermission); //Goes to Intermission
-
-        button2Start = createButton('Start');
-        button2Start.style('color', 'orange');
-        button2Start.style('font-size', '18px');
-        button2Start.style('border', '5px solid orange');
-        button2Start.style('cursor', 'pointer');
-        button2Start.size(200*boardZoom, 75*boardZoom);
-        button2Start.mousePressed(normalLevel); //Play Normal Mode
-        //-----------------------------------
-
-        //------------Hard button------------
-        button3 = createButton('💰 Hard 💰');
-        button3.style('color', 'red');
-        button3.style('font-size', '18px');
-        button3.style('border', '5px solid red');
-        button3.style('cursor', 'pointer');
-        button3.size(200*boardZoom, 75*boardZoom);
-        button3.mousePressed(hardIntermission); //Goes to Intermission
-
-        button3Start = createButton('Start');
-        button3Start.style('color', 'red');
-        button3Start.style('font-size', '18px');
-        button3Start.style('border', '5px solid red');
-        button3Start.style('cursor', 'pointer');
-        button3Start.size(200*boardZoom, 75*boardZoom);
-        button3Start.mousePressed(hardLevel); //Play Hard Mode
-        //------------------------------------
-
-        //-----------Master button (Used to see the High Score)----------
-        button4 = createButton('💰👑 Master 👑💰');
-        button4.style('color', 'blueviolet');
-        button4.style('font-size', '18px');
-        button4.style('border', '5px solid blueviolet');
-        button4.style('cursor', 'pointer');
-        button4.size(200*boardZoom, 75*boardZoom);
-        button4.mousePressed(masterIntermission); //Goes to Intermission
-
-        button4Start = createButton('Start');
-        button4Start.style('color', 'blueviolet');
-        button4Start.style('font-size', '18px');
-        button4Start.style('border', '5px solid blueviolet');
-        button4Start.style('cursor', 'pointer');
-        button4Start.size(200*boardZoom, 75*boardZoom);
-        button4Start.mousePressed(masterLevel); //Play Master Mode
-        //-----------------------------------------------------------------
-
-
-        //---------Return button (For Finish and Fail level)---------------
-        buttonW = createButton('Return');
-        buttonW.style('color', 'black');
-        buttonW.style('font-size', '18px');
-        buttonW.style('border', '5px solid cyan');
-        buttonW.style('cursor', 'pointer');
-        buttonW.size(200*boardZoom, 75*boardZoom);
-
-        buttonW.mousePressed(mainMenu); //Main menu
-        buttonW.hide();
-
-        //-----------------------------------------------------------------
-
-        //---------Retry button (For Fail level)---------------
-        buttonRetry = createButton('Retry');
-        buttonRetry.style('color', 'black');
-        buttonRetry.style('font-size', '18px');
-        buttonRetry.style('border', '5px solid cyan');
-        buttonRetry.style('cursor', 'pointer');
-        buttonRetry.size(200*boardZoom, 75*boardZoom);
-
-        buttonRetry.mousePressed(mainMenuRetry); //Main menu
-        buttonRetry.hide();
-
-        //-----------------------------------------------------------------
-
-
-        //----------------------Music Related------------------------------
-        amplitude = new p5.Amplitude();
-
-        cubeDetector = new Cube();
-        cubeBeat = new Cube();
-        //-----------------------------------------------------------------
-        redrawLock = true;
+    if (redrawLock !== false){
+        return;
     }
+    StartGameButton = createTemplateButton('Start');
+    StartGameButton.style('color', 'blueviolet');
+    // minimum font 10px
+    StartGameButton.style('border', '5px solid cyan');
+    StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
+
+
+    //-------------Back button-----------
+    buttonBack = createTemplateButton('Back');
+    buttonBack.style('color', 'black');
+    buttonBack.style('border', '5px solid cyan');
+    buttonBack.mousePressed(mainMenu); //Goes to Main Menu
+    //-----------------------------------
+
+    //-----------Easy Button-------------
+    button = createTemplateButton('💎 Easy 💎');
+    button.style('color', 'green');
+    // button.style('font-size', '18px');
+    button.style('border', '5px solid green');
+    button.mousePressed(easyIntermission); //Goes to Intermission
+
+    buttonStart = createTemplateButton('Start');
+    buttonStart.style('color', 'green');
+    buttonStart.style('border', '5px solid green');
+    buttonStart.mousePressed(easyLevel); //Play Easy Mode
+    //-----------------------------------
+
+    //-----------Normal Button-----------
+    button2 = createTemplateButton('💎💎 Normal 💎💎');
+    button2.style('color', 'orange');
+    button2.style('border', '5px solid orange');
+    button2.mousePressed(normalIntermission); //Goes to Intermission
+
+    button2Start = createTemplateButton('Start');
+    button2Start.style('color', 'orange');
+    button2Start.style('border', '5px solid orange');
+    button2Start.mousePressed(normalLevel); //Play Normal Mode
+    //-----------------------------------
+
+    //------------Hard button------------
+    button3 = createTemplateButton('💰 Hard 💰');
+    button3.style('color', 'red');
+    button3.style('border', '5px solid red');
+    button3.mousePressed(hardIntermission); //Goes to Intermission
+
+    button3Start = createTemplateButton('Start');
+    button3Start.style('color', 'red');
+    button3Start.style('border', '5px solid red');
+    button3Start.mousePressed(hardLevel); //Play Hard Mode
+    //------------------------------------
+
+    //-----------Master button (Used to see the High Score)----------
+    button4 = createTemplateButton('💰👑 Master 👑💰');
+    button4.style('color', 'blueviolet');
+    button4.style('border', '5px solid blueviolet');
+    button4.mousePressed(masterIntermission); //Goes to Intermission
+
+    button4Start = createTemplateButton('Start');
+    button4Start.style('color', 'blueviolet');
+    button4Start.style('border', '5px solid blueviolet');
+    button4Start.mousePressed(masterLevel); //Play Master Mode
+    //-----------------------------------------------------------------
+
+
+    //---------Return button (For Finish and Fail level)---------------
+    buttonW = createTemplateButton('Return');
+    buttonW.style('color', 'black');
+    buttonW.style('border', '5px solid cyan');
+
+    buttonW.mousePressed(mainMenu); //Main menu
+    buttonW.hide();
+
+    //-----------------------------------------------------------------
+
+    //---------Retry button (For Fail level)---------------
+    buttonRetry = createTemplateButton('Retry');
+    buttonRetry.style('color', 'black');
+    buttonRetry.style('border', '5px solid cyan');
+    buttonRetry.style('cursor', 'pointer');
+
+    buttonRetry.mousePressed(mainMenuRetry); //Main menu
+    buttonRetry.hide();
+
+    //-----------------------------------------------------------------
+
+
+    //----------------------Music Related------------------------------
+    amplitude = new p5.Amplitude();
+
+    cubeDetector = new Cube();
+    cubeBeat = new Cube();
+    //-----------------------------------------------------------------
+    redrawLock = true;
 
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -474,7 +462,7 @@ function draw(){
     
 
     textFont(pixelFont);
-    StartGameButton.position(250, 356.5);
+    StartGameButton.position(250*boardZoom, boardYPos+255.5*boardZoom);
     StartGameButton.center('horizontal');
 
     button.position(0, boardYPos+136.66*boardZoom);
@@ -506,7 +494,7 @@ function draw(){
 
     buttonBack.position(250, boardYPos+451*boardZoom);
     buttonBack.center('horizontal');
-    buttonW.position(250, 590);
+    buttonW.position(250, boardYPos+489*boardZoom);
     buttonW.center('horizontal');
 
     buttonRetry.position(250, boardYPos+404*boardZoom);
@@ -561,7 +549,7 @@ function draw(){
             buttonBack.hide();
             StartGameButton.show();
             tint(200);
-            image(StartBackgroundImage, 0, 0, boardSize, boardSize);
+            image(StartBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             break;
         //---------------Main Menu------------------
         case 0:
@@ -599,16 +587,16 @@ function draw(){
             //*/
             //background('black');
             tint(200);
-            image(BackgroundImage, 0, 0, boardSize, boardSize);
+            image(BackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             showNPC(); //A nice seeing of a cop running to the robber
             fill('cyan');
-            textSize(43*boardZoom);
-            text("R h y t h m  S w i p e", 77*boardZoom, 100*boardZoom);
+            textSizeZoomed(43);
+            textZoomed("R h y t h m  S w i p e", 77, 100);
 
             //*/VERSION/
-            textSize(15);
+            textSizeZoomed(15);
             fill("white");
-            text("Alpha v1.1.2", 5, 15);
+            textZoomed("Alpha v1.1.2", 5, 15);
 
             buttonShow();
             break;
@@ -625,33 +613,33 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             //background('gray');
             buttonHide();
             //Show the Start and Back button
             buttonBack.show();
             buttonStart.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Easy", 25, 100);
-            textSize(15);
-            text("Music: A Punch Up at a Wedding 8-bit", 25, 150);
-            text("By RGYDK", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Easy", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: A Punch Up at a Wedding 8-bit", 25, 150);
+            textZoomed("By RGYDK", 25, 200);
 
             if (easyworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
                 if (easyworldRecord <= 100){
-                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[0], 215, 50, 75, 75);
                 }else if (easyworldRecord > 100 && easyworldRecord < 150){
-                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[1], 215, 50, 75, 75);
                 }else{
-                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
                     image(trophies[2], 215, 50, 75, 75);
                 }
@@ -669,7 +657,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            image(LevelBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             levelRetry = level;
             //background(backgroundColor);
             level1();
@@ -690,23 +678,23 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
             button2Start.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Normal", 25, 100);
-            textSize(15);
-            text("Music: There There 8-bit", 25, 150);
-            text("By RGYDK", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Normal", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: There There 8-bit", 25, 150);
+            textZoomed("By RGYDK", 25, 200);
 
             if (normalworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
-                text("Personal Best: "+normalworldRecord+"s", 20, 570);
+                textZoomed("Personal Best: "+normalworldRecord+"s", 20, 570);
                 tint(230);
                 if (normalworldRecord <= 100){
                     image(trophies[0], 245, 50, 75, 75);
@@ -731,7 +719,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            image(LevelBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             //background(backgroundColor);
             levelRetry = level;
             level2();
@@ -754,23 +742,23 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
             button3Start.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Hard", 25, 100);
-            textSize(15);
-            text("Music: Where I End and You Begin 8-bit", 25, 150);
-            text("By RGYDK", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Hard", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: Where I End and You Begin 8-bit", 25, 150);
+            textZoomed("By RGYDK", 25, 200);
 
             if (hardworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
-                text("Personal Best: "+hardworldRecord+"s", 20, 570);
+                textZoomed("Personal Best: "+hardworldRecord+"s", 20, 570);
                 tint(230);
                 if (hardworldRecord <= 100){
                     image(trophies[0], 214, 50, 75, 75);
@@ -796,7 +784,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            image(LevelBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             levelRetry = level;
             //background(backgroundColor);
             level3();
@@ -810,54 +798,54 @@ function draw(){
         case 4: //Mission accomplished with Stats (Competition used Testing)
             //background('green');
             tint(100);
-            image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
+            image(MissionSuccessBackground, 0, 0, boardSizeZoomed, boardSizeZoomed);
 
             fill('cyan');
-            textSize(42);
+            textSizeZoomed(42);
             textAlign(CENTER, BASELINE);
-            text("M i s s i o n  S u c c e s s", boardSize/2, 100);
+            textZoomed("M i s s i o n  S u c c e s s", boardSize/2, 100, true);
             textAlign(LEFT, BASELINE);
 
             //Timers
             if (easyModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200, true);
                 if (easyworldRecord > timer || easyworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300, true);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", boardSize/12, 300, true);
                 }
             }else if (normalModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (normalworldRecord > timer || normalworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300, true);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+normalworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+normalworldRecord+"s", boardSize/12, 300, true);
                 }
             }else if (hardModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200, true);
                 if (hardworldRecord > timer || hardworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300, true);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+hardworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+hardworldRecord+"s", boardSize/12, 300, true);
                 }
             }else if (masterModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200, true);
                 if (masterworldRecord > timer || masterworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300, true);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+masterworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+masterworldRecord+"s", boardSize/12, 300, true);
                 }
             }else{
                 tint(255);
-                image(OtherImg[2], 102, 115);
+                image(OtherImg[2], 102*boardZoom, 115*boardZoom);
             }
             //----
 
@@ -869,15 +857,15 @@ function draw(){
         case 5: //Mission Failed
             //background('#D9544D');
             tint(100);
-            image(MissionFailedBackground, 0, 0, boardSize, boardSize);
+            image(MissionFailedBackground, 0, 0, boardSizeZoomed, boardSizeZoomed);
             fill('red');
-            textSize(42);
+            textSizeZoomed(42);
             textAlign(CENTER, BASELINE);
-            text("M i s s i o n  F a i l e d", boardSize/2, 100);
+            textZoomed("M i s s i o n  F a i l e d", boardSize/2, 100);
 
             textAlign(LEFT, BASELINE); // default textAlign
             tint(255);
-            image(OtherImg[1], 51, 115);
+            image(OtherImg[1], 51*boardZoom, 115*boardZoom); // this needs to not rely on default size .. unless there's another way
             buttonRetry.show(); //Retry option
             buttonW.show();
             buttonHide();
@@ -896,22 +884,22 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
             button4Start.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Master", 25, 100);
-            textSize(15);
-            text("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
-            text("By Tater-Tot Tunes", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Master", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
+            textZoomed("By Tater-Tot Tunes", 25, 200);
             if (masterworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
-                text("Personal Best: "+masterworldRecord+"s", 20, 570);
+                textZoomed("Personal Best: "+masterworldRecord+"s", 20, 570);
                 tint(230);
                 if (masterworldRecord <= 100){
                     image(trophies[0], 245, 50, 75, 75);
@@ -935,7 +923,7 @@ function draw(){
 
             //TESTING Image
             tint(backgroundColor);
-            image(MasterModeBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MasterModeBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
             //background(backgroundColor);
             levelRetry = level;
 
@@ -1199,7 +1187,7 @@ function visualAudio(){
   
     volHistory.push(vol);
   
-    if(volHistory.length > width*1) volHistory.splice(0,1); //width map
+    if(volHistory.length > boardSizeZoomed*1) volHistory.splice(0,1); //width map
   
     stroke('cyan');
     noFill();
@@ -1711,7 +1699,7 @@ function level4(){ //MASTER MODE
 
 //The board itself. Is used for all levels
 function board(){
-    for (var x = 0; x < width; x += width / 10) {
+    for (var x = 0; x < boardSizeZoomed; x += boardSizeZoomed / 10) {
         for (var y = 0; y < height; y += height / 10) {
             stroke(0);
             strokeWeight(1.5);
@@ -1722,10 +1710,10 @@ function board(){
 
             stroke(0);
             strokeWeight(1.5);
-            line(0, y, width, y);
+            line(0, y, boardSizeZoomed, y);
             stroke(110);
             strokeWeight(1.5);
-            line(0, y +1.5, width, y +1.5);
+            line(0, y +1.5, boardSizeZoomed, y +1.5);
 
         }
     }
@@ -1750,8 +1738,8 @@ function board(){
     strokeWeight(2);
     rect(0, 0, 180 ,60);
     fill('cyan');
-    textSize(33);
-    text(" Jewels: "+points, 0, 45);
+    textSizeZoomed(33);
+    textZoomed(" Jewels: "+points, 0, 45);
 
 
     cubeDetector.displayDetector();
@@ -1889,7 +1877,7 @@ class Player{
         }else{
             fill(100, 120);
         }
-        rect(this.x, this.y, width / 10, height / 10);
+        rect(this.x, this.y, boardSizeZoomed / 10, height / 10);
 
         if(str === "right"){
             this.currentImg = playerAnimation[6];
@@ -1987,7 +1975,7 @@ class EnemyJ{
         this.xy = tileAt(startPosX,startPosY);
         this.x = this.xy.x;
         this.y = this.xy.y;
-        //height and width are based on pixels of the png
+        //height and boardSizeZoomed are based on pixels of the png
         this.enemyHeight = 89;
         this.enemyWidth = 50;
 
@@ -2067,8 +2055,8 @@ class Coins{
         push();
         //fill('gold');
         image(diamonds[round(this.random)], this.rpos - 22, this.rpos2 - 20, 45, 43);
-        //ellipse(this.rpos, this.rpos2, width / 20, height / 16); //Outer circle
-        //ellipse(this.rpos, this.rpos2, width / 40, height / 25); //Inner circle
+        //ellipse(this.rpos, this.rpos2, boardSizeZoomed / 20, height / 16); //Outer circle
+        //ellipse(this.rpos, this.rpos2, boardSizeZoomed / 40, height / 25); //Inner circle
         pop();
     }
 }
@@ -2085,7 +2073,7 @@ class Block{
     display(){
         push();
         fill('#2e2e2d');
-        rect(this.rpos - 20, this.rpos2 - 20, width / 15, height / 15); //Outer circle
+        rect(this.rpos - 20, this.rpos2 - 20, boardSizeZoomed / 15, height / 15); //Outer circle
         pop();
     }
 }
@@ -2104,7 +2092,7 @@ class FinishBlock{
     finishDisplay(){
         push();
         fill('green');
-        rect(this.rpos + 10, this.rpos2 + 10, width / 15, height / 15); //Outer circle
+        rect(this.rpos + 10, this.rpos2 + 10, boardSizeZoomed / 15, height / 15); //Outer circle
         pop();
     }
 }
@@ -2155,8 +2143,8 @@ class Cube{ //The red cube
 
         //Show player attempts on the bar
         fill('gold');
-        textSize(50);
-        text(playerAttempts, 496, 590);
+        textSizeZoomed(50);
+        textZoomed(playerAttempts, 496, 590);
 
         //Are you in sync?
         //*/Debug/
@@ -2230,9 +2218,9 @@ class Cube{ //The red cube
         noStroke();
         //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
         image(playerAnimation[12], xMainMenu - 550, yMainMenu - 53, 0, 0);
-        textSize(20);
+        textSizeZoomed(20);
         fill('white');
-        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
+        textZoomed("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
         //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
         image(guard[14], xMainMenu - 650, yMainMenu - 60, 0, 0);
 
@@ -2240,21 +2228,21 @@ class Cube{ //The red cube
         image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53, 0, 0);
         image(guard[14], xMainMenuCop - 100, yMainMenu - 60, 0, 0);
 
-        if(xMainMenu > width + 700) {
+        if(xMainMenu > boardSizeZoomed + 700) {
             xMainMenu = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuRobber > width + 100) {
+        if(xMainMenuRobber > boardSizeZoomed + 100) {
             xMainMenuRobber = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuCop > width + 110) {
+        if(xMainMenuCop > boardSizeZoomed + 110) {
             xMainMenuCop = -rectWidthMainMenu - 700;
         }
 
 
-        xMainMenu+=2; //Change when needed
+        xMainMenu+=2*boardZoom; //Change when needed
 
-        xMainMenuCop+=2.5;
-        xMainMenuRobber+=3;
+        xMainMenuCop+=2.5*boardZoom;
+        xMainMenuRobber+=3*boardZoom;
     }
 
     x2calculate(offset){
@@ -2352,11 +2340,11 @@ class Cube{ //The red cube
             //    console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
             //    background(0, 0, 0, 128);
             //    fill('cyan');
-            //    textSize(50);
+            //    textSizeZoomed(50);
             //    textAlign(CENTER);
-            //    text("Mission Paused", boardSize*0.5, boardSize*0.5);
-            //    textSize(20);
-            //    text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
+            //    textZoomed("Mission Paused", boardSize*0.5, boardSize*0.5, true, true);
+            //    textSizeZoomed(20);
+            //    textZoomed("Text zoom not working.Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35)
             //    textAlign(LEFT, BASELINE); // default textAlign
             //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
             //    return;
@@ -2449,7 +2437,7 @@ class Cube{ //The red cube
             }
 
             for (let i = 0; i < x2.length; i++) {
-                if(x2[i] > width) {
+                if(x2[i] > boardSizeZoomed) {
                     x2[i] %= 600;
                     x2temp = -rectWidth;
                 }
