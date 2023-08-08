@@ -11,10 +11,11 @@ Legends:
 
 
 //---------------Creating the Board-------------------
-let boardSize = 600; //How big the board is
-let boardSizeZoomed = 400; //How big the board will be displayed in pixels
+let boardSize = 600; //How big the board is; should not change
+let xBoardSizeZoomed = 700; //How big the board is; changed based on zoom // this variable == width
+let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
 let tileSize = boardSize/10; //The grid
-let boardZoom = boardSizeZoomed / boardSize;
+let boardZoom = xBoardSizeZoomed / boardSize;
 let boardXPos = 490;
 let boardYPos = 101;
 //----------------------------------------------------
@@ -304,9 +305,15 @@ function preload() {
 
 
 
+//----ZOOMED SETUP----
+function imageZoomed(img, xPos, yPos, xSize, ySize) {
+    image(img, xPos * boardZoom, yPos * boardZoom, xSize * boardZoom, ySize * boardZoom);
+}
 
-//--------------------------------------------------------------------SETUP---------------------------------------------------------------------------------
-//Creation of the Canvas, the buttons, and the sounds
+function rectZoomed(xPos, yPos, xSize, ySize) {
+    rect(xPos * boardZoom, yPos * boardZoom, xSize * boardZoom, ySize * boardZoom);
+}
+
 function textZoomed(txt, x=0, y=0) {
     text(txt, x * boardZoom, y * boardZoom);
 }
@@ -326,10 +333,12 @@ function createTemplateButton(txt/*, properties*/) {
     return tempButton;
 }
 
+//--------------------------------------------------------------------SETUP---------------------------------------------------------------------------------
+//Creation of the Canvas, the buttons, and the sounds
 function setup() {
     //Center the game on the page
 
-    let div = createCanvas(boardSizeZoomed, boardSizeZoomed);
+    let div = createCanvas(xBoardSizeZoomed, yBoardSizeZoomed);
     div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
@@ -549,7 +558,7 @@ function draw(){
             buttonBack.hide();
             StartGameButton.show();
             tint(200);
-            image(StartBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(StartBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             break;
         //---------------Main Menu------------------
         case 0:
@@ -587,7 +596,7 @@ function draw(){
             //*/
             //background('black');
             tint(200);
-            image(BackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(BackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             showNPC(); //A nice seeing of a cop running to the robber
             fill('cyan');
             textSizeZoomed(43);
@@ -613,7 +622,7 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             //Show the Start and Back button
@@ -633,15 +642,15 @@ function draw(){
                 if (easyworldRecord <= 100){
                     textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[0], 215, 50, 75, 75);
+                    imageZoomed(trophies[0], 215, 50, 75, 75);
                 }else if (easyworldRecord > 100 && easyworldRecord < 150){
                     textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[1], 215, 50, 75, 75);
+                    imageZoomed(trophies[1], 215, 50, 75, 75);
                 }else{
                     textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[2], 215, 50, 75, 75);
+                    imageZoomed(trophies[2], 215, 50, 75, 75);
                 }
             }
             visualAudio(); //Show the audio visually
@@ -657,7 +666,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(LevelBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             levelRetry = level;
             //background(backgroundColor);
             level1();
@@ -678,7 +687,7 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
@@ -697,11 +706,11 @@ function draw(){
                 textZoomed("Personal Best: "+normalworldRecord+"s", 20, 570);
                 tint(230);
                 if (normalworldRecord <= 100){
-                    image(trophies[0], 245, 50, 75, 75);
+                    imageZoomed(trophies[0], 245, 50, 75, 75);
                 }else if (normalworldRecord > 100 && normalworldRecord < 150){
-                    image(trophies[1], 245, 50, 75, 75);
+                    imageZoomed(trophies[1], 245, 50, 75, 75);
                 }else{
-                    image(trophies[2], 245, 50, 75, 75);
+                    imageZoomed(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
@@ -719,7 +728,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(LevelBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background(backgroundColor);
             levelRetry = level;
             level2();
@@ -742,7 +751,7 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
@@ -761,11 +770,11 @@ function draw(){
                 textZoomed("Personal Best: "+hardworldRecord+"s", 20, 570);
                 tint(230);
                 if (hardworldRecord <= 100){
-                    image(trophies[0], 214, 50, 75, 75);
+                    imageZoomed(trophies[0], 214, 50, 75, 75);
                 }else if (hardworldRecord > 100 && hardworldRecord < 150){
-                    image(trophies[1], 214, 50, 75, 75);
+                    imageZoomed(trophies[1], 214, 50, 75, 75);
                 }else{
-                    image(trophies[2], 214, 50, 75, 75);
+                    imageZoomed(trophies[2], 214, 50, 75, 75);
                 }
             }
 
@@ -784,7 +793,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(LevelBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             levelRetry = level;
             //background(backgroundColor);
             level3();
@@ -798,7 +807,7 @@ function draw(){
         case 4: //Mission accomplished with Stats (Competition used Testing)
             //background('green');
             tint(100);
-            image(MissionSuccessBackground, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(MissionSuccessBackground, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
 
             fill('cyan');
             textSizeZoomed(42);
@@ -857,7 +866,7 @@ function draw(){
         case 5: //Mission Failed
             //background('#D9544D');
             tint(100);
-            image(MissionFailedBackground, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(MissionFailedBackground, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             fill('red');
             textSizeZoomed(42);
             textAlign(CENTER, BASELINE);
@@ -884,7 +893,7 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
@@ -902,11 +911,11 @@ function draw(){
                 textZoomed("Personal Best: "+masterworldRecord+"s", 20, 570);
                 tint(230);
                 if (masterworldRecord <= 100){
-                    image(trophies[0], 245, 50, 75, 75);
+                    imageZoomed(trophies[0], 245, 50, 75, 75);
                 }else if (masterworldRecord > 100 && masterworldRecord < 150){
-                    image(trophies[1], 245, 50, 75, 75);
+                    imageZoomed(trophies[1], 245, 50, 75, 75);
                 }else{
-                    image(trophies[2], 245, 50, 75, 75);
+                    imageZoomed(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
@@ -923,7 +932,7 @@ function draw(){
 
             //TESTING Image
             tint(backgroundColor);
-            image(MasterModeBackgroundImage, 0, 0, boardSizeZoomed, boardSizeZoomed);
+            image(MasterModeBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background(backgroundColor);
             levelRetry = level;
 
@@ -1187,19 +1196,19 @@ function visualAudio(){
   
     volHistory.push(vol);
   
-    if(volHistory.length > boardSizeZoomed*1) volHistory.splice(0,1); //width map
+    if(volHistory.length > xBoardSizeZoomed*1) volHistory.splice(0,1); //width map
   
     stroke('cyan');
     noFill();
     beginShape();
     for(let i=0; i<volHistory.length; i++) {
-        let y = map(volHistory[i], 0, 1, height/2, 0); //position map
+        let y = map(volHistory[i], 0, 1, yBoardSizeZoomed/2, 0); //position map
         vertex(i, y);
     }
     endShape();
   
     stroke(11, 37, 52);
-    line(volHistory.length, 0, volHistory.length, height);
+    line(volHistory.length, 0, volHistory.length, yBoardSizeZoomed);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1699,21 +1708,21 @@ function level4(){ //MASTER MODE
 
 //The board itself. Is used for all levels
 function board(){
-    for (var x = 0; x < boardSizeZoomed; x += boardSizeZoomed / 10) {
-        for (var y = 0; y < height; y += height / 10) {
+    for (var x = 0; x < xBoardSizeZoomed; x += xBoardSizeZoomed / 10) {
+        for (var y = 0; y < yBoardSizeZoomed; y += yBoardSizeZoomed / 10) {
             stroke(0);
             strokeWeight(1.5);
-            line(x, 0, x, height);
+            line(x, 0, x, yBoardSizeZoomed);
             stroke(110);
             strokeWeight(1.5);
-            line(x + 1.5, 0, x + 1.5, height);
+            line(x + 1.5, 0, x + 1.5, yBoardSizeZoomed);
 
             stroke(0);
             strokeWeight(1.5);
-            line(0, y, boardSizeZoomed, y);
+            line(0, y, xBoardSizeZoomed, y);
             stroke(110);
             strokeWeight(1.5);
-            line(0, y +1.5, boardSizeZoomed, y +1.5);
+            line(0, y +1.5, xBoardSizeZoomed, y +1.5);
 
         }
     }
@@ -1736,7 +1745,7 @@ function board(){
     stroke(51);
     fill('gray');
     strokeWeight(2);
-    rect(0, 0, 180 ,60);
+    rectZoomed(0, 0, 180, 60);
     fill('cyan');
     textSizeZoomed(33);
     textZoomed(" Jewels: "+points, 0, 45);
@@ -1877,7 +1886,7 @@ class Player{
         }else{
             fill(100, 120);
         }
-        rect(this.x, this.y, boardSizeZoomed / 10, height / 10);
+        rect(this.x*boardZoom, this.y*boardZoom, xBoardSizeZoomed / 10, yBoardSizeZoomed / 10); // fixZoom
 
         if(str === "right"){
             this.currentImg = playerAnimation[6];
@@ -1893,7 +1902,7 @@ class Player{
             this.currentImg = playerAnimation[0];
             offsetY = (this.y+tileSize +3)-(this.y + this.playerHeight);
         }
-        image(this.currentImg, this.x+offsetX, this.y+offsetY);
+        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY);
     }
 
     face(str){
@@ -1975,7 +1984,7 @@ class EnemyJ{
         this.xy = tileAt(startPosX,startPosY);
         this.x = this.xy.x;
         this.y = this.xy.y;
-        //height and boardSizeZoomed are based on pixels of the png
+        //yBoardSizeZoomed and xBoardSizeZoomed are based on pixels of the png
         this.enemyHeight = 89;
         this.enemyWidth = 50;
 
@@ -2017,7 +2026,7 @@ class EnemyJ{
                 this.currentImg = this.img2;
             }
         }
-        image(this.currentImg, this.x+offsetX, this.y+offsetY);
+        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY);
 
         //Detect if player collides with enemy
         let playerPos = {x: player.x, y: player.y};
@@ -2054,9 +2063,10 @@ class Coins{
     display(){
         push();
         //fill('gold');
-        image(diamonds[round(this.random)], this.rpos - 22, this.rpos2 - 20, 45, 43);
-        //ellipse(this.rpos, this.rpos2, boardSizeZoomed / 20, height / 16); //Outer circle
-        //ellipse(this.rpos, this.rpos2, boardSizeZoomed / 40, height / 25); //Inner circle
+        imageZoomed(diamonds[round(this.random)], this.rpos - 22, this.rpos2 - 20, 45, 43);
+        //below will display the same on 600x600 width and height for sure
+        //ellipse(this.rpos, this.rpos2, xBoardSizeZoomed / 20, yBoardSizeZoomed / 16); //Outer circle
+        //ellipse(this.rpos, this.rpos2, xBoardSizeZoomed / 40, yBoardSizeZoomed / 25); //Inner circle
         pop();
     }
 }
@@ -2073,7 +2083,7 @@ class Block{
     display(){
         push();
         fill('#2e2e2d');
-        rect(this.rpos - 20, this.rpos2 - 20, boardSizeZoomed / 15, height / 15); //Outer circle
+        rect((this.rpos - 20)*boardZoom, (this.rpos2 - 20)*boardZoom, xBoardSizeZoomed / 15, yBoardSizeZoomed / 15); //Outer circle
         pop();
     }
 }
@@ -2092,7 +2102,7 @@ class FinishBlock{
     finishDisplay(){
         push();
         fill('green');
-        rect(this.rpos + 10, this.rpos2 + 10, boardSizeZoomed / 15, height / 15); //Outer circle
+        rect((this.rpos + 10)*boardZoom, (this.rpos2 + 10)*boardZoom, xBoardSizeZoomed / 15, yBoardSizeZoomed / 15); //Outer circle
         pop();
     }
 }
@@ -2136,9 +2146,9 @@ class Cube{ //The red cube
 
     displayDetector(){
         fill('black');
-        rect(0, 540, 600 ,60); //Whole bar
+        rectZoomed(0, 540, 600, 60); //Whole bar
         fill(pressByBeat);
-        rect(470, 540, 80 , 60); //Beat detector?
+        rectZoomed(470, 540, 80, 60); //Beat detector?
         // now see if distance between two is less than sum of two radius'
 
         //Show player attempts on the bar
@@ -2216,25 +2226,25 @@ class Cube{ //The red cube
 
     displayMainMenu(){ //Shows a Cop and a Thief Running
         noStroke();
-        //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(playerAnimation[12], xMainMenu - 550, yMainMenu - 53, 0, 0);
+        //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
+        imageZoomed(playerAnimation[12], xMainMenu - 550, yMainMenu - 53, 0, 0);
         textSizeZoomed(20);
         fill('white');
         textZoomed("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
-        //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
+        //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
         image(guard[14], xMainMenu - 650, yMainMenu - 60, 0, 0);
 
         //Cop and Robber running (Funny decoration)
         image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53, 0, 0);
         image(guard[14], xMainMenuCop - 100, yMainMenu - 60, 0, 0);
 
-        if(xMainMenu > boardSizeZoomed + 700) {
+        if(xMainMenu > xBoardSizeZoomed + 700) {
             xMainMenu = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuRobber > boardSizeZoomed + 100) {
+        if(xMainMenuRobber > xBoardSizeZoomed + 100) {
             xMainMenuRobber = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuCop > boardSizeZoomed + 110) {
+        if(xMainMenuCop > xBoardSizeZoomed + 110) {
             xMainMenuCop = -rectWidthMainMenu - 700;
         }
 
@@ -2423,7 +2433,7 @@ class Cube{ //The red cube
             this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo * musicRate, tempo);
             // in theory: this.x2tNoSkip(x2totalTime * tempo, tempo, musicOffset);
             
-            rect(x2[0], y2, rectWidth, rectHeight);
+            rectZoomed(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
                 rect(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
@@ -2432,12 +2442,12 @@ class Cube{ //The red cube
 
             fill('red'); //Red boxes
             if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
-                rect(x2temp, y2, rectWidth, rectHeight);
+                rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
             }
 
             for (let i = 0; i < x2.length; i++) {
-                if(x2[i] > boardSizeZoomed) {
+                if(x2[i] > xBoardSizeZoomed) {
                     x2[i] %= 600;
                     x2temp = -rectWidth;
                 }
@@ -2449,7 +2459,7 @@ class Cube{ //The red cube
             let realTempo = _x2[this.tempoChange - 1][1]
             // this.x2tNoSkip(x2totalTime * realTempo * musicRate, realTempo, musicOffset);
             this.x2tNoSkip((realMusicTime - realPrevMusicTime) * realTempo * musicRate, realTempo);
-            rect(x2[0], y2, rectWidth, rectHeight);
+            rectZoomed(x2[0], y2, rectWidth, rectHeight);
 
             fill('red'); //Red boxes
 
@@ -2462,7 +2472,7 @@ class Cube{ //The red cube
         // console.log(x2totalDistance + " t*60=" + x2totalTime * _x2[this.tempoChange][1]);
 
         for (let i = 1; i < x2.length; i++) {
-            rect(x2[i], y2, rectWidth, rectHeight);
+            rectZoomed(x2[i], y2, rectWidth, rectHeight);
         }
     }
 
