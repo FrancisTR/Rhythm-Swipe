@@ -12,7 +12,7 @@ Legends:
 
 //---------------Creating the Board-------------------
 let boardSize = 600; //How big the board is; should not change
-let xBoardSizeZoomed = 700; //How big the board is; changed based on zoom // this variable == width
+let xBoardSizeZoomed = 600; //How big the board is; changed based on zoom // this variable == width
 let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
 let tileSize = boardSize/10; //The grid
 let boardZoom = xBoardSizeZoomed / boardSize;
@@ -364,14 +364,14 @@ function setup() {
     StartGameButton = createTemplateButton('Start');
     StartGameButton.style('color', 'blueviolet');
     // minimum font 10px
-    StartGameButton.style('border', '5px solid cyan');
+    StartGameButton.style('border', 5*boardZoom + 'px solid cyan');
     StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
 
 
     //-------------Back button-----------
     buttonBack = createTemplateButton('Back');
     buttonBack.style('color', 'black');
-    buttonBack.style('border', '5px solid cyan');
+    buttonBack.style('border', 5*boardZoom + 'px solid cyan');
     buttonBack.mousePressed(mainMenu); //Goes to Main Menu
     //-----------------------------------
 
@@ -379,48 +379,48 @@ function setup() {
     button = createTemplateButton('💎 Easy 💎');
     button.style('color', 'green');
     // button.style('font-size', '18px');
-    button.style('border', '5px solid green');
+    button.style('border', 5*boardZoom + 'px solid green');
     button.mousePressed(easyIntermission); //Goes to Intermission
 
     buttonStart = createTemplateButton('Start');
     buttonStart.style('color', 'green');
-    buttonStart.style('border', '5px solid green');
+    buttonStart.style('border', 5*boardZoom + 'px solid green');
     buttonStart.mousePressed(easyLevel); //Play Easy Mode
     //-----------------------------------
 
     //-----------Normal Button-----------
     button2 = createTemplateButton('💎💎 Normal 💎💎');
     button2.style('color', 'orange');
-    button2.style('border', '5px solid orange');
+    button2.style('border', 5*boardZoom + 'px solid orange');
     button2.mousePressed(normalIntermission); //Goes to Intermission
 
     button2Start = createTemplateButton('Start');
     button2Start.style('color', 'orange');
-    button2Start.style('border', '5px solid orange');
+    button2Start.style('border', 5*boardZoom + 'px solid orange');
     button2Start.mousePressed(normalLevel); //Play Normal Mode
     //-----------------------------------
 
     //------------Hard button------------
     button3 = createTemplateButton('💰 Hard 💰');
     button3.style('color', 'red');
-    button3.style('border', '5px solid red');
+    button3.style('border', 5*boardZoom + 'px solid red');
     button3.mousePressed(hardIntermission); //Goes to Intermission
 
     button3Start = createTemplateButton('Start');
     button3Start.style('color', 'red');
-    button3Start.style('border', '5px solid red');
+    button3Start.style('border', 5*boardZoom + 'px solid red');
     button3Start.mousePressed(hardLevel); //Play Hard Mode
     //------------------------------------
 
     //-----------Master button (Used to see the High Score)----------
     button4 = createTemplateButton('💰👑 Master 👑💰');
     button4.style('color', 'blueviolet');
-    button4.style('border', '5px solid blueviolet');
+    button4.style('border', 5*boardZoom + 'px solid blueviolet');
     button4.mousePressed(masterIntermission); //Goes to Intermission
 
     button4Start = createTemplateButton('Start');
     button4Start.style('color', 'blueviolet');
-    button4Start.style('border', '5px solid blueviolet');
+    button4Start.style('border', 5*boardZoom + 'px solid blueviolet');
     button4Start.mousePressed(masterLevel); //Play Master Mode
     //-----------------------------------------------------------------
 
@@ -428,7 +428,7 @@ function setup() {
     //---------Return button (For Finish and Fail level)---------------
     buttonW = createTemplateButton('Return');
     buttonW.style('color', 'black');
-    buttonW.style('border', '5px solid cyan');
+    buttonW.style('border', 5*boardZoom + 'px solid cyan');
 
     buttonW.mousePressed(mainMenu); //Main menu
     buttonW.hide();
@@ -438,7 +438,7 @@ function setup() {
     //---------Retry button (For Fail level)---------------
     buttonRetry = createTemplateButton('Retry');
     buttonRetry.style('color', 'black');
-    buttonRetry.style('border', '5px solid cyan');
+    buttonRetry.style('border', 5*boardZoom + 'px solid cyan');
     buttonRetry.style('cursor', 'pointer');
 
     buttonRetry.mousePressed(mainMenuRetry); //Main menu
@@ -605,7 +605,7 @@ function draw(){
             //*/VERSION/
             textSizeZoomed(15);
             fill("white");
-            textZoomed("Alpha v1.1.2", 5, 15);
+            textZoomed("Alpha v1.1.3", 5, 15);
 
             buttonShow();
             break;
@@ -854,7 +854,7 @@ function draw(){
                 }
             }else{
                 tint(255);
-                image(OtherImg[2], 102*boardZoom, 115*boardZoom);
+                image(OtherImg[2], 102*boardZoom, 115*boardZoom, 400*boardZoom, 300*boardZoom);
             }
             //----
 
@@ -874,7 +874,7 @@ function draw(){
 
             textAlign(LEFT, BASELINE); // default textAlign
             tint(255);
-            image(OtherImg[1], 51*boardZoom, 115*boardZoom); // this needs to not rely on default size .. unless there's another way
+            image(OtherImg[1], 51*boardZoom, 115*boardZoom, 498*boardZoom, 278*boardZoom); // this needs to not rely on default size .. unless there's another way
             buttonRetry.show(); //Retry option
             buttonW.show();
             buttonHide();
@@ -1886,7 +1886,7 @@ class Player{
         }else{
             fill(100, 120);
         }
-        rect(this.x*boardZoom, this.y*boardZoom, xBoardSizeZoomed / 10, yBoardSizeZoomed / 10); // fixZoom
+        rect(this.x*boardZoom, this.y*boardZoom, xBoardSizeZoomed / 10, yBoardSizeZoomed / 10);
 
         if(str === "right"){
             this.currentImg = playerAnimation[6];
@@ -1902,7 +1902,7 @@ class Player{
             this.currentImg = playerAnimation[0];
             offsetY = (this.y+tileSize +3)-(this.y + this.playerHeight);
         }
-        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY);
+        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY, 50, 82);
     }
 
     face(str){
@@ -2026,7 +2026,7 @@ class EnemyJ{
                 this.currentImg = this.img2;
             }
         }
-        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY);
+        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY, 50, 89);
 
         //Detect if player collides with enemy
         let playerPos = {x: player.x, y: player.y};
@@ -2227,24 +2227,25 @@ class Cube{ //The red cube
     displayMainMenu(){ //Shows a Cop and a Thief Running
         noStroke();
         //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        imageZoomed(playerAnimation[12], xMainMenu - 550, yMainMenu - 53, 0, 0);
+        image(playerAnimation[12], xMainMenu - 550, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom); // NPC #3
         textSizeZoomed(20);
         fill('white');
-        textZoomed("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
+        // textZoomed("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
+        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, yMainMenu);
         //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(guard[14], xMainMenu - 650, yMainMenu - 60, 0, 0);
+        image(guard[14], xMainMenu - 650, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
 
         //Cop and Robber running (Funny decoration)
-        image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53, 0, 0);
-        image(guard[14], xMainMenuCop - 100, yMainMenu - 60, 0, 0);
+        image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom);
+        image(guard[14], xMainMenuCop - 100, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
 
-        if(xMainMenu > xBoardSizeZoomed + 700) {
+        if(xMainMenu > boardSize + 700) {
             xMainMenu = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuRobber > xBoardSizeZoomed + 100) {
+        if(xMainMenuRobber > boardSize + 100) {
             xMainMenuRobber = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuCop > xBoardSizeZoomed + 110) {
+        if(xMainMenuCop > boardSize + 110) {
             xMainMenuCop = -rectWidthMainMenu - 700;
         }
 
@@ -2435,7 +2436,7 @@ class Cube{ //The red cube
             
             rectZoomed(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
-                rect(x2temp, y2, rectWidth, rectHeight);
+                rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
                 // console.log(_x2[0][1])
             }
