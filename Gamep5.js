@@ -2138,10 +2138,29 @@ class Cube{ //The red cube
         ]
         // New music: Super_Smash_Bros.mp3
         this.masterTempo = [
+            // [0, -997], // blue cube detection
             [0, 236], // (236, 236.?) // tempo might be changing
             [masterSound.duration() - 2, -998],
             [masterSound.duration() || -1, -999],
         ]
+
+        // // Future structure?
+        // this.currentSong = this.musicData.easy
+        // this.musicData = [
+        //     easy = new Map([
+        //         // maps are unordered, nested lists are ordered. don't use maps in this case
+        //         tempo = [
+        //             [0, 133.8],
+        //             [(easySound.duration() || -1), 133.8],
+        //         ],
+        //         signals = /*new Map(*/[
+            //         [-997, 0], // start of song (for blue cube detection)
+        //             [-998, easySound.duration() - 0], // -998 could be named "endBeats" instead
+        //             [-999, easySound.duration() || -1], // -999 could be named "endRestart" instead
+        //         ]/*)*/,
+        //         title = "",
+        //     ]),
+        // ]
     }
 
     displayDetector(){
@@ -2171,6 +2190,9 @@ class Cube{ //The red cube
             lockPattern = false;
             lockPatternUsed = true;
         }else if(x2[0] <= -70 || (x2[0] <= 530 && x2[0] > -40) || x2[0] > 560) {
+            // if (_x2[this.tempoChange][1] == 0) { // wrong value probably
+            //     console.log("nahhh");
+            // }
             lockPattern = false;
             lockPatternUsed = false;
         }else if(!lockPatternUsed) { 
