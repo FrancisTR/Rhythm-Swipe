@@ -2239,13 +2239,13 @@ class Cube{ //The red cube
         image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom);
         image(guard[14], xMainMenuCop - 100, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
 
-        if(xMainMenu > boardSize + 700) {
+        if(xMainMenu > xBoardSizeZoomed + 700) {
             xMainMenu = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuRobber > boardSize + 100) {
+        if(xMainMenuRobber > xBoardSizeZoomed + 100) {
             xMainMenuRobber = -rectWidthMainMenu - 1000;
         }
-        if(xMainMenuCop > boardSize + 110) {
+        if(xMainMenuCop > xBoardSizeZoomed + 110) {
             xMainMenuCop = -rectWidthMainMenu - 700;
         }
 
