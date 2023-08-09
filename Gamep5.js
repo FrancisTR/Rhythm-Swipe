@@ -812,45 +812,45 @@ function draw(){
             fill('cyan');
             textSizeZoomed(42);
             textAlign(CENTER, BASELINE);
-            textZoomed("M i s s i o n  S u c c e s s", boardSize/2, 100, true);
+            textZoomed("M i s s i o n  S u c c e s s", boardSize/2, 100);
             textAlign(LEFT, BASELINE);
 
             //Timers
             if (easyModeTimer === true){
-                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200, true);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (easyworldRecord > timer || easyworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    textZoomed("New High Score!", boardSize/2, 300, true);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
                     textSizeZoomed(25);
-                    textZoomed("Personal Best: "+easyworldRecord+"s", boardSize/12, 300, true);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
                 }
             }else if (normalModeTimer === true){
                 textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (normalworldRecord > timer || normalworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    textZoomed("New High Score!", boardSize/2, 300, true);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
                     textSizeZoomed(25);
-                    textZoomed("Personal Best: "+normalworldRecord+"s", boardSize/12, 300, true);
+                    textZoomed("Personal Best: "+normalworldRecord+"s", boardSize/12, 300);
                 }
             }else if (hardModeTimer === true){
-                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200, true);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (hardworldRecord > timer || hardworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    textZoomed("New High Score!", boardSize/2, 300, true);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
                     textSizeZoomed(25);
-                    textZoomed("Personal Best: "+hardworldRecord+"s", boardSize/12, 300, true);
+                    textZoomed("Personal Best: "+hardworldRecord+"s", boardSize/12, 300);
                 }
             }else if (masterModeTimer === true){
-                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200, true);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (masterworldRecord > timer || masterworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    textZoomed("New High Score!", boardSize/2, 300, true);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
                     textSizeZoomed(25);
-                    textZoomed("Personal Best: "+masterworldRecord+"s", boardSize/12, 300, true);
+                    textZoomed("Personal Best: "+masterworldRecord+"s", boardSize/12, 300);
                 }
             }else{
                 tint(255);
@@ -2353,7 +2353,7 @@ class Cube{ //The red cube
             //    fill('cyan');
             //    textSizeZoomed(50);
             //    textAlign(CENTER);
-            //    textZoomed("Mission Paused", boardSize*0.5, boardSize*0.5, true, true);
+            //    textZoomed("Mission Paused", boardSize*0.5, boardSize*0.5);
             //    textSizeZoomed(20);
             //    textZoomed("Text zoom not working.Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35)
             //    textAlign(LEFT, BASELINE); // default textAlign
