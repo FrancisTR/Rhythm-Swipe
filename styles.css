@@ -88,6 +88,16 @@ a:hover{
     color: rgb(120, 197, 241);
 }
 
+@media only screen and (max-width: 340px){
+    .HeaderLogo{
+        font-size: 12px;
+    }
+    .Navbar a{
+        font-size: 18px;
+        margin-left: 25px;
+    }
+}
+
 
 
 
