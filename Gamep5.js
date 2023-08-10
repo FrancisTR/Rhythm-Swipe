@@ -25,7 +25,7 @@ let boardYPos = 101;
 //----------------------MainMenu----------------------
 let BackgroundImage; //Main menu background
 var NPCS; 
-let rectWidthMainMenu = 30;
+let rectWidthMainMenu = 30*boardZoom;
 let rectHeightMainMenu = 500*boardZoom;
 
 //Characters in the Main Menu (Decoration)
@@ -2259,26 +2259,26 @@ class Cube{ //The red cube
     displayMainMenu(){ //Shows a Cop and a Thief Running
         noStroke();
         //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(playerAnimation[12], xMainMenu - 550, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom); // NPC #3
+        image(playerAnimation[12], xMainMenu - 550*boardZoom, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom); // NPC #3
         textSizeZoomed(20);
         fill('white');
         // textZoomed("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
-        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, yMainMenu);
+        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500*boardZoom, yMainMenu);
         //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(guard[14], xMainMenu - 650, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
+        image(guard[14], xMainMenu - 650*boardZoom, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
 
         //Cop and Robber running (Funny decoration)
         image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom);
-        image(guard[14], xMainMenuCop - 100, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
+        image(guard[14], xMainMenuCop - 100*boardZoom, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
 
-        if(xMainMenu > xBoardSizeZoomed + 700) {
-            xMainMenu = -rectWidthMainMenu - 1000;
+        if(xMainMenu > xBoardSizeZoomed + 700*boardZoom) {
+            xMainMenu = -rectWidthMainMenu - 1000*boardZoom;
         }
-        if(xMainMenuRobber > xBoardSizeZoomed + 100) {
-            xMainMenuRobber = -rectWidthMainMenu - 1000;
+        if(xMainMenuRobber > xBoardSizeZoomed + 100*boardZoom) {
+            xMainMenuRobber = -rectWidthMainMenu - 1000*boardZoom;
         }
-        if(xMainMenuCop > xBoardSizeZoomed + 110) {
-            xMainMenuCop = -rectWidthMainMenu - 700;
+        if(xMainMenuCop > xBoardSizeZoomed + 110*boardZoom) {
+            xMainMenuCop = -rectWidthMainMenu - 700*boardZoom;
         }
 
 
