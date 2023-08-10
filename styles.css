@@ -88,6 +88,16 @@ a:hover{
     color: rgb(120, 197, 241);
 }
 
+@media only screen and (max-width: 340px){
+    .HeaderLogo{
+        font-size: 20px;
+    }
+    .Navbar a{
+        font-size: 15px;
+        margin-left: 25px;
+    }
+}
+
 
 
 
@@ -157,7 +167,7 @@ a:hover{
     /* border: 1px solid red; */
 }
 .profile{
-    width: 100%;
+    min-width: 100%;
     height: 100%;
     margin-bottom: 20px;
     /* border: 1px solid white;  */
@@ -182,6 +192,7 @@ a:hover{
     font-weight: 100;
     letter-spacing: 3px;
     color: #ccc;
+    word-break: break-all;
 }
 
 .profile i{
