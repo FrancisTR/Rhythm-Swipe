@@ -92,6 +92,7 @@ let realStartTime = 0.0; //!!!
 let oldMusicRate = 1; //!!!
 let musicRate = 1;
 
+let firstCubeTimestamp = 0.0;
 //position of red cubes
 let x2tWait = 0.0; // no reset required
 let x2t = 0.0; //!!!
@@ -2119,7 +2120,6 @@ class Cube{ //The red cube
         // music tempos
         this.easyTempo = [ 
             [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
-            // sends -999 signal to restart song at duration
             [easySound.duration() || -1, -999],
         ]
         this.normalTempo = [
@@ -2128,9 +2128,14 @@ class Cube{ //The red cube
             [normalSound.duration() || -1, -999],
         ]
         this.hardTempo = [
+            // Basics: If it's not a signal, it's a tempo.
+            // If blue cube detection is needed, must be on index 0 (-997)
+            [2.6, -997], 
             [0, 175],
             [11.4, 185],
             [18.2, 205.07], // (205, 205.1)
+            // below must be in -1 and optionally -2 index with respective
+            // signal number (-999: restart song and -998: end visible cubes)
             [hardSound.duration(), -998], // 20.507 is too big (2 is temporarily there) guess
             [hardSound.duration() || -1, -999],
             // [-2, -998], // game will auto set these values
@@ -2138,13 +2143,15 @@ class Cube{ //The red cube
         ]
         // New music: Super_Smash_Bros.mp3
         this.masterTempo = [
-            // [0, -997], // blue cube detection
+            [0.4, -997],
             [0, 236], // (236, 236.?) // tempo might be changing
             [masterSound.duration() - 2, -998],
             [masterSound.duration() || -1, -999],
         ]
 
-        // // Future structure?
+        // // Future structure? Should it be stored in Cube, new class
+        // (MusicMan.setSong(), etc.) or globally? Worth the time?
+        //
         // this.currentSong = this.musicData.easy
         // this.musicData = [
         //     easy = new Map([
@@ -2154,7 +2161,7 @@ class Cube{ //The red cube
         //             [(easySound.duration() || -1), 133.8],
         //         ],
         //         signals = /*new Map(*/[
-            //         [-997, 0], // start of song (for blue cube detection)
+        //             [-997, 0], // start of song (for blue cube detection)
         //             [-998, easySound.duration() - 0], // -998 could be named "endBeats" instead
         //             [-999, easySound.duration() || -1], // -999 could be named "endRestart" instead
         //         ]/*)*/,
@@ -2189,7 +2196,10 @@ class Cube{ //The red cube
         if (lockPattern) {
             lockPattern = false;
             lockPatternUsed = true;
-        }else if(x2[0] <= -70 || (x2[0] <= 530 && x2[0] > -40) || x2[0] > 560) {
+        }else if((x2[0] <= -70 || (x2[0] <= 530 && x2[0] > -40) || x2[0] > 560) && firstCubeTimestamp < realMusicTime){
+            // displayDetector is in a different instance ... oof.
+            // console.log(` && ${this.firstCubeTimestamp} < ${realMusicTime}`);
+
             // if (_x2[this.tempoChange][1] == 0) { // wrong value probably
             //     console.log("nahhh");
             // }
@@ -2434,7 +2444,13 @@ class Cube{ //The red cube
                 console.log(`Failed to set song length earlier. Value now set to ${durationFix}`)
                 return;
             }
-            console.log(`Restarted song. realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
+
+            if (_x2[0][1] === -997) {
+                firstCubeTimestamp = _x2[0][0];
+                this.tempoChange++;
+                // console.log(` new tempo! ${this.tempoChange}`);
+            }
+            console.log(`Restarted song. firstCubeTimestamp ${firstCubeTimestamp} realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
             musicLevel.rate(musicRate);
             
             this.tempoChange = 0;
