@@ -10,11 +10,23 @@ Legends:
 
 
 
+//---------------Creating the Board-------------------
+let boardSize = 600; //How big the board is; should not change
+let xBoardSizeZoomed = 600; //How big the board is; changed based on zoom // this variable == width
+let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
+let tileSize = boardSize/10; //The grid
+let boardZoom = xBoardSizeZoomed / boardSize;
+let boardXPos = 490;
+let boardYPos = 101;
+//----------------------------------------------------
+
+
+
 //----------------------MainMenu----------------------
 let BackgroundImage; //Main menu background
 var NPCS; 
-let rectWidthMainMenu = 30;
-let rectHeightMainMenu = 500;
+let rectWidthMainMenu = 30*boardZoom;
+let rectHeightMainMenu = 500*boardZoom;
 
 //Characters in the Main Menu (Decoration)
 let xMainMenu = rectWidthMainMenu; 
@@ -22,18 +34,13 @@ let xMainMenu = rectWidthMainMenu;
 let xMainMenuCop = rectWidthMainMenu; 
 let xMainMenuRobber = rectWidthMainMenu; 
 
-let yMainMenu = 575;
+let yMainMenu = 575*boardZoom;
 
 //Audio for the Main Menu
 let MainMenuTheme;
 let MainMenuThemeSwitch = false;
 
 let IntermissionThemeSwitch = false;
-//----------------------------------------------------
-
-//---------------Creating the Board-------------------
-var boardSize = 600; //How big the board is
-let tileSize = boardSize/10; //The grid
 //----------------------------------------------------
 
 
@@ -85,6 +92,7 @@ let realStartTime = 0.0; //!!!
 let oldMusicRate = 1; //!!!
 let musicRate = 1;
 
+let firstCubeTimestamp = 0.0;
 //position of red cubes
 let x2tWait = 0.0; // no reset required
 let x2t = 0.0; //!!!
@@ -298,14 +306,41 @@ function preload() {
 
 
 
+//----ZOOMED SETUP----
+function imageZoomed(img, xPos, yPos, xSize, ySize) {
+    image(img, xPos * boardZoom, yPos * boardZoom, xSize * boardZoom, ySize * boardZoom);
+}
+
+function rectZoomed(xPos, yPos, xSize, ySize) {
+    rect(xPos * boardZoom, yPos * boardZoom, xSize * boardZoom, ySize * boardZoom);
+}
+
+function textZoomed(txt, x=0, y=0) {
+    text(txt, x * boardZoom, y * boardZoom);
+}
+
+function textSizeZoomed(n) {
+    textSize(Math.max(n * boardZoom, 9));
+}
+
+function createTemplateButton(txt/*, properties*/) {
+    let tempButton = createButton(txt);
+    
+    // minimum font 9px
+    tempButton.style('font-size', Math.max((18 * boardZoom), 9) + 'px');
+
+    tempButton.style('cursor', 'pointer');
+    tempButton.size(200 * boardZoom, 75 * boardZoom);
+    return tempButton;
+}
 
 //--------------------------------------------------------------------SETUP---------------------------------------------------------------------------------
 //Creation of the Canvas, the buttons, and the sounds
 function setup() {
     //Center the game on the page
 
-    let div = createCanvas(boardSize, boardSize);
-    div.position(100, 101);
+    let div = createCanvas(xBoardSizeZoomed, yBoardSizeZoomed);
+    div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
 
@@ -324,134 +359,102 @@ function setup() {
 
     //StartGame
     background("darkgray");
-    if (redrawLock == false){
-        StartGameButton = createButton('Start');
-        StartGameButton.style('color', 'blueviolet');
-        StartGameButton.style('font-size', 'large');
-        StartGameButton.style('border', '5px solid cyan');
-        StartGameButton.style('cursor', 'pointer');
-        StartGameButton.size(200, 75);
-        StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
-
-
-        //-------------Back button-----------
-        buttonBack = createButton('Back');
-        buttonBack.style('color', 'black');
-        buttonBack.style('font-size', 'large');
-        buttonBack.style('border', '5px solid cyan');
-        buttonBack.style('cursor', 'pointer');
-        buttonBack.size(200, 75);
-        buttonBack.mousePressed(mainMenu); //Goes to Main Menu
-        //-----------------------------------
-
-        //-----------Easy Button-------------
-        button = createButton('💎 Easy 💎');
-        button.style('color', 'green');
-        button.style('font-size', 'large');
-        button.style('border', '5px solid green');
-        button.style('cursor', 'pointer');
-        button.size(200, 75);
-        button.mousePressed(easyIntermission); //Goes to Intermission
-
-        buttonStart = createButton('Start');
-        buttonStart.style('color', 'green');
-        buttonStart.style('font-size', 'large');
-        buttonStart.style('border', '5px solid green');
-        buttonStart.style('cursor', 'pointer');
-        buttonStart.size(200, 75);
-        buttonStart.mousePressed(easyLevel); //Play Easy Mode
-        //-----------------------------------
-
-        //-----------Normal Button-----------
-        button2 = createButton('💎💎 Normal 💎💎');
-        button2.style('color', 'orange');
-        button2.style('font-size', 'large');
-        button2.style('border', '5px solid orange');
-        button2.style('cursor', 'pointer');
-        button2.size(200, 75);
-        button2.mousePressed(normalIntermission); //Goes to Intermission
-
-        button2Start = createButton('Start');
-        button2Start.style('color', 'orange');
-        button2Start.style('font-size', 'large');
-        button2Start.style('border', '5px solid orange');
-        button2Start.style('cursor', 'pointer');
-        button2Start.size(200, 75);
-        button2Start.mousePressed(normalLevel); //Play Normal Mode
-        //-----------------------------------
-
-        //------------Hard button------------
-        button3 = createButton('💰 Hard 💰');
-        button3.style('color', 'red');
-        button3.style('font-size', 'large');
-        button3.style('border', '5px solid red');
-        button3.style('cursor', 'pointer');
-        button3.size(200, 75);
-        button3.mousePressed(hardIntermission); //Goes to Intermission
-
-        button3Start = createButton('Start');
-        button3Start.style('color', 'red');
-        button3Start.style('font-size', 'large');
-        button3Start.style('border', '5px solid red');
-        button3Start.style('cursor', 'pointer');
-        button3Start.size(200, 75);
-        button3Start.mousePressed(hardLevel); //Play Hard Mode
-        //------------------------------------
-
-        //-----------Master button (Used to see the High Score)----------
-        button4 = createButton('💰👑 Master 👑💰');
-        button4.style('color', 'blueviolet');
-        button4.style('font-size', 'large');
-        button4.style('border', '5px solid blueviolet');
-        button4.style('cursor', 'pointer');
-        button4.size(200, 75);
-        button4.mousePressed(masterIntermission); //Goes to Intermission
-
-        button4Start = createButton('Start');
-        button4Start.style('color', 'blueviolet');
-        button4Start.style('font-size', 'large');
-        button4Start.style('border', '5px solid blueviolet');
-        button4Start.style('cursor', 'pointer');
-        button4Start.size(200, 75);
-        button4Start.mousePressed(masterLevel); //Play Master Mode
-        //-----------------------------------------------------------------
-
-
-        //---------Return button (For Finish and Fail level)---------------
-        buttonW = createButton('Return');
-        buttonW.style('color', 'black');
-        buttonW.style('font-size', 'large');
-        buttonW.style('border', '5px solid cyan');
-        buttonW.style('cursor', 'pointer');
-        buttonW.size(200, 75);
-
-        buttonW.mousePressed(mainMenu); //Main menu
-        buttonW.hide();
-
-        //-----------------------------------------------------------------
-
-        //---------Retry button (For Fail level)---------------
-        buttonRetry = createButton('Retry');
-        buttonRetry.style('color', 'black');
-        buttonRetry.style('font-size', 'large');
-        buttonRetry.style('border', '5px solid cyan');
-        buttonRetry.style('cursor', 'pointer');
-        buttonRetry.size(200, 75);
-
-        buttonRetry.mousePressed(mainMenuRetry); //Main menu
-        buttonRetry.hide();
-
-        //-----------------------------------------------------------------
-
-
-        //----------------------Music Related------------------------------
-        amplitude = new p5.Amplitude();
-
-        cubeDetector = new Cube();
-        cubeBeat = new Cube();
-        //-----------------------------------------------------------------
-        redrawLock = true;
+    if (redrawLock !== false){
+        return;
     }
+    StartGameButton = createTemplateButton('Start');
+    StartGameButton.style('color', 'blueviolet');
+    // minimum font 10px
+    StartGameButton.style('border', 5*boardZoom + 'px solid cyan');
+    StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
+
+
+    //-------------Back button-----------
+    buttonBack = createTemplateButton('Back');
+    buttonBack.style('color', 'black');
+    buttonBack.style('border', 5*boardZoom + 'px solid cyan');
+    buttonBack.mousePressed(mainMenu); //Goes to Main Menu
+    //-----------------------------------
+
+    //-----------Easy Button-------------
+    button = createTemplateButton('💎 Easy 💎');
+    button.style('color', 'green');
+    // button.style('font-size', '18px');
+    button.style('border', 5*boardZoom + 'px solid green');
+    button.mousePressed(easyIntermission); //Goes to Intermission
+
+    buttonStart = createTemplateButton('Start');
+    buttonStart.style('color', 'green');
+    buttonStart.style('border', 5*boardZoom + 'px solid green');
+    buttonStart.mousePressed(easyLevel); //Play Easy Mode
+    //-----------------------------------
+
+    //-----------Normal Button-----------
+    button2 = createTemplateButton('💎💎 Normal 💎💎');
+    button2.style('color', 'orange');
+    button2.style('border', 5*boardZoom + 'px solid orange');
+    button2.mousePressed(normalIntermission); //Goes to Intermission
+
+    button2Start = createTemplateButton('Start');
+    button2Start.style('color', 'orange');
+    button2Start.style('border', 5*boardZoom + 'px solid orange');
+    button2Start.mousePressed(normalLevel); //Play Normal Mode
+    //-----------------------------------
+
+    //------------Hard button------------
+    button3 = createTemplateButton('💰 Hard 💰');
+    button3.style('color', 'red');
+    button3.style('border', 5*boardZoom + 'px solid red');
+    button3.mousePressed(hardIntermission); //Goes to Intermission
+
+    button3Start = createTemplateButton('Start');
+    button3Start.style('color', 'red');
+    button3Start.style('border', 5*boardZoom + 'px solid red');
+    button3Start.mousePressed(hardLevel); //Play Hard Mode
+    //------------------------------------
+
+    //-----------Master button (Used to see the High Score)----------
+    button4 = createTemplateButton('💰👑 Master 👑💰');
+    button4.style('color', 'blueviolet');
+    button4.style('border', 5*boardZoom + 'px solid blueviolet');
+    button4.mousePressed(masterIntermission); //Goes to Intermission
+
+    button4Start = createTemplateButton('Start');
+    button4Start.style('color', 'blueviolet');
+    button4Start.style('border', 5*boardZoom + 'px solid blueviolet');
+    button4Start.mousePressed(masterLevel); //Play Master Mode
+    //-----------------------------------------------------------------
+
+
+    //---------Return button (For Finish and Fail level)---------------
+    buttonW = createTemplateButton('Return');
+    buttonW.style('color', 'black');
+    buttonW.style('border', 5*boardZoom + 'px solid cyan');
+
+    buttonW.mousePressed(mainMenu); //Main menu
+    buttonW.hide();
+
+    //-----------------------------------------------------------------
+
+    //---------Retry button (For Fail level)---------------
+    buttonRetry = createTemplateButton('Retry');
+    buttonRetry.style('color', 'black');
+    buttonRetry.style('border', 5*boardZoom + 'px solid cyan');
+    buttonRetry.style('cursor', 'pointer');
+
+    buttonRetry.mousePressed(mainMenuRetry); //Main menu
+    buttonRetry.hide();
+
+    //-----------------------------------------------------------------
+
+
+    //----------------------Music Related------------------------------
+    amplitude = new p5.Amplitude();
+
+    cubeDetector = new Cube();
+    cubeBeat = new Cube();
+    //-----------------------------------------------------------------
+    redrawLock = true;
 
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -469,40 +472,42 @@ function draw(){
     
 
     textFont(pixelFont);
-    StartGameButton.position(250, 356.5);
+    StartGameButton.position(250*boardZoom, boardYPos+255.5*boardZoom);
     StartGameButton.center('horizontal');
 
-    button.position(250, 237.66);
+    button.position(0, boardYPos+136.66*boardZoom);
+    // This is visible barely button.position(0, 237.66*boardZoom*boardZoom);
     button.center('horizontal');
 
-    button2.position(250, 324);
+    button2.position(250, boardYPos+223*boardZoom);
+    // button2.position(250, 324); // subtract literal by boardYPos, then *
     button2.center('horizontal');
 
-    button3.position(250, 409.7);
+    button3.position(250, boardYPos+308.7*boardZoom);
     button3.center('horizontal');
 
-    button4.position(250, 498.6);
+    button4.position(250, boardYPos+397.6*boardZoom);
     button4.center('horizontal');
 
-    buttonStart.position(250, 469);
+    buttonStart.position(250, boardYPos+368*boardZoom);
     buttonStart.center('horizontal');
 
-    button2Start.position(250, 469);
+    button2Start.position(250, boardYPos+368*boardZoom);
     button2Start.center('horizontal');
  
-    button3Start.position(250, 469);
+    button3Start.position(250, boardYPos+368*boardZoom);
     button3Start.center('horizontal');
 
-    button4Start.position(250, 469);
+    button4Start.position(250, boardYPos+368*boardZoom);
     button4Start.center('horizontal');
 
 
-    buttonBack.position(250, 552);
+    buttonBack.position(250, boardYPos+451*boardZoom);
     buttonBack.center('horizontal');
-    buttonW.position(250, 590);
+    buttonW.position(250, boardYPos+489*boardZoom);
     buttonW.center('horizontal');
 
-    buttonRetry.position(250, 505);
+    buttonRetry.position(250, boardYPos+404*boardZoom);
     buttonRetry.center('horizontal');
     
 
@@ -554,7 +559,7 @@ function draw(){
             buttonBack.hide();
             StartGameButton.show();
             tint(200);
-            image(StartBackgroundImage, 0, 0, boardSize, boardSize);
+            image(StartBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             break;
         //---------------Main Menu------------------
         case 0:
@@ -592,16 +597,16 @@ function draw(){
             //*/
             //background('black');
             tint(200);
-            image(BackgroundImage, 0, 0, boardSize, boardSize);
+            image(BackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             showNPC(); //A nice seeing of a cop running to the robber
             fill('cyan');
-            textSize(43);
-            text("R h y t h m  S w i p e", 77, 100);
+            textSizeZoomed(43);
+            textZoomed("R h y t h m  S w i p e", 77, 100);
 
             //*/VERSION/
-            textSize(15);
+            textSizeZoomed(15);
             fill("white");
-            text("Alpha v1.1.2", 5, 15);
+            textZoomed("Alpha v1.1.3", 5, 15);
 
             buttonShow();
             break;
@@ -618,35 +623,35 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             //Show the Start and Back button
             buttonBack.show();
             buttonStart.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Easy", 25, 100);
-            textSize(15);
-            text("Music: A Punch Up at a Wedding 8-bit", 25, 150);
-            text("By RGYDK", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Easy", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: A Punch Up at a Wedding 8-bit", 25, 150);
+            textZoomed("By RGYDK", 25, 200);
 
             if (easyworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
                 if (easyworldRecord <= 100){
-                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[0], 215, 50, 75, 75);
+                    imageZoomed(trophies[0], 215, 50, 75, 75);
                 }else if (easyworldRecord > 100 && easyworldRecord < 150){
-                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[1], 215, 50, 75, 75);
+                    imageZoomed(trophies[1], 215, 50, 75, 75);
                 }else{
-                    text("Personal Best: "+easyworldRecord+"s", 20, 570);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", 20, 570);
                     tint(230);
-                    image(trophies[2], 215, 50, 75, 75);
+                    imageZoomed(trophies[2], 215, 50, 75, 75);
                 }
             }
             visualAudio(); //Show the audio visually
@@ -662,7 +667,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            image(LevelBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             levelRetry = level;
             //background(backgroundColor);
             level1();
@@ -683,30 +688,30 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
             button2Start.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Normal", 25, 100);
-            textSize(15);
-            text("Music: There There 8-bit", 25, 150);
-            text("By RGYDK", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Normal", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: There There 8-bit", 25, 150);
+            textZoomed("By RGYDK", 25, 200);
 
             if (normalworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
-                text("Personal Best: "+normalworldRecord+"s", 20, 570);
+                textZoomed("Personal Best: "+normalworldRecord+"s", 20, 570);
                 tint(230);
                 if (normalworldRecord <= 100){
-                    image(trophies[0], 245, 50, 75, 75);
+                    imageZoomed(trophies[0], 245, 50, 75, 75);
                 }else if (normalworldRecord > 100 && normalworldRecord < 150){
-                    image(trophies[1], 245, 50, 75, 75);
+                    imageZoomed(trophies[1], 245, 50, 75, 75);
                 }else{
-                    image(trophies[2], 245, 50, 75, 75);
+                    imageZoomed(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
@@ -724,7 +729,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            image(LevelBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background(backgroundColor);
             levelRetry = level;
             level2();
@@ -747,30 +752,30 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
             button3Start.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Hard", 25, 100);
-            textSize(15);
-            text("Music: Where I End and You Begin 8-bit", 25, 150);
-            text("By RGYDK", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Hard", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: Where I End and You Begin 8-bit", 25, 150);
+            textZoomed("By RGYDK", 25, 200);
 
             if (hardworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
-                text("Personal Best: "+hardworldRecord+"s", 20, 570);
+                textZoomed("Personal Best: "+hardworldRecord+"s", 20, 570);
                 tint(230);
                 if (hardworldRecord <= 100){
-                    image(trophies[0], 214, 50, 75, 75);
+                    imageZoomed(trophies[0], 214, 50, 75, 75);
                 }else if (hardworldRecord > 100 && hardworldRecord < 150){
-                    image(trophies[1], 214, 50, 75, 75);
+                    imageZoomed(trophies[1], 214, 50, 75, 75);
                 }else{
-                    image(trophies[2], 214, 50, 75, 75);
+                    imageZoomed(trophies[2], 214, 50, 75, 75);
                 }
             }
 
@@ -789,7 +794,7 @@ function draw(){
             }
 
             tint(backgroundColor);
-            image(LevelBackgroundImage, 0, 0, boardSize, boardSize);
+            image(LevelBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             levelRetry = level;
             //background(backgroundColor);
             level3();
@@ -803,54 +808,54 @@ function draw(){
         case 4: //Mission accomplished with Stats (Competition used Testing)
             //background('green');
             tint(100);
-            image(MissionSuccessBackground, 0, 0, boardSize, boardSize);
+            image(MissionSuccessBackground, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
 
             fill('cyan');
-            textSize(42);
+            textSizeZoomed(42);
             textAlign(CENTER, BASELINE);
-            text("M i s s i o n  S u c c e s s", boardSize/2, 100);
+            textZoomed("M i s s i o n  S u c c e s s", boardSize/2, 100);
             textAlign(LEFT, BASELINE);
 
             //Timers
             if (easyModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (easyworldRecord > timer || easyworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+easyworldRecord+"s", boardSize/12, 300);
                 }
             }else if (normalModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (normalworldRecord > timer || normalworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+normalworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+normalworldRecord+"s", boardSize/12, 300);
                 }
             }else if (hardModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (hardworldRecord > timer || hardworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+hardworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+hardworldRecord+"s", boardSize/12, 300);
                 }
             }else if (masterModeTimer === true){
-                text("Finish Time: "+timer+"s", boardSize/5, 200);
+                textZoomed("Finish Time: "+timer+"s", boardSize/5, 200);
                 if (masterworldRecord > timer || masterworldRecord === null){
                     textAlign(CENTER, BASELINE);
-                    text("New High Score!", boardSize/2, 300);
+                    textZoomed("New High Score!", boardSize/2, 300);
                 }else{
-                    textSize(25);
-                    text("Personal Best: "+masterworldRecord+"s", boardSize/12, 300);
+                    textSizeZoomed(25);
+                    textZoomed("Personal Best: "+masterworldRecord+"s", boardSize/12, 300);
                 }
             }else{
                 tint(255);
-                image(OtherImg[2], 102, 115);
+                image(OtherImg[2], 102*boardZoom, 115*boardZoom, 400*boardZoom, 300*boardZoom);
             }
             //----
 
@@ -862,15 +867,15 @@ function draw(){
         case 5: //Mission Failed
             //background('#D9544D');
             tint(100);
-            image(MissionFailedBackground, 0, 0, boardSize, boardSize);
+            image(MissionFailedBackground, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             fill('red');
-            textSize(42);
+            textSizeZoomed(42);
             textAlign(CENTER, BASELINE);
-            text("M i s s i o n  F a i l e d", boardSize/2, 100);
+            textZoomed("M i s s i o n  F a i l e d", boardSize/2, 100);
 
             textAlign(LEFT, BASELINE); // default textAlign
             tint(255);
-            image(OtherImg[1], 51, 115);
+            image(OtherImg[1], 51*boardZoom, 115*boardZoom, 498*boardZoom, 278*boardZoom); // this needs to not rely on default size .. unless there's another way
             buttonRetry.show(); //Retry option
             buttonW.show();
             buttonHide();
@@ -889,29 +894,29 @@ function draw(){
             MainMenuThemeSwitch = false;
 
             tint(100);
-            image(MusicBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MusicBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background('gray');
             buttonHide();
             buttonBack.show();
             button4Start.show();
             fill('white');
-            textSize(25);
-            text("Difficulty: Master", 25, 100);
-            textSize(15);
-            text("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
-            text("By Tater-Tot Tunes", 25, 200);
+            textSizeZoomed(25);
+            textZoomed("Difficulty: Master", 25, 100);
+            textSizeZoomed(15);
+            textZoomed("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
+            textZoomed("By Tater-Tot Tunes", 25, 200);
             if (masterworldRecord === null){
-                text("Personal Best: ???", 20, 570);
+                textZoomed("Personal Best: ???", 20, 570);
             }else{
                 //Display appropriate Trophy (Need Refining)
-                text("Personal Best: "+masterworldRecord+"s", 20, 570);
+                textZoomed("Personal Best: "+masterworldRecord+"s", 20, 570);
                 tint(230);
                 if (masterworldRecord <= 100){
-                    image(trophies[0], 245, 50, 75, 75);
+                    imageZoomed(trophies[0], 245, 50, 75, 75);
                 }else if (masterworldRecord > 100 && masterworldRecord < 150){
-                    image(trophies[1], 245, 50, 75, 75);
+                    imageZoomed(trophies[1], 245, 50, 75, 75);
                 }else{
-                    image(trophies[2], 245, 50, 75, 75);
+                    imageZoomed(trophies[2], 245, 50, 75, 75);
                 }
             }
             visualAudio();
@@ -928,7 +933,7 @@ function draw(){
 
             //TESTING Image
             tint(backgroundColor);
-            image(MasterModeBackgroundImage, 0, 0, boardSize, boardSize);
+            image(MasterModeBackgroundImage, 0, 0, xBoardSizeZoomed, yBoardSizeZoomed);
             //background(backgroundColor);
             levelRetry = level;
 
@@ -1192,19 +1197,19 @@ function visualAudio(){
   
     volHistory.push(vol);
   
-    if(volHistory.length > width*1) volHistory.splice(0,1); //width map
+    if(volHistory.length > xBoardSizeZoomed*1) volHistory.splice(0,1); //width map
   
     stroke('cyan');
     noFill();
     beginShape();
     for(let i=0; i<volHistory.length; i++) {
-        let y = map(volHistory[i], 0, 1, height/2, 0); //position map
+        let y = map(volHistory[i], 0, 1, yBoardSizeZoomed/2, 0); //position map
         vertex(i, y);
     }
     endShape();
   
     stroke(11, 37, 52);
-    line(volHistory.length, 0, volHistory.length, height);
+    line(volHistory.length, 0, volHistory.length, yBoardSizeZoomed);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1704,21 +1709,21 @@ function level4(){ //MASTER MODE
 
 //The board itself. Is used for all levels
 function board(){
-    for (var x = 0; x < width; x += width / 10) {
-        for (var y = 0; y < height; y += height / 10) {
+    for (var x = 0; x < xBoardSizeZoomed; x += xBoardSizeZoomed / 10) {
+        for (var y = 0; y < yBoardSizeZoomed; y += yBoardSizeZoomed / 10) {
             stroke(0);
             strokeWeight(1.5);
-            line(x, 0, x, height);
+            line(x, 0, x, yBoardSizeZoomed);
             stroke(110);
             strokeWeight(1.5);
-            line(x + 1.5, 0, x + 1.5, height);
+            line(x + 1.5, 0, x + 1.5, yBoardSizeZoomed);
 
             stroke(0);
             strokeWeight(1.5);
-            line(0, y, width, y);
+            line(0, y, xBoardSizeZoomed, y);
             stroke(110);
             strokeWeight(1.5);
-            line(0, y +1.5, width, y +1.5);
+            line(0, y +1.5, xBoardSizeZoomed, y +1.5);
 
         }
     }
@@ -1741,10 +1746,10 @@ function board(){
     stroke(51);
     fill('gray');
     strokeWeight(2);
-    rect(0, 0, 180 ,60);
+    rectZoomed(0, 0, 180, 60);
     fill('cyan');
-    textSize(33);
-    text(" Jewels: "+points, 0, 45);
+    textSizeZoomed(33);
+    textZoomed(" Jewels: "+points, 0, 45);
 
 
     cubeDetector.displayDetector();
@@ -1882,7 +1887,7 @@ class Player{
         }else{
             fill(100, 120);
         }
-        rect(this.x, this.y, width / 10, height / 10);
+        rect(this.x*boardZoom, this.y*boardZoom, xBoardSizeZoomed / 10, yBoardSizeZoomed / 10);
 
         if(str === "right"){
             this.currentImg = playerAnimation[6];
@@ -1898,7 +1903,7 @@ class Player{
             this.currentImg = playerAnimation[0];
             offsetY = (this.y+tileSize +3)-(this.y + this.playerHeight);
         }
-        image(this.currentImg, this.x+offsetX, this.y+offsetY);
+        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY, 50, 82);
     }
 
     face(str){
@@ -1980,7 +1985,7 @@ class EnemyJ{
         this.xy = tileAt(startPosX,startPosY);
         this.x = this.xy.x;
         this.y = this.xy.y;
-        //height and width are based on pixels of the png
+        //yBoardSizeZoomed and xBoardSizeZoomed are based on pixels of the png
         this.enemyHeight = 89;
         this.enemyWidth = 50;
 
@@ -2022,7 +2027,7 @@ class EnemyJ{
                 this.currentImg = this.img2;
             }
         }
-        image(this.currentImg, this.x+offsetX, this.y+offsetY);
+        imageZoomed(this.currentImg, this.x+offsetX, this.y+offsetY, 50, 89);
 
         //Detect if player collides with enemy
         let playerPos = {x: player.x, y: player.y};
@@ -2059,9 +2064,10 @@ class Coins{
     display(){
         push();
         //fill('gold');
-        image(diamonds[round(this.random)], this.rpos - 22, this.rpos2 - 20, 45, 43);
-        //ellipse(this.rpos, this.rpos2, width / 20, height / 16); //Outer circle
-        //ellipse(this.rpos, this.rpos2, width / 40, height / 25); //Inner circle
+        imageZoomed(diamonds[round(this.random)], this.rpos - 22, this.rpos2 - 20, 45, 43);
+        //below will display the same on 600x600 width and height for sure
+        //ellipse(this.rpos, this.rpos2, xBoardSizeZoomed / 20, yBoardSizeZoomed / 16); //Outer circle
+        //ellipse(this.rpos, this.rpos2, xBoardSizeZoomed / 40, yBoardSizeZoomed / 25); //Inner circle
         pop();
     }
 }
@@ -2078,7 +2084,7 @@ class Block{
     display(){
         push();
         fill('#2e2e2d');
-        rect(this.rpos - 20, this.rpos2 - 20, width / 15, height / 15); //Outer circle
+        rect((this.rpos - 20)*boardZoom, (this.rpos2 - 20)*boardZoom, xBoardSizeZoomed / 15, yBoardSizeZoomed / 15); //Outer circle
         pop();
     }
 }
@@ -2097,7 +2103,7 @@ class FinishBlock{
     finishDisplay(){
         push();
         fill('green');
-        rect(this.rpos + 10, this.rpos2 + 10, width / 15, height / 15); //Outer circle
+        rect((this.rpos + 10)*boardZoom, (this.rpos2 + 10)*boardZoom, xBoardSizeZoomed / 15, yBoardSizeZoomed / 15); //Outer circle
         pop();
     }
 }
@@ -2114,7 +2120,6 @@ class Cube{ //The red cube
         // music tempos
         this.easyTempo = [ 
             [0, 133.8], // 133.7 - 133.9 (it's possible this is wrong)
-            // sends -999 signal to restart song at duration
             [easySound.duration() || -1, -999],
         ]
         this.normalTempo = [
@@ -2123,9 +2128,14 @@ class Cube{ //The red cube
             [normalSound.duration() || -1, -999],
         ]
         this.hardTempo = [
+            // Basics: If it's not a signal, it's a tempo.
+            // If blue cube detection is needed, must be on index 0 (-997)
+            [2.6, -997], 
             [0, 175],
             [11.4, 185],
             [18.2, 205.07], // (205, 205.1)
+            // below must be in -1 and optionally -2 index with respective
+            // signal number (-999: restart song and -998: end visible cubes)
             [hardSound.duration(), -998], // 20.507 is too big (2 is temporarily there) guess
             [hardSound.duration() || -1, -999],
             // [-2, -998], // game will auto set these values
@@ -2133,23 +2143,44 @@ class Cube{ //The red cube
         ]
         // New music: Super_Smash_Bros.mp3
         this.masterTempo = [
+            [0.4, -997],
             [0, 236], // (236, 236.?) // tempo might be changing
             [masterSound.duration() - 2, -998],
             [masterSound.duration() || -1, -999],
         ]
+
+        // // Future structure? Should it be stored in Cube, new class
+        // (MusicMan.setSong(), etc.) or globally? Worth the time?
+        //
+        // this.currentSong = this.musicData.easy
+        // this.musicData = [
+        //     easy = new Map([
+        //         // maps are unordered, nested lists are ordered. don't use maps in this case
+        //         tempo = [
+        //             [0, 133.8],
+        //             [(easySound.duration() || -1), 133.8],
+        //         ],
+        //         signals = /*new Map(*/[
+        //             [-997, 0], // start of song (for blue cube detection)
+        //             [-998, easySound.duration() - 0], // -998 could be named "endBeats" instead
+        //             [-999, easySound.duration() || -1], // -999 could be named "endRestart" instead
+        //         ]/*)*/,
+        //         title = "",
+        //     ]),
+        // ]
     }
 
     displayDetector(){
         fill('black');
-        rect(0, 540, 600 ,60); //Whole bar
+        rectZoomed(0, 540, 600, 60); //Whole bar
         fill(pressByBeat);
-        rect(470, 540, 80 , 60); //Beat detector?
+        rectZoomed(470, 540, 80, 60); //Beat detector?
         // now see if distance between two is less than sum of two radius'
 
         //Show player attempts on the bar
         fill('gold');
-        textSize(50);
-        text(playerAttempts, 496, 590);
+        textSizeZoomed(50);
+        textZoomed(playerAttempts, 496, 590);
 
         //Are you in sync?
         //*/Debug/
@@ -2165,7 +2196,13 @@ class Cube{ //The red cube
         if (lockPattern) {
             lockPattern = false;
             lockPatternUsed = true;
-        }else if(x2[0] <= -70 || (x2[0] <= 530 && x2[0] > -40) || x2[0] > 560) {
+        }else if((x2[0] <= -70 || (x2[0] <= 530 && x2[0] > -40) || x2[0] > 560) && firstCubeTimestamp < realMusicTime){
+            // displayDetector is in a different instance ... oof.
+            // console.log(` && ${this.firstCubeTimestamp} < ${realMusicTime}`);
+
+            // if (_x2[this.tempoChange][1] == 0) { // wrong value probably
+            //     console.log("nahhh");
+            // }
             lockPattern = false;
             lockPatternUsed = false;
         }else if(!lockPatternUsed) { 
@@ -2221,33 +2258,34 @@ class Cube{ //The red cube
 
     displayMainMenu(){ //Shows a Cop and a Thief Running
         noStroke();
-        //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(playerAnimation[12], xMainMenu - 550, yMainMenu - 53, 0, 0);
-        textSize(20);
+        //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
+        image(playerAnimation[12], xMainMenu - 550*boardZoom, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom); // NPC #3
+        textSizeZoomed(20);
         fill('white');
-        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
-        //rect(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
-        image(guard[14], xMainMenu - 650, yMainMenu - 60, 0, 0);
+        // textZoomed("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500, 575);
+        text("Now playing: 2+2=5 8-bit (By RGYDK)", xMainMenu - 500*boardZoom, yMainMenu);
+        //rectZoomed(xMainMenu, yMainMenu, rectWidthMainMenu, rectHeightMainMenu);
+        image(guard[14], xMainMenu - 650*boardZoom, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
 
         //Cop and Robber running (Funny decoration)
-        image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53, 0, 0);
-        image(guard[14], xMainMenuCop - 100, yMainMenu - 60, 0, 0);
+        image(playerAnimation[12], xMainMenuRobber, yMainMenu - 53*boardZoom, 50*boardZoom, 83*boardZoom);
+        image(guard[14], xMainMenuCop - 100*boardZoom, yMainMenu - 60*boardZoom, 50*boardZoom, 89*boardZoom);
 
-        if(xMainMenu > width + 700) {
-            xMainMenu = -rectWidthMainMenu - 1000;
+        if(xMainMenu > xBoardSizeZoomed + 700*boardZoom) {
+            xMainMenu = -rectWidthMainMenu - 1000*boardZoom;
         }
-        if(xMainMenuRobber > width + 100) {
-            xMainMenuRobber = -rectWidthMainMenu - 1000;
+        if(xMainMenuRobber > xBoardSizeZoomed + 100*boardZoom) {
+            xMainMenuRobber = -rectWidthMainMenu - 1000*boardZoom;
         }
-        if(xMainMenuCop > width + 110) {
-            xMainMenuCop = -rectWidthMainMenu - 700;
+        if(xMainMenuCop > xBoardSizeZoomed + 110*boardZoom) {
+            xMainMenuCop = -rectWidthMainMenu - 700*boardZoom;
         }
 
 
-        xMainMenu+=2; //Change when needed
+        xMainMenu+=2*boardZoom; //Change when needed
 
-        xMainMenuCop+=2.5;
-        xMainMenuRobber+=3;
+        xMainMenuCop+=2.5*boardZoom;
+        xMainMenuRobber+=3*boardZoom;
     }
 
     x2calculate(offset){
@@ -2345,11 +2383,11 @@ class Cube{ //The red cube
             //    console.log(`(isPaused): ${musicLevel.currentTime()}`) // realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
             //    background(0, 0, 0, 128);
             //    fill('cyan');
-            //    textSize(50);
+            //    textSizeZoomed(50);
             //    textAlign(CENTER);
-            //    text("Mission Paused", boardSize*0.5, boardSize*0.5);
-            //    textSize(20);
-            //    text("Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35);
+            //    textZoomed("Mission Paused", boardSize*0.5, boardSize*0.5);
+            //    textSizeZoomed(20);
+            //    textZoomed("Text zoom not working.Pause screen is experimental. Use at your own risk.", boardSize*0.5, boardSize*0.5 + 35)
             //    textAlign(LEFT, BASELINE); // default textAlign
             //    // console.log(`(isPaused) realStartTime: ${realStartTime} realMusicTime: ${realMusicTime} realPrevMusicTime: ${realPrevMusicTime} pauseTime: ${pauseTime}`);
             //    return;
@@ -2406,7 +2444,13 @@ class Cube{ //The red cube
                 console.log(`Failed to set song length earlier. Value now set to ${durationFix}`)
                 return;
             }
-            console.log(`Restarted song. realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
+
+            if (_x2[0][1] === -997) {
+                firstCubeTimestamp = _x2[0][0];
+                this.tempoChange++;
+                // console.log(` new tempo! ${this.tempoChange}`);
+            }
+            console.log(`Restarted song. firstCubeTimestamp ${firstCubeTimestamp} realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
             musicLevel.rate(musicRate);
             
             this.tempoChange = 0;
@@ -2428,21 +2472,21 @@ class Cube{ //The red cube
             this.x2tNoSkip((realMusicTime - realPrevMusicTime) * tempo * musicRate, tempo);
             // in theory: this.x2tNoSkip(x2totalTime * tempo, tempo, musicOffset);
             
-            rect(x2[0], y2, rectWidth, rectHeight);
+            rectZoomed(x2[0], y2, rectWidth, rectHeight);
             if(x2[0] > widthMinusCube){
-                rect(x2temp, y2, rectWidth, rectHeight);
+                rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
                 // console.log(_x2[0][1])
             }
 
             fill('red'); //Red boxes
             if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
-                rect(x2temp, y2, rectWidth, rectHeight);
+                rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
             }
 
             for (let i = 0; i < x2.length; i++) {
-                if(x2[i] > width) {
+                if(x2[i] > xBoardSizeZoomed) {
                     x2[i] %= 600;
                     x2temp = -rectWidth;
                 }
@@ -2454,7 +2498,7 @@ class Cube{ //The red cube
             let realTempo = _x2[this.tempoChange - 1][1]
             // this.x2tNoSkip(x2totalTime * realTempo * musicRate, realTempo, musicOffset);
             this.x2tNoSkip((realMusicTime - realPrevMusicTime) * realTempo * musicRate, realTempo);
-            rect(x2[0], y2, rectWidth, rectHeight);
+            rectZoomed(x2[0], y2, rectWidth, rectHeight);
 
             fill('red'); //Red boxes
 
@@ -2467,7 +2511,7 @@ class Cube{ //The red cube
         // console.log(x2totalDistance + " t*60=" + x2totalTime * _x2[this.tempoChange][1]);
 
         for (let i = 1; i < x2.length; i++) {
-            rect(x2[i], y2, rectWidth, rectHeight);
+            rectZoomed(x2[i], y2, rectWidth, rectHeight);
         }
     }
 
