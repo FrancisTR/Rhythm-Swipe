@@ -1806,6 +1806,17 @@ function keyPressed() {
     }
     
 }
+
+function touchStarted(event) {
+    console.log("touchStarted")
+    console.log(event);
+    StartGameButton.html("Don't touch! " + event);
+}
+
+function touchEnded(event) {
+    console.log("touchEnded")
+    StartGameButton.html("The touchEnded! " + event);
+}
 //---------------------------------------------------------LEVEL DESIGN-------------------------------------------------------------------
 
 
