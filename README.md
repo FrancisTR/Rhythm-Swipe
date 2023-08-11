@@ -32,6 +32,12 @@ If you find any issues or bugs, please let us know in the "[Issues](https://gith
 
 
 
+## Milestones
+
+GitHub [Milestones](https://github.com/FrancisTR/Rhythm-Swipe/milestones "Milestones - FrancisTR/Rhythm-Swipe") - A roadmap on what we should do next based on collections of issues. This is also located in Issues tab > Milestones button.
+
+
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute.
