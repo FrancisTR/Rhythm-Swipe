@@ -97,6 +97,11 @@ let firstCubeTimestamp = 0.0;
 //---------Touches-----------------------------------
 let oldClientX = 0;
 let oldClientY = 0;
+let clientX = 0;
+let clientY = 0;
+let clientXDir = 0;
+let clientYDir = 0;
+let isClientXMax = true;
 
 //---------The position of red cubes------------------
 let x2tWait = 0.0; // fallback to fps while audioContext == 0. could be improved
@@ -1813,13 +1818,16 @@ function keyPressed() {
     
 }
 
-function mousePressed(event) {
-    console.log("mousePressed: " + event.type + "target: " + event.target + " buttons: " + event.buttons + " clientX: " + event.clientX + " clientY: " + event.clientY);
-    console.log(event);
+function mousePressed(e) {
+    oldClientX = e.clientX;
+    oldClientY = e.clientY;
+
+    // console.log("mousePressed: " + e.type + "target: " + e.target + " buttons: " + e.buttons + " clientX: " + e.clientX + " clientY: " + e.clientY);
+    // console.log(e);
 }
 
 // function touchStarted(event) {
-//     // this doesn't fire.
+//     // this doesn't fire. If it works in the future, make an issue.
 //     // online demo of bug + sources:
 //     // https://editor.p5js.org/FrostyNick/sketches/6vrneZP1m
 //     console.log("touchStarted")
@@ -1827,9 +1835,63 @@ function mousePressed(event) {
 //     StartGameButton.html("Don't touch! " + event);
 // }
 
-function touchEnded(event) {
-    console.log("touchEnded")
-    console.log(event)
+function touchEnded(e) {
+    // If you are below the canvas, ignore touches
+    if (!player || e.layerY > (boardYPos + yBoardSizeZoomed)) {
+        // console.log(e.layerY);
+        return;
+    }
+
+    clientX = e.clientX;
+    clientY = e.clientY;
+
+    console.log("direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY);
+    
+    // conversion is very questionable rn
+    clientXDir = clientX - oldClientX;
+    clientYDir = clientY - oldClientY;
+
+    if (clientXDir < 0) {
+        clientXDir = -1;
+    } else {
+        clientXDir = 1;
+    }
+    if (clientYDir < 0) {
+        clientYDir = -1;
+    } else {
+        clientYDir = 1;
+    }
+
+    player.move(clientXDir, clientYDir);
+    switch (clientXDir, clientYDir) {
+        case 0, 1:
+            player.face("up");
+            player.move(0, 1);
+            playJumpSound();
+            break;
+        case -1, 0:
+            player.face("left");
+            player.move(-1, 0);
+            playJumpSound();
+            break;
+        case 0, -1:
+            player.face("down");
+            player.move(0, -1);
+            playJumpSound();
+            break;
+        case 1, 0:
+            player.face("right");
+            player.move(1, 0);
+            playJumpSound();
+            break;
+        default:
+            console.log("Invalid direction! " + clientXDir + " " + clientYDir);
+            break;
+    }
+    // todo: sensitivity, test irl
+
+    console.log("direction: " + clientXDir + " " + clientYDir);
+    console.log(e)
     // StartGameButton.html("The touchEnded! " + event);
 }
 //---------------------------------------------------------LEVEL DESIGN-------------------------------------------------------------------
