@@ -99,9 +99,9 @@ let oldClientX = 0;
 let oldClientY = 0;
 let clientX = 0;
 let clientY = 0;
-let clientXDir = 0;
-let clientYDir = 0;
-let isClientXMax = true;
+let clientDirX = 0;
+let clientDirY = 0;
+let clientDirMax = true;
 
 //---------The position of red cubes------------------
 let x2tWait = 0.0; // fallback to fps while audioContext == 0. could be improved
@@ -1837,7 +1837,7 @@ function mousePressed(e) {
 
 function touchEnded(e) {
     // If you are below the canvas, ignore touches
-    if (!player || e.layerY > (boardYPos + yBoardSizeZoomed)) {
+    if (!player || e.layerY > (boardYPos + yBoardSizeZoomed) || clientDirX === NaN) {
         // console.log(e.layerY);
         return;
     }
@@ -1847,50 +1847,44 @@ function touchEnded(e) {
 
     console.log("direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY);
     
-    // conversion is very questionable rn
-    clientXDir = clientX - oldClientX;
-    clientYDir = clientY - oldClientY;
+    clientDirX = clientX - oldClientX;
+    clientDirY = clientY - oldClientY;
 
-    if (clientXDir < 0) {
-        clientXDir = -1;
-    } else {
-        clientXDir = 1;
-    }
-    if (clientYDir < 0) {
-        clientYDir = -1;
-    } else {
-        clientYDir = 1;
-    }
+    clientDirMax = Math.max(Math.abs(clientDirX), Math.abs(clientDirY));
+    clientDirX = clientDirX / clientDirMax;
+    clientDirY = clientDirY / clientDirMax;
 
-    player.move(clientXDir, clientYDir);
-    switch (clientXDir, clientYDir) {
-        case 0, 1:
-            player.face("up");
-            player.move(0, 1);
-            playJumpSound();
-            break;
-        case -1, 0:
-            player.face("left");
-            player.move(-1, 0);
-            playJumpSound();
-            break;
-        case 0, -1:
-            player.face("down");
-            player.move(0, -1);
-            playJumpSound();
-            break;
-        case 1, 0:
+    console.log("direction: " + clientDirX + " " + clientDirY);
+    
+    if (clientDirX > clientDirY) {
+        if (clientDirX > -clientDirY) {
+            console.log("right");
             player.face("right");
             player.move(1, 0);
             playJumpSound();
-            break;
-        default:
-            console.log("Invalid direction! " + clientXDir + " " + clientYDir);
-            break;
+        } else {
+            console.log("up");
+            player.face("up");
+            player.move(0, 1);
+            playJumpSound();
+        }
+    } else {
+        if (clientDirX > -clientDirY) {
+            player.face("down");
+            player.move(0, -1);
+            playJumpSound();
+            console.log("down");
+        } else {
+            player.face("left");
+            player.move(-1, 0);
+            playJumpSound();
+            console.log("left");
+        }
     }
+
     // todo: sensitivity, test irl
 
-    console.log("direction: " + clientXDir + " " + clientYDir);
+    console.log("direction: " + clientDirX + " " + clientDirY);
     console.log(e)
     // StartGameButton.html("The touchEnded! " + event);
 }
