@@ -83,7 +83,7 @@ let rectWidth = 30;
 let rectHeight = 500;
 let widthMinusCube = boardSize - rectWidth;
 
-// time for cubes and music
+//---------Time for cubes and music-------------------
 let realPrevMusicTime = 0.0; //!!!
 let realMusicTime = 0.0; //!!!
 let isStartTime = false; //!!!
@@ -93,8 +93,13 @@ let oldMusicRate = 1; //!!!
 let musicRate = 1;
 
 let firstCubeTimestamp = 0.0;
-//position of red cubes
-let x2tWait = 0.0; // no reset required
+
+//---------Touches-----------------------------------
+let oldClientX = 0;
+let oldClientY = 0;
+
+//---------The position of red cubes------------------
+let x2tWait = 0.0; // fallback to fps while audioContext == 0. could be improved
 let x2t = 0.0; //!!!
 let x2totalDistance = 0.0;
 let x2totalTime = 0.0;
@@ -1770,52 +1775,62 @@ function playJumpSound() {
 //Moving correlates to Canvas size. Ex: If Canvas is 600x600, then the
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
-    if(player != null){
-        // if (key === "p") {
-        //     isPaused = !isPaused;
-        //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
-        // }
-        // if (isPaused) return;
-        
-        switch (key) {
-            case "w":
-            case "i":
-                player.face("up");
-                player.move(0, 1);
-                playJumpSound();
-                break;
-            case "a":
-            case "j":
-                player.face("left");
-                player.move(-1, 0);
-                playJumpSound();
-                break;
-            case "s":
-            case "k":
-                player.face("down");
-                player.move(0, -1);
-                playJumpSound();
-                break;
-            case "d":
-            case "l":
-                player.face("right");
-                player.move(1, 0);
-                playJumpSound();
-                break;
-        }
+    if(player == null){
+        return;
+    }
+    // if (key === "p") {
+    //     isPaused = !isPaused;
+    //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
+    // }
+    // if (isPaused) return;
+
+    switch (key) {
+        case "w":
+        case "i":
+            player.face("up");
+            player.move(0, 1);
+            playJumpSound();
+            break;
+        case "a":
+        case "j":
+            player.face("left");
+            player.move(-1, 0);
+            playJumpSound();
+            break;
+        case "s":
+        case "k":
+            player.face("down");
+            player.move(0, -1);
+            playJumpSound();
+            break;
+        case "d":
+        case "l":
+            player.face("right");
+            player.move(1, 0);
+            playJumpSound();
+            break;
     }
     
 }
 
-function touchStarted(event) {
-    console.log("touchStarted")
+function mousePressed(event) {
+    console.log("mousePressed: " + event.type + "target: " + event.target + " buttons: " + event.buttons + " clientX: " + event.clientX + " clientY: " + event.clientY);
     console.log(event);
-    StartGameButton.html("Don't touch! " + event);
 }
+
+// function touchStarted(event) {
+//     // this doesn't fire.
+//     // online demo of bug + sources:
+//     // https://editor.p5js.org/FrostyNick/sketches/6vrneZP1m
+//     console.log("touchStarted")
+//     console.log(event);
+//     StartGameButton.html("Don't touch! " + event);
+// }
 
 function touchEnded(event) {
     console.log("touchEnded")
-    StartGameButton.html("The touchEnded! " + event);
+    console.log(event)
+    // StartGameButton.html("The touchEnded! " + event);
 }
 //---------------------------------------------------------LEVEL DESIGN-------------------------------------------------------------------
 
