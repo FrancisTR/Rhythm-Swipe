@@ -648,7 +648,7 @@ function draw(){
             //*/VERSION/
             textSizeZoomed(15);
             fill("white");
-            textZoomed("Alpha v1.1.3", 5, 15);
+            textZoomed("Alpha v2.0.0", 5, 15);
 
             buttonShow();
             break;
@@ -1239,19 +1239,19 @@ function visualAudio(){
   
     volHistory.push(vol);
   
-    if(volHistory.length > xBoardSizeZoomed*1) volHistory.splice(0,1); //width map
+    if(volHistory.length > boardSize*1) volHistory.splice(0,1); //width map
   
     stroke('cyan');
     noFill();
     beginShape();
     for(let i=0; i<volHistory.length; i++) {
         let y = map(volHistory[i], 0, 1, yBoardSizeZoomed/2, 0); //position map
-        vertex(i, y);
+        vertex(i*boardZoom, y);
     }
     endShape();
   
     stroke(11, 37, 52);
-    line(volHistory.length, 0, volHistory.length, yBoardSizeZoomed);
+    line(volHistory.length*boardZoom, 0, volHistory.length*boardZoom, yBoardSizeZoomed);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1884,15 +1884,17 @@ function touchEnded(e) {
     clientDirY = clientY - oldClientY;
     clientDirMax = Math.max(Math.abs(clientDirX), Math.abs(clientDirY));
 
-    if (clientDirMax < 10) {
+    if (clientDirMax < 10*boardZoom) {
         return;
     }
 
-    clientDirX = clientDirX / clientDirMax;
-    clientDirY = clientDirY / clientDirMax;
+    clientDirX /= clientDirMax;
+    clientDirY /= clientDirMax;
 
     console.log("direction: " + clientDirX + " " + clientDirY);
     
+// try this with the timing in between triggering cube deletion instead of rn?
+    // nah. that's too complex for no real benefit
     if (clientDirX > clientDirY) {
         if (clientDirX > -clientDirY) {
             console.log("right");
