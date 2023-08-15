@@ -46,6 +46,8 @@ for (let finalSize = 4800; finalSize >= 75; finalSize/=2) { // max resolution: 4
 }
 let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
 
+document.querySelector("section").style.height = yBoardSizeZoomed + "px";
+
 let tileSize = boardSize/10; //The grid
 let boardZoom = xBoardSizeZoomed / boardSize;
 //----------------------------------------------------
@@ -383,19 +385,19 @@ function setup() {
     div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
-
-    //Check to see if it supports the game
-    if ((windowWidth <= 620)){
-        level = -2;
-        messageError.style.display = "block";
-        resizeLock = true;
-        div.hide();
-    }else if ((windowWidth > 620) && resizeLock === true){
-        level = -1;
-        messageError.style.display = "none";
-        resizeLock = false;
-        div.show();
-    }
+    //
+    // //Check to see if it supports the game
+    // if ((windowWidth <= 620)){
+    //     level = -2;
+    //     messageError.style.display = "block";
+    //     resizeLock = true;
+    //     div.hide();
+    // }else if ((windowWidth > 620) && resizeLock === true){
+    //     level = -1;
+    //     messageError.style.display = "none";
+    //     resizeLock = false;
+    //     div.show();
+    // }
 
     //StartGame
     background("darkgray");
@@ -2359,7 +2361,7 @@ class Cube{ //The red cube
                 y2 -= 12;
             }else{
                 console.log("Perfect!");
-                x2[j] -= 600;
+                x2[j] -= boardSize;
             }
         }else{
             console.log("Still perfect!");
@@ -2600,12 +2602,14 @@ class Cube{ //The red cube
             if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
                 rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
+                console.log("x2temp: " + x2temp);
             }
 
             for (let i = 0; i < x2.length; i++) {
-                if(x2[i] > xBoardSizeZoomed) {
-                    x2[i] %= 600;
-                    x2temp = -rectWidth;
+                if(x2[i] > boardSize) {
+                    x2[i] %= boardSize;
+                    x2temp = x2[i] - rectWidth;
+                    // x2temp = -rectWidth*boardZoom;
                 }
                 x2[i]+=x2t;
             }

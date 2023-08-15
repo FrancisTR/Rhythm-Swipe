@@ -11,7 +11,7 @@ body{
     min-height: 100vh;
 }
 section{
-    min-height: 619px;
+    /* min-height: 619px; */
     display: flex;
     justify-content: center;
     align-items: center;
