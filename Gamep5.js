@@ -136,11 +136,12 @@ let clientDirY = 0;
 let clientDirMax = true;
 
 //---------The position of red cubes------------------
-let x2tWait = 0.0; // fallback to fps while audioContext == 0. could be improved
+let x2waitTravel = boardZoom / 60; // if there's a new frameCount, update this
+let x2wait = 0.0; //!!!falls back to fps if audioContext == 0. could be improved
+            
 let x2t = 0.0; //!!!
 let x2totalDistance = 0.0;
 let x2totalTime = 0.0;
-let x2wait = 0.0; //!!!
 let x2start = 0.0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
@@ -2425,7 +2426,7 @@ class Cube{ //The red cube
         }
 
         if (x2check === 0) {
-            x2t = realTempo / 60;
+            x2t = x2waitTravel * realTempo;
             x2wait += x2t;
 //            if (x2wait > 80) {
 //            }
@@ -2457,9 +2458,9 @@ class Cube{ //The red cube
         // p5js currentTime() is a bit jittery.
         if (isStartTime) {
 
-            if (typeof this.tempoChange === "undefined") {
-                return this.restartMusic(false, "WARNING: tempoChange is undefined. Restarting...");
-            }
+            if (typeof this.tempoChange === "undefined")
+                return this.restartMusic(false,
+                    "WARNING: tempoChange is undefined. Restarting...");
 
             realPrevMusicTime = realMusicTime;
             realMusicTime = getAudioContext().currentTime * musicRate - realStartTime;
@@ -2573,7 +2574,7 @@ class Cube{ //The red cube
             }
             console.log(`Restarted song. firstCubeTimestamp ${firstCubeTimestamp} realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
             musicLevel.rate(musicRate);
-            
+
             this.tempoChange = 0;
             this.x2calculate(musicOffset); // x start positions
             realStartTime = getAudioContext().currentTime;
@@ -2598,14 +2599,12 @@ class Cube{ //The red cube
                 rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
                 // console.log(_x2[0][1])
-            }
-
-            fill('red'); //Red boxes
-            if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
+            } else if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
+                fill('red'); //Red boxes
                 rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
-                console.log("x2temp: " + x2temp);
             }
+            fill('red');
 
             for (let i = 0; i < x2.length; i++) {
                 if(x2[i] > boardSize) {
