@@ -12,12 +12,42 @@ Legends:
 
 //---------------Creating the Board-------------------
 let boardSize = 600; //How big the board is; should not change
-let xBoardSizeZoomed = 600; //How big the board is; changed based on zoom // this variable == width
-let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
-let tileSize = boardSize/10; //The grid
-let boardZoom = xBoardSizeZoomed / boardSize;
+
 let boardXPos = 490;
 let boardYPos = 101;
+
+// From jQuery library source code. ty: https://stackoverflow.com/a/1038781
+// Is this reliable enough?
+let websiteSize = Math.min(
+    Math.max( 
+        document.body.scrollWidth,
+        document.documentElement.scrollWidth,
+        document.body.offsetWidth,
+        document.documentElement.offsetWidth,
+        document.documentElement.clientWidth
+    ), Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.documentElement.clientHeight
+    ) - boardYPos
+);
+
+let xBoardSizeZoomed = 600; //How big the board is; changed based on zoom // this variable == width
+for (let finalSize = 4800; finalSize >= 75; finalSize/=2) { // max resolution: 4800x4800px
+    if (finalSize <= websiteSize) {
+        xBoardSizeZoomed = finalSize;
+        break;
+    } else if (finalSize*0.75 <= websiteSize) {
+        xBoardSizeZoomed = finalSize*0.75;
+        break;
+    }
+}
+let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
+
+let tileSize = boardSize/10; //The grid
+let boardZoom = xBoardSizeZoomed / boardSize;
 //----------------------------------------------------
 
 
@@ -1836,8 +1866,9 @@ function mousePressed(e) {
 // }
 
 function touchEnded(e) {
+    // Bug: Pressing "Start" counts as a touch
     // If you are below the canvas, ignore touches
-    if (!player || e.layerY > (boardYPos + yBoardSizeZoomed) || clientDirX === NaN) {
+    if (e.layerY > (boardYPos + yBoardSizeZoomed) || realPrevMusicTime === 0) {
         // console.log(e.layerY);
         return;
     }
@@ -1849,8 +1880,12 @@ function touchEnded(e) {
     
     clientDirX = clientX - oldClientX;
     clientDirY = clientY - oldClientY;
-
     clientDirMax = Math.max(Math.abs(clientDirX), Math.abs(clientDirY));
+
+    if (clientDirMax < 10) {
+        return;
+    }
+
     clientDirX = clientDirX / clientDirMax;
     clientDirY = clientDirY / clientDirMax;
 
