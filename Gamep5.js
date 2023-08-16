@@ -127,6 +127,7 @@ let musicRate = 1;
 let firstCubeTimestamp = 0.0;
 
 //---------Touches-----------------------------------
+let displayMobileText = "";
 let oldClientX = 0;
 let oldClientY = 0;
 let clientX = 0;
@@ -245,6 +246,7 @@ let button4Start;
 let buttonBack;
 let buttonW;
 let buttonRetry;
+let buttonTouchInput;
 
 let pixelFont;
 //--------------------------------------------------------------------
@@ -490,6 +492,16 @@ function setup() {
 
     //-----------------------------------------------------------------
 
+    //----------Touch Input Button----------------
+    buttonTouchInput = createButton("will be invisible later");
+    buttonTouchInput.style('font-size', Math.max((18 * boardZoom), 9) + 'px');
+
+    buttonTouchInput.style('cursor', 'pointer');
+    buttonTouchInput.size(xBoardSizeZoomed, yBoardSizeZoomed);
+    // buttonTouchInput.hide();
+    buttonTouchInput.mousePressed(touchStarted);
+
+    //-----------------------------------------------------------------
 
     //----------------------Music Related------------------------------
     amplitude = new p5.Amplitude();
@@ -987,6 +999,10 @@ function draw(){
             break;
         //-------------------------------------------
     }
+
+    textSizeZoomed(20);
+    textZoomed(displayMobileText, 100, 100);
+
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1852,21 +1868,25 @@ function keyPressed() {
 }
 
 function mousePressed(e) {
-    oldClientX = e.clientX;
-    oldClientY = e.clientY;
+
+    oldClientX = e.layerX;
+    oldClientY = e.layerY;
 
     // console.log("mousePressed: " + e.type + "target: " + e.target + " buttons: " + e.buttons + " clientX: " + e.clientX + " clientY: " + e.clientY);
     // console.log(e);
 }
 
-// function touchStarted(event) {
-//     // this doesn't fire. If it works in the future, make an issue.
-//     // online demo of bug + sources:
-//     // https://editor.p5js.org/FrostyNick/sketches/6vrneZP1m
-//     console.log("touchStarted")
-//     console.log(event);
-//     StartGameButton.html("Don't touch! " + event);
-// }
+function touchStarted(event) {
+    // this doesn't fire as expected. If it works in the future, make an issue.
+    oldClientX = e.layerX;
+    oldClientY = e.layerY;
+    // online demo of bug + sources:
+    // https://editor.p5js.org/FrostyNick/sketches/6vrneZP1m
+    displayMobileText = "touchStarted";
+    console.log("touchStarted works!!")
+    console.log(event);
+    StartGameButton.html("Don't touch! " + event);
+}
 
 function touchEnded(e) {
     // Bug: Pressing "Start" counts as a touch
@@ -1875,11 +1895,12 @@ function touchEnded(e) {
         // console.log(e.layerY);
         return;
     }
+    
+ // e.clientX returns undefined on mobile devices I've tested
+    clientX = e.layerX;
+    clientY = e.layerY;
 
-    clientX = e.clientX;
-    clientY = e.clientY;
-
-    console.log("direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY);
+    displayMobileText = "direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY;
     
     clientDirX = clientX - oldClientX;
     clientDirY = clientY - oldClientY;
