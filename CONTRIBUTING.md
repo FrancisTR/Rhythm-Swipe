@@ -1,6 +1,6 @@
 # Contribution Instructions
 
-***Note that this only applies to those that have Collaborator Access and you must have this access in order to contribute.***
+
 
 ### Before contributing, make sure you follow these steps:
 
@@ -10,7 +10,7 @@
 <!-- Rules about rebase, merge, and squash. See https://help.github.com/articles/about-merging-pull-requests/ -->
 
 
+
 # Thank you for your contribution!
 
-![happy-obi-wan](https://github.com/FrancisTR/Rhythm-Swipe/assets/123771828/5acd50bc-e575-4a75-a885-bbc4bd070737)
-
+![happy-obi-wan](https://github.com/FrancisTR/Rhythm-Swipe/assets/123771828/feab4bd3-fc9f-4502-9fc4-598a4820d91c)
