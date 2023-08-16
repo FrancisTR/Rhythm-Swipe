@@ -499,7 +499,7 @@ function setup() {
     buttonTouchInput.style('cursor', 'pointer');
     buttonTouchInput.size(xBoardSizeZoomed, yBoardSizeZoomed);
     // buttonTouchInput.hide();
-    buttonTouchInput.mousePressed(touchStarted);
+    buttonTouchInput.mousePressed(mousePressed);
 
     //-----------------------------------------------------------------
 
@@ -1868,27 +1868,6 @@ function keyPressed() {
 }
 
 function mousePressed(e) {
-
-    oldClientX = e.layerX;
-    oldClientY = e.layerY;
-
-    // console.log("mousePressed: " + e.type + "target: " + e.target + " buttons: " + e.buttons + " clientX: " + e.clientX + " clientY: " + e.clientY);
-    // console.log(e);
-}
-
-function touchStarted(event) {
-    // this doesn't fire as expected. If it works in the future, make an issue.
-    oldClientX = e.layerX;
-    oldClientY = e.layerY;
-    // online demo of bug + sources:
-    // https://editor.p5js.org/FrostyNick/sketches/6vrneZP1m
-    displayMobileText = "touchStarted";
-    console.log("touchStarted works!!")
-    console.log(event);
-    StartGameButton.html("Don't touch! " + event);
-}
-
-function touchEnded(e) {
     // Bug: Pressing "Start" counts as a touch
     // If you are below the canvas, ignore touches
     if (e.layerY > (boardYPos + yBoardSizeZoomed) || realPrevMusicTime === 0) {
@@ -1902,18 +1881,18 @@ function touchEnded(e) {
 
     displayMobileText = "direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY;
     
-    clientDirX = clientX - oldClientX;
-    clientDirY = clientY - oldClientY;
+    clientDirX = clientX * 2 / xBoardSizeZoomed - 1;
+    clientDirY = clientY * 2 / yBoardSizeZoomed - 1;
     clientDirMax = Math.max(Math.abs(clientDirX), Math.abs(clientDirY));
 
-    if (clientDirMax < 10*boardZoom) {
-        return;
-    }
+    // if (clientDirMax < 10*boardZoom) {
+    //     return;
+    // }
 
     clientDirX /= clientDirMax;
     clientDirY /= clientDirMax;
 
-    console.log("direction: " + clientDirX + " " + clientDirY);
+    displayMobileText += "\ndirection: " + clientDirX + " " + clientDirY;
     
 // try this with the timing in between triggering cube deletion instead of rn?
     // nah. that's too complex for no real benefit
