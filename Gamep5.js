@@ -86,6 +86,7 @@ var playerCounter = 0; //!!!
 let backgroundColor = 250; //The background color of the board. //!!!
 let playerAttempts = 3; //!!!
 let beatColorBoolean = false; //!!!
+let keysDebounce = new Set();
 //----------------------------------------------------
 
 
@@ -1836,24 +1837,32 @@ function keyPressed() {
     switch (key) {
         case "w":
         case "i":
+            if (keysDebounce.has(1)) break;
+            keysDebounce.add(1);
             player.face("up");
             player.move(0, 1);
             playJumpSound();
             break;
         case "a":
         case "j":
+            if (keysDebounce.has(2)) break;
+            keysDebounce.add(2);
             player.face("left");
             player.move(-1, 0);
             playJumpSound();
             break;
         case "s":
         case "k":
+            if (keysDebounce.has(3)) break;
+            keysDebounce.add(3);
             player.face("down");
             player.move(0, -1);
             playJumpSound();
             break;
         case "d":
         case "l":
+            if (keysDebounce.has(4)) break;
+            keysDebounce.add(4);
             player.face("right");
             player.move(1, 0);
             playJumpSound();
@@ -1893,11 +1902,15 @@ function touchEnded(e) {
     // nah. that's too complex for no real benefit
     if (clientDirX > clientDirY) {
         if (clientDirX > -clientDirY) {
+            if (keysDebounce.has(4)) return;
+            keysDebounce.add(4);
             console.log("right");
             player.face("right");
             player.move(1, 0);
             playJumpSound();
         } else {
+            if (keysDebounce.has(1)) return;
+            keysDebounce.add(1);
             console.log("up");
             player.face("up");
             player.move(0, 1);
@@ -1905,11 +1918,15 @@ function touchEnded(e) {
         }
     } else {
         if (clientDirX > -clientDirY) {
+            if (keysDebounce.has(3)) return;
+            keysDebounce.add(3);
             player.face("down");
             player.move(0, -1);
             playJumpSound();
             console.log("down");
         } else {
+            if (keysDebounce.has(2)) return;
+            keysDebounce.add(2);
             player.face("left");
             player.move(-1, 0);
             playJumpSound();
@@ -2546,8 +2563,6 @@ class Cube{ //The red cube
                 if (_x2[this.tempoChange][1] === -999) {
                     this.restartMusic(musicLevel);
                 } 
-        //  } else {
-        //      console.log("this should never be called from now on since it loops");
             }
         } else {
             isStartTime = true;
@@ -2579,6 +2594,7 @@ class Cube{ //The red cube
             realMusicTime = 0;
         }
 
+        keysDebounce.clear()
         let tempo = _x2[this.tempoChange][1]
 
 
