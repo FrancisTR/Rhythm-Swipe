@@ -496,11 +496,6 @@ function setup() {
     buttonTouchInput = createButton("will be invisible later");
     buttonTouchInput.style('font-size', Math.max((18 * boardZoom), 9) + 'px');
 
-    buttonTouchInput.style('cursor', 'pointer');
-    buttonTouchInput.size(xBoardSizeZoomed, yBoardSizeZoomed);
-    // buttonTouchInput.hide();
-    buttonTouchInput.mousePressed(mousePressed);
-
     //-----------------------------------------------------------------
 
     //----------------------Music Related------------------------------
@@ -1867,7 +1862,7 @@ function keyPressed() {
     
 }
 
-function mousePressed(e) {
+function touchEnded(e) {
     // Bug: Pressing "Start" counts as a touch
     // If you are below the canvas, ignore touches
     if (e.layerY > (boardYPos + yBoardSizeZoomed) || realPrevMusicTime === 0) {

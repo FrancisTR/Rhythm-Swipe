@@ -26,6 +26,7 @@ a:hover{
 }
 
 .GamePresentation h1{ /* Error Message */
+    touch-action: manipulation;
     margin-top: 125px;
     color: white;
     display: none;
