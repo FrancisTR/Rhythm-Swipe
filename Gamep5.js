@@ -669,7 +669,7 @@ function draw(){
 
         //--------------Easy Mode-------------------
         case 0.5: //Level 1 Overview
-        setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -734,7 +734,7 @@ function draw(){
 
         //-------------Normal Mode-----------------
         case 1.5: //Level 2 overview
-        setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -798,7 +798,7 @@ function draw(){
 
         //---------------Hard Mode-----------------
         case 2.5: //Hard intermission
-        setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -940,7 +940,7 @@ function draw(){
 
         //--------------Master Mode-------------------
         case 5.5: //Master Mode Intermssion
-        setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -2684,4 +2684,4 @@ class Cube{ //The red cube
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
-// }
+
