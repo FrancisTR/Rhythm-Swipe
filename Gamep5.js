@@ -10,6 +10,8 @@ Legends:
 
 
 
+p5.disableFriendlyErrors = true;
+
 //---------------Creating the Board-------------------
 let boardSize = 600; //How big the board is; should not change
 
@@ -128,7 +130,7 @@ let musicRate = 1;
 let firstCubeTimestamp = 0.0;
 
 //---------Touches-----------------------------------
-let displayMobileText = "";
+let debugText = "";
 let oldClientX = 0;
 let oldClientY = 0;
 let clientX = 0;
@@ -667,7 +669,7 @@ function draw(){
 
         //--------------Easy Mode-------------------
         case 0.5: //Level 1 Overview
-	    setup();
+        setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -732,7 +734,7 @@ function draw(){
 
         //-------------Normal Mode-----------------
         case 1.5: //Level 2 overview
-	    setup();
+        setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -796,7 +798,7 @@ function draw(){
 
         //---------------Hard Mode-----------------
         case 2.5: //Hard intermission
-	    setup();
+        setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -938,7 +940,7 @@ function draw(){
 
         //--------------Master Mode-------------------
         case 5.5: //Master Mode Intermssion
-	    setup();
+        setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -997,7 +999,7 @@ function draw(){
     }
 
     textSizeZoomed(20);
-    textZoomed(displayMobileText, 100, 100);
+    textZoomed(debugText, 100, 100);
 
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1867,6 +1869,8 @@ function keyPressed() {
             player.move(1, 0);
             playJumpSound();
             break;
+        case "e":
+            throw "Pressed e for test error.";
     }
     
 }
@@ -1883,7 +1887,7 @@ function touchEnded(e) {
     clientX = e.layerX;
     clientY = e.layerY;
 
-    displayMobileText = "direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY;
+    debugText = "direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY;
     
     clientDirX = clientX * 2 / xBoardSizeZoomed - 1;
     clientDirY = clientY * 2 / yBoardSizeZoomed - 1;
@@ -1896,7 +1900,7 @@ function touchEnded(e) {
     clientDirX /= clientDirMax;
     clientDirY /= clientDirMax;
 
-    displayMobileText += "\ndirection: " + clientDirX + " " + clientDirY;
+    debugText += "\ndirection: " + clientDirX + " " + clientDirY;
     
 // try this with the timing in between triggering cube deletion instead of rn?
     // nah. that's too complex for no real benefit
@@ -1940,6 +1944,18 @@ function touchEnded(e) {
     console.log(e)
     // StartGameButton.html("The touchEnded! " + event);
 }
+//-----------------------------------------------------------ERROR DESIGN-----------------------------------------------------------------
+window.onerror = function(e){
+    debugText = e.toString();
+    document.querySelector(".GameError").textContent = "Report on github for super free robux not clickybait or sus: " + debugText;
+    console.log(debugText);
+}
+// window.addEventListener("error", (event) => {
+//   // log.textContent = `${log.textContent}${event.type}: ${event.message}\n`;
+//   console.log(event);
+// });
+
+
 //---------------------------------------------------------LEVEL DESIGN-------------------------------------------------------------------
 
 
@@ -2668,4 +2684,4 @@ class Cube{ //The red cube
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
-
+// }
