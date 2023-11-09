@@ -275,7 +275,7 @@ function preload() {
     hardSound = loadSound('sounds/LevelSounds/Where_I_End_You_Begin_8-bit.mp3');
     //*/
     //*/Sounds//
-    masterSound = loadSound('sounds/LevelSounds/Super_Smash_Bros.mp3');
+    masterSound = loadSound('sounds/LevelSounds/Revenge ｜ 8-Bit Cover [LrIYu4Lcs2Y].mp3');
     //*/
 
     //*/Sounds//
@@ -953,8 +953,8 @@ function draw(){
             textSizeZoomed(25);
             textZoomed("Difficulty: Master", 25, 100);
             textSizeZoomed(15);
-            textZoomed("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
-            textZoomed("By Tater-Tot Tunes", 25, 200);
+            textZoomed("Music: Revenge", 25, 150);
+            textZoomed("By nbclover", 25, 200);
             if (masterworldRecord === null){
                 textZoomed("Personal Best: ???", 20, 570);
             }else{
@@ -1945,7 +1945,7 @@ function touchEnded(e) {
 window.onerror = function(e){
     debugText = e.toString();
                     
-    // This isn't visible for some reason. document.querySelector(".GameError").textContent = "Report on <a href=\"https://github.com/FrancisTR/Rhythm-Swipe/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc\" target=\"_blank\">GitHub issues</a> okay?\n" + debugText; // future idea to append: or send an email to rhythmswipe@gmail.com
+    // This isn't visible for some reason: document.querySelector(".GameError").textContent = "Report on <a href=\"https://github.com/FrancisTR/Rhythm-Swipe/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc\" target=\"_blank\">GitHub issues</a> okay?\n" + debugText; // future idea to append: or send an email to rhythmswipe@gmail.com
     console.log(debugText);
 }
 // window.addEventListener("error", (event) => {
@@ -2289,11 +2289,11 @@ class Cube{ //The red cube
             // [-2, -998], // game will auto set these values
             // [0 || -1, -999],
         ]
-        // New music: Super_Smash_Bros.mp3
+        // New new music: Revenge - 8-Bit Cover [LrIYu4Lcs2Y].mp3
         this.masterTempo = [
-            [0.4, -997],
-            [0, 236], // (236, 236.?) // tempo might be changing
-            [masterSound.duration() - 2, -998],
+            // [0.4, -997], // review this
+            [0, 200],
+            [masterSound.duration() - 4, -998],
             [masterSound.duration() || -1, -999],
         ]
 
@@ -2678,7 +2678,7 @@ class Cube{ //The red cube
     }
 
     displayLevel4(){
-        this.displayLevelSetup(masterSound, this.masterTempo, -155);
+        this.displayLevelSetup(masterSound, this.masterTempo);
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
