@@ -496,8 +496,8 @@ function setup() {
     //-----------------------------------------------------------------
 
     //----------Touch Input Button----------------
-    buttonTouchInput = createButton("will be invisible later");
-    buttonTouchInput.style('font-size', Math.max((18 * boardZoom), 9) + 'px');
+    // buttonTouchInput = createButton("will be invisible later");
+    // buttonTouchInput.style('font-size', Math.max((18 * boardZoom), 9) + 'px');
 
     //-----------------------------------------------------------------
 
@@ -711,7 +711,6 @@ function draw(){
             break;
         case 1: //Easy Mode Game
             buttonHide();
-            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // easySound.play();
@@ -771,7 +770,6 @@ function draw(){
             break;
         case 2: //Normal Mode Game
             buttonHide();
-            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // normalSound.play();
@@ -836,7 +834,6 @@ function draw(){
             break;
         case 3: //Hard Mode
             buttonHide();
-            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // hardSound.play();
@@ -976,7 +973,6 @@ function draw(){
             break;
         case 6: //Master Mode Game
             buttonHide();
-            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // masterSound.play();
@@ -1046,6 +1042,7 @@ function finished(){
     if (coins.length === points && finishedPos.x == tilePos.x && finishedPos.y == tilePos.y){ //If it collides with the endBlock
         console.log("Winner!");
         level = 4;
+        FailSound.stop();
         VictorySound.setVolume(0.3);
         VictorySound.play();
 
@@ -1887,7 +1884,7 @@ function touchEnded(e) {
     clientX = e.layerX;
     clientY = e.layerY;
 
-    debugText = "direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY;
+    // debugText = "direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY;
     
     clientDirX = clientX * 2 / xBoardSizeZoomed - 1;
     clientDirY = clientY * 2 / yBoardSizeZoomed - 1;
@@ -1900,7 +1897,7 @@ function touchEnded(e) {
     clientDirX /= clientDirMax;
     clientDirY /= clientDirMax;
 
-    debugText += "\ndirection: " + clientDirX + " " + clientDirY;
+    // debugText += "\ndirection: " + clientDirX + " " + clientDirY;
     
 // try this with the timing in between triggering cube deletion instead of rn?
     // nah. that's too complex for no real benefit
@@ -1947,7 +1944,8 @@ function touchEnded(e) {
 //-----------------------------------------------------------ERROR DESIGN-----------------------------------------------------------------
 window.onerror = function(e){
     debugText = e.toString();
-    document.querySelector(".GameError").textContent = "Report on github for super free robux not clickybait or sus: " + debugText;
+                    
+    // This isn't visible for some reason. document.querySelector(".GameError").textContent = "Report on <a href=\"https://github.com/FrancisTR/Rhythm-Swipe/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc\" target=\"_blank\">GitHub issues</a> okay?\n" + debugText; // future idea to append: or send an email to rhythmswipe@gmail.com
     console.log(debugText);
 }
 // window.addEventListener("error", (event) => {
