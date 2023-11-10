@@ -141,7 +141,10 @@ let clientDirMax = true;
 
 //---------The position of red cubes------------------
 let x2waitTravel = boardZoom / 60; // if there's a new frameCount, update this
-let x2wait = 0.0; //!!!falls back to fps if audioContext == 0. could be improved
+let x2waitFps = 0.0; //!!!falls back to fps if audioContext == 0. could be improved
+let x2waitMs = 0.0; //!!!
+let x2waitOld = 0.0;
+let x2waitNow = 0.0;
             
 let x2t = 0.0; //!!!
 let x2totalDistance = 0.0;
@@ -172,6 +175,7 @@ let y2 = 575; //!!!
 //--------------------Timer for all levels---------------------------
 //Timer used to see how long the player takes to complete a level.
 let timer = 0; //!!!
+let fps = 60;
 
 let easyworldRecord = null;
 let normalworldRecord = null;
@@ -522,7 +526,10 @@ function setup() {
 //--------------------------------------------------------------------DRAW----------------------------------------------------------------------------------
 function draw(){
 
-    
+    // Bugs with differing frame rates so far:
+    // - Cops are not positioned correctly when not in 60 FPS.
+
+    frameRate(fps)
 
     textFont(pixelFont);
     StartGameButton.position(250*boardZoom, boardYPos+255.5*boardZoom);
@@ -1054,7 +1061,7 @@ function finished(){
         realStartTime = 0;
         oldMusicRate = 1; // not perfect. fixes some situations.
         isStartTime = false;
-        x2wait = 0; 
+        x2waitFps = 0; 
         x2t = 0;
         x2temp = -rectWidth; //
         y2 = 575; //
@@ -1110,7 +1117,7 @@ function failed(){
     isStartTime = false;
     x2t = 0;
     x2temp = -rectWidth; //
-    x2wait = 0; //
+    x2waitFps = 0; //
     y2 = 575; //
     i = 0; //
     finishLine = []; //
@@ -1471,7 +1478,7 @@ function level1(){ //Done
 
     //We time the player
     easyModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1567,7 +1574,7 @@ function level2(){ //Normal mode
 
     //We time the player
     normalModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1661,7 +1668,7 @@ function level3(){ // Hard Mode
 
     //We time the player
     hardModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1754,7 +1761,7 @@ function level4(){ //MASTER MODE
 
     //We time the player
     masterModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1866,8 +1873,8 @@ function keyPressed() {
             player.move(1, 0);
             playJumpSound();
             break;
-        case "e":
-            throw "Pressed e for test error.";
+        // case "e":
+        //     throw "Pressed e for test error.";
     }
     
 }
@@ -2291,7 +2298,7 @@ class Cube{ //The red cube
         ]
         // New new music: Revenge - 8-Bit Cover [LrIYu4Lcs2Y].mp3
         this.masterTempo = [
-            // [0.4, -997], // review this
+            // [0.4, -997], // review this ln later
             [0, 200],
             [masterSound.duration() - 4, -998],
             [masterSound.duration() || -1, -999],
@@ -2444,28 +2451,34 @@ class Cube{ //The red cube
     }
 
     x2tNoSkip(x2check, realTempo, _offset = 0){
+        x2waitOld = x2waitNow;
+        x2waitNow = Date.now();
+
         // if 0 (or false), use previous value
-        // remove x2check by x2wait when audioContext is not 0
+        // remove x2check by x2waitFps when audioContext is not 0
         if (realTempo === 0) {
             x2t = 0;
             return;
         }
 
         if (x2check === 0) {
-            x2t = x2waitTravel * realTempo;
-            x2wait += x2t;
-//            if (x2wait > 80) {
-//            }
+            // x2t = x2waitTravel * realTempo;
+            x2t = (x2waitNow - x2waitOld) * realTempo / 1000;
+            x2waitMs += (x2waitOld - x2waitNow) * realTempo / 1000;
+            x2waitFps += x2t;
         } else {
 
-            if (x2wait === 0) {
+            // if (x2waitFps === 0) {
+            if (x2waitMs === 0) {
                 x2t = x2check;
             } else {
-                x2t = x2check - x2wait;
-                // if (x2wait > 22) {
-                //    console.log(`laggier waiting: x2wait=${x2wait} original x2t=${x2check}`)
+                x2t = x2check - x2waitFps;
+                // x2t = x2check - x2waitMs;
+                // if (x2waitFps > 22) {
+                //    console.log(`laggier waiting: x2waitFps=${x2waitFps} original x2t=${x2check}`)
                 // }
-                x2wait = 0;
+                x2waitMs = 0.0;
+                x2waitFps = 0.0;
             }
         }
     }
@@ -2602,6 +2615,7 @@ class Cube{ //The red cube
             this.tempoChange = 0;
             this.x2calculate(musicOffset); // x start positions
             realStartTime = getAudioContext().currentTime;
+            x2waitNow = Date.now();
             musicLevel.play();
 
             realPrevMusicTime = 0;
