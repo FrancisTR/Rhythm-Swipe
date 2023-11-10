@@ -13,6 +13,9 @@ Rhythm Swipe is a 2D game where the goal is to collect all the Jewels and to rea
 Play <a href="https://projectrhythmswipe.netlify.app/" target="_blank">Rhythm Swipe</a> now!
 
 
+## Rhythm Swipe (Processing)
+Rhythm Swipe also has a version written in Java using Processing.<br>
+For more information, see <a href="https://github.com/johntran038/Rhythm-Swipe_Processing" target="_blank">Rhythm Swipe (Processing)</a>
 
 
 ## Languages/Libraries Used
