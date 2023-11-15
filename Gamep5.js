@@ -396,8 +396,9 @@ function setup() {
     div.center('horizontal');
     div.style("border", "5px solid cyan");
 
-    //Check to see if it supports the game (probably mobile device)
+    //Check to see if device is supported (probably not mobile device)
     //Technically screen resolution doesn't determine it. This is fast solution.
+
     if ((windowWidth <= 620)){
         level = -2;
         messageError.style.display = "block";
@@ -419,14 +420,14 @@ function setup() {
     StartGameButton.style('color', 'blueviolet');
     // minimum font 10px
     StartGameButton.style('border', 5*boardZoom + 'px solid cyan');
-    StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
+    StartGameButton.mouseReleased(mainMenu); //Goes to Main Menu
 
 
     //-------------Back button-----------
     buttonBack = createTemplateButton('Back');
     buttonBack.style('color', 'black');
     buttonBack.style('border', 5*boardZoom + 'px solid cyan');
-    buttonBack.mousePressed(mainMenu); //Goes to Main Menu
+    buttonBack.mouseReleased(mainMenu); //Goes to Main Menu
     //-----------------------------------
 
     //-----------Easy Button-------------
@@ -434,48 +435,48 @@ function setup() {
     button.style('color', 'green');
     // button.style('font-size', '18px');
     button.style('border', 5*boardZoom + 'px solid green');
-    button.mousePressed(easyIntermission); //Goes to Intermission
+    button.mouseReleased(easyIntermission); //Goes to Intermission
 
     buttonStart = createTemplateButton('Start');
     buttonStart.style('color', 'green');
     buttonStart.style('border', 5*boardZoom + 'px solid green');
-    buttonStart.mousePressed(easyLevel); //Play Easy Mode
+    buttonStart.mouseReleased(easyLevel); //Play Easy Mode
     //-----------------------------------
 
     //-----------Normal Button-----------
     button2 = createTemplateButton('💎💎 Normal 💎💎');
     button2.style('color', 'orange');
     button2.style('border', 5*boardZoom + 'px solid orange');
-    button2.mousePressed(normalIntermission); //Goes to Intermission
+    button2.mouseReleased(normalIntermission); //Goes to Intermission
 
     button2Start = createTemplateButton('Start');
     button2Start.style('color', 'orange');
     button2Start.style('border', 5*boardZoom + 'px solid orange');
-    button2Start.mousePressed(normalLevel); //Play Normal Mode
+    button2Start.mouseReleased(normalLevel); //Play Normal Mode
     //-----------------------------------
 
     //------------Hard button------------
     button3 = createTemplateButton('💰 Hard 💰');
     button3.style('color', 'red');
     button3.style('border', 5*boardZoom + 'px solid red');
-    button3.mousePressed(hardIntermission); //Goes to Intermission
+    button3.mouseReleased(hardIntermission); //Goes to Intermission
 
     button3Start = createTemplateButton('Start');
     button3Start.style('color', 'red');
     button3Start.style('border', 5*boardZoom + 'px solid red');
-    button3Start.mousePressed(hardLevel); //Play Hard Mode
+    button3Start.mouseReleased(hardLevel); //Play Hard Mode
     //------------------------------------
 
     //-----------Master button (Used to see the High Score)----------
     button4 = createTemplateButton('💰👑 Master 👑💰');
     button4.style('color', 'blueviolet');
     button4.style('border', 5*boardZoom + 'px solid blueviolet');
-    button4.mousePressed(masterIntermission); //Goes to Intermission
+    button4.mouseReleased(masterIntermission); //Goes to Intermission
 
     button4Start = createTemplateButton('Start');
     button4Start.style('color', 'blueviolet');
     button4Start.style('border', 5*boardZoom + 'px solid blueviolet');
-    button4Start.mousePressed(masterLevel); //Play Master Mode
+    button4Start.mouseReleased(masterLevel); //Play Master Mode
     //-----------------------------------------------------------------
 
 
@@ -484,7 +485,7 @@ function setup() {
     buttonW.style('color', 'black');
     buttonW.style('border', 5*boardZoom + 'px solid cyan');
 
-    buttonW.mousePressed(mainMenu); //Main menu
+    buttonW.mouseReleased(mainMenu); //Main menu
     buttonW.hide();
 
     //-----------------------------------------------------------------
@@ -495,7 +496,7 @@ function setup() {
     buttonRetry.style('border', 5*boardZoom + 'px solid cyan');
     buttonRetry.style('cursor', 'pointer');
 
-    buttonRetry.mousePressed(mainMenuRetry); //Main menu
+    buttonRetry.mouseReleased(mainMenuRetry); //Main menu
     buttonRetry.hide();
 
     //-----------------------------------------------------------------
@@ -1881,7 +1882,6 @@ function keyPressed() {
 }
 
 function touchEnded(e) {
-    // Bug: Pressing "Start" counts as a touch
     // If you are below the canvas, ignore touches
     if (e.layerY > (boardYPos + yBoardSizeZoomed) || realPrevMusicTime === 0) {
         // console.log(e.layerY);
