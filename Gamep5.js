@@ -395,19 +395,20 @@ function setup() {
     div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
-    //
-    // //Check to see if it supports the game
-    // if ((windowWidth <= 620)){
-    //     level = -2;
-    //     messageError.style.display = "block";
-    //     resizeLock = true;
-    //     div.hide();
-    // }else if ((windowWidth > 620) && resizeLock === true){
-    //     level = -1;
-    //     messageError.style.display = "none";
-    //     resizeLock = false;
-    //     div.show();
-    // }
+
+    //Check to see if it supports the game (probably mobile device)
+    //Technically screen resolution doesn't determine it. This is fast solution.
+    if ((windowWidth <= 620)){
+        level = -2;
+        messageError.style.display = "block";
+        resizeLock = true;
+        div.hide();
+    }else if ((windowWidth > 620) && resizeLock === true){
+        level = -1;
+        messageError.style.display = "none";
+        resizeLock = false;
+        div.show();
+    }
 
     //StartGame
     background("darkgray");
