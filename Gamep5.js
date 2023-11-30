@@ -720,6 +720,7 @@ function draw(){
             break;
         case 1: //Easy Mode Game
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // easySound.play();
@@ -779,6 +780,7 @@ function draw(){
             break;
         case 2: //Normal Mode Game
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // normalSound.play();
@@ -843,6 +845,7 @@ function draw(){
             break;
         case 3: //Hard Mode
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // hardSound.play();
@@ -982,6 +985,7 @@ function draw(){
             break;
         case 6: //Master Mode Game
             buttonHide();
+            FailSound.stop();
             if (!player){
                 //*/Sounds//
                 // masterSound.play();
