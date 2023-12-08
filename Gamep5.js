@@ -392,6 +392,7 @@ function setup() {
     //Center the game on the page
 
     let div = createCanvas(xBoardSizeZoomed, yBoardSizeZoomed);
+    boardYPos = document.querySelector(".HeaderNav").style.height || 101
     div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
@@ -1886,11 +1887,8 @@ function keyPressed() {
 }
 
 function touchEnded(e) {
-    // If you are below the canvas, ignore touches
-    if (e.layerY > (boardYPos + yBoardSizeZoomed) || realPrevMusicTime === 0) {
-        // console.log(e.layerY);
-        return;
-    }
+    // If canvas is not used or not playing, ignore
+    if (e.target.id !== "defaultCanvas0" || realPrevMusicTime === 0) return;
     
  // e.clientX returns undefined on mobile devices I've tested
     clientX = e.layerX;
@@ -1917,14 +1915,12 @@ function touchEnded(e) {
         if (clientDirX > -clientDirY) {
             if (keysDebounce.has(4)) return;
             keysDebounce.add(4);
-            console.log("right");
             player.face("right");
             player.move(1, 0);
             playJumpSound();
         } else {
             if (keysDebounce.has(1)) return;
             keysDebounce.add(1);
-            console.log("up");
             player.face("up");
             player.move(0, 1);
             playJumpSound();
@@ -1936,14 +1932,12 @@ function touchEnded(e) {
             player.face("down");
             player.move(0, -1);
             playJumpSound();
-            console.log("down");
         } else {
             if (keysDebounce.has(2)) return;
             keysDebounce.add(2);
             player.face("left");
             player.move(-1, 0);
             playJumpSound();
-            console.log("left");
         }
     }
 
@@ -1958,7 +1952,7 @@ window.onerror = function(e){
     debugText = e.toString();
                     
     // This isn't visible for some reason: document.querySelector(".GameError").textContent = "Report on <a href=\"https://github.com/FrancisTR/Rhythm-Swipe/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc\" target=\"_blank\">GitHub issues</a> okay?\n" + debugText; // future idea to append: or send an email to rhythmswipe@gmail.com
-    console.log(debugText);
+    console.log("onerror debugText: " + debugText);
 }
 // window.addEventListener("error", (event) => {
 //   // log.textContent = `${log.textContent}${event.type}: ${event.message}\n`;
