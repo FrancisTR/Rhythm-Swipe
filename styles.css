@@ -11,7 +11,7 @@ body{
     min-height: 100vh;
 }
 section{
-    min-height: 619px;
+    /* min-height: 619px; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,6 +26,7 @@ a:hover{
 }
 
 .GamePresentation h1{ /* Error Message */
+    touch-action: manipulation;
     margin-top: 125px;
     color: white;
     display: none;
@@ -105,6 +106,12 @@ a:hover{
 
 
 
+/* Game Error */
+.GameError{
+    color: red;
+    font-size: 15px;
+}
+    
 /* Game Description */
 .GameDescription{
     margin-top: 200px;

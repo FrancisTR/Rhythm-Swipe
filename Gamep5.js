@@ -10,14 +10,48 @@ Legends:
 
 
 
+p5.disableFriendlyErrors = true;
+
 //---------------Creating the Board-------------------
 let boardSize = 600; //How big the board is; should not change
-let xBoardSizeZoomed = 600; //How big the board is; changed based on zoom // this variable == width
-let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
-let tileSize = boardSize/10; //The grid
-let boardZoom = xBoardSizeZoomed / boardSize;
+
 let boardXPos = 490;
 let boardYPos = 101;
+
+// From jQuery library source code. ty: https://stackoverflow.com/a/1038781
+// Is this reliable enough?
+let websiteSize = Math.min(
+    Math.max( 
+        document.body.scrollWidth,
+        document.documentElement.scrollWidth,
+        document.body.offsetWidth,
+        document.documentElement.offsetWidth,
+        document.documentElement.clientWidth
+    ), Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.documentElement.clientHeight
+    ) - boardYPos
+);
+
+let xBoardSizeZoomed = 600; //How big the board is; changed based on zoom // this variable == width
+for (let finalSize = 4800; finalSize >= 75; finalSize/=2) { // max resolution: 4800x4800px
+    if (finalSize <= websiteSize) {
+        xBoardSizeZoomed = finalSize;
+        break;
+    } else if (finalSize*0.75 <= websiteSize) {
+        xBoardSizeZoomed = finalSize*0.75;
+        break;
+    }
+}
+let yBoardSizeZoomed = xBoardSizeZoomed; // this variable == height
+
+document.querySelector("section").style.height = yBoardSizeZoomed + "px";
+
+let tileSize = boardSize/10; //The grid
+let boardZoom = xBoardSizeZoomed / boardSize;
 //----------------------------------------------------
 
 
@@ -54,6 +88,7 @@ var playerCounter = 0; //!!!
 let backgroundColor = 250; //The background color of the board. //!!!
 let playerAttempts = 3; //!!!
 let beatColorBoolean = false; //!!!
+let keysDebounce = new Set();
 //----------------------------------------------------
 
 
@@ -83,7 +118,7 @@ let rectWidth = 30;
 let rectHeight = 500;
 let widthMinusCube = boardSize - rectWidth;
 
-// time for cubes and music
+//---------Time for cubes and music-------------------
 let realPrevMusicTime = 0.0; //!!!
 let realMusicTime = 0.0; //!!!
 let isStartTime = false; //!!!
@@ -93,12 +128,27 @@ let oldMusicRate = 1; //!!!
 let musicRate = 1;
 
 let firstCubeTimestamp = 0.0;
-//position of red cubes
-let x2tWait = 0.0; // no reset required
+
+//---------Touches-----------------------------------
+let debugText = "";
+let oldClientX = 0;
+let oldClientY = 0;
+let clientX = 0;
+let clientY = 0;
+let clientDirX = 0;
+let clientDirY = 0;
+let clientDirMax = true;
+
+//---------The position of red cubes------------------
+let x2waitTravel = boardZoom / 60; // if there's a new frameCount, update this
+let x2waitFps = 0.0; //!!!falls back to fps if audioContext == 0. could be improved
+let x2waitMs = 0.0; //!!!
+let x2waitOld = 0.0;
+let x2waitNow = 0.0;
+            
 let x2t = 0.0; //!!!
 let x2totalDistance = 0.0;
 let x2totalTime = 0.0;
-let x2wait = 0.0; //!!!
 let x2start = 0.0;//!!! tileSize-(rectWidth/2);
 // Above positioned on 1st/2nd tile border.
 // IF there was 5 cubes it might be perfect position.
@@ -125,6 +175,7 @@ let y2 = 575; //!!!
 //--------------------Timer for all levels---------------------------
 //Timer used to see how long the player takes to complete a level.
 let timer = 0; //!!!
+let fps = 60;
 
 let easyworldRecord = null;
 let normalworldRecord = null;
@@ -202,6 +253,7 @@ let button4Start;
 let buttonBack;
 let buttonW;
 let buttonRetry;
+let buttonTouchInput;
 
 let pixelFont;
 //--------------------------------------------------------------------
@@ -227,7 +279,7 @@ function preload() {
     hardSound = loadSound('sounds/LevelSounds/Where_I_End_You_Begin_8-bit.mp3');
     //*/
     //*/Sounds//
-    masterSound = loadSound('sounds/LevelSounds/Super_Smash_Bros.mp3');
+    masterSound = loadSound('sounds/LevelSounds/Revenge ｜ 8-Bit Cover [LrIYu4Lcs2Y].mp3');
     //*/
 
     //*/Sounds//
@@ -340,11 +392,14 @@ function setup() {
     //Center the game on the page
 
     let div = createCanvas(xBoardSizeZoomed, yBoardSizeZoomed);
+    boardYPos = document.querySelector(".HeaderNav").style.height || 101
     div.position(-1, boardYPos); // X does nothing with horizontal below
     div.center('horizontal');
     div.style("border", "5px solid cyan");
 
-    //Check to see if it supports the game
+    //Check to see if device is supported (probably not mobile device)
+    //Technically screen resolution doesn't determine it. This is fast solution.
+
     if ((windowWidth <= 620)){
         level = -2;
         messageError.style.display = "block";
@@ -366,14 +421,14 @@ function setup() {
     StartGameButton.style('color', 'blueviolet');
     // minimum font 10px
     StartGameButton.style('border', 5*boardZoom + 'px solid cyan');
-    StartGameButton.mousePressed(mainMenu); //Goes to Main Menu
+    StartGameButton.mouseReleased(mainMenu); //Goes to Main Menu
 
 
     //-------------Back button-----------
     buttonBack = createTemplateButton('Back');
     buttonBack.style('color', 'black');
     buttonBack.style('border', 5*boardZoom + 'px solid cyan');
-    buttonBack.mousePressed(mainMenu); //Goes to Main Menu
+    buttonBack.mouseReleased(mainMenu); //Goes to Main Menu
     //-----------------------------------
 
     //-----------Easy Button-------------
@@ -381,48 +436,48 @@ function setup() {
     button.style('color', 'green');
     // button.style('font-size', '18px');
     button.style('border', 5*boardZoom + 'px solid green');
-    button.mousePressed(easyIntermission); //Goes to Intermission
+    button.mouseReleased(easyIntermission); //Goes to Intermission
 
     buttonStart = createTemplateButton('Start');
     buttonStart.style('color', 'green');
     buttonStart.style('border', 5*boardZoom + 'px solid green');
-    buttonStart.mousePressed(easyLevel); //Play Easy Mode
+    buttonStart.mouseReleased(easyLevel); //Play Easy Mode
     //-----------------------------------
 
     //-----------Normal Button-----------
     button2 = createTemplateButton('💎💎 Normal 💎💎');
     button2.style('color', 'orange');
     button2.style('border', 5*boardZoom + 'px solid orange');
-    button2.mousePressed(normalIntermission); //Goes to Intermission
+    button2.mouseReleased(normalIntermission); //Goes to Intermission
 
     button2Start = createTemplateButton('Start');
     button2Start.style('color', 'orange');
     button2Start.style('border', 5*boardZoom + 'px solid orange');
-    button2Start.mousePressed(normalLevel); //Play Normal Mode
+    button2Start.mouseReleased(normalLevel); //Play Normal Mode
     //-----------------------------------
 
     //------------Hard button------------
     button3 = createTemplateButton('💰 Hard 💰');
     button3.style('color', 'red');
     button3.style('border', 5*boardZoom + 'px solid red');
-    button3.mousePressed(hardIntermission); //Goes to Intermission
+    button3.mouseReleased(hardIntermission); //Goes to Intermission
 
     button3Start = createTemplateButton('Start');
     button3Start.style('color', 'red');
     button3Start.style('border', 5*boardZoom + 'px solid red');
-    button3Start.mousePressed(hardLevel); //Play Hard Mode
+    button3Start.mouseReleased(hardLevel); //Play Hard Mode
     //------------------------------------
 
     //-----------Master button (Used to see the High Score)----------
     button4 = createTemplateButton('💰👑 Master 👑💰');
     button4.style('color', 'blueviolet');
     button4.style('border', 5*boardZoom + 'px solid blueviolet');
-    button4.mousePressed(masterIntermission); //Goes to Intermission
+    button4.mouseReleased(masterIntermission); //Goes to Intermission
 
     button4Start = createTemplateButton('Start');
     button4Start.style('color', 'blueviolet');
     button4Start.style('border', 5*boardZoom + 'px solid blueviolet');
-    button4Start.mousePressed(masterLevel); //Play Master Mode
+    button4Start.mouseReleased(masterLevel); //Play Master Mode
     //-----------------------------------------------------------------
 
 
@@ -431,7 +486,7 @@ function setup() {
     buttonW.style('color', 'black');
     buttonW.style('border', 5*boardZoom + 'px solid cyan');
 
-    buttonW.mousePressed(mainMenu); //Main menu
+    buttonW.mouseReleased(mainMenu); //Main menu
     buttonW.hide();
 
     //-----------------------------------------------------------------
@@ -442,11 +497,16 @@ function setup() {
     buttonRetry.style('border', 5*boardZoom + 'px solid cyan');
     buttonRetry.style('cursor', 'pointer');
 
-    buttonRetry.mousePressed(mainMenuRetry); //Main menu
+    buttonRetry.mouseReleased(mainMenuRetry); //Main menu
     buttonRetry.hide();
 
     //-----------------------------------------------------------------
 
+    //----------Touch Input Button----------------
+    // buttonTouchInput = createButton("will be invisible later");
+    // buttonTouchInput.style('font-size', Math.max((18 * boardZoom), 9) + 'px');
+
+    //-----------------------------------------------------------------
 
     //----------------------Music Related------------------------------
     amplitude = new p5.Amplitude();
@@ -469,7 +529,10 @@ function setup() {
 //--------------------------------------------------------------------DRAW----------------------------------------------------------------------------------
 function draw(){
 
-    
+    // Bugs with differing frame rates so far:
+    // - Cops are not positioned correctly when not in 60 FPS.
+
+    frameRate(fps)
 
     textFont(pixelFont);
     StartGameButton.position(250*boardZoom, boardYPos+255.5*boardZoom);
@@ -606,7 +669,7 @@ function draw(){
             //*/VERSION/
             textSizeZoomed(15);
             fill("white");
-            textZoomed("Alpha v1.1.3", 5, 15);
+            textZoomed("Alpha v2.0.0", 5, 15);
 
             buttonShow();
             break;
@@ -616,7 +679,7 @@ function draw(){
 
         //--------------Easy Mode-------------------
         case 0.5: //Level 1 Overview
-	    setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -681,7 +744,7 @@ function draw(){
 
         //-------------Normal Mode-----------------
         case 1.5: //Level 2 overview
-	    setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -745,7 +808,7 @@ function draw(){
 
         //---------------Hard Mode-----------------
         case 2.5: //Hard intermission
-	    setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -887,7 +950,7 @@ function draw(){
 
         //--------------Master Mode-------------------
         case 5.5: //Master Mode Intermssion
-	    setup();
+            setup();
             //*/Sounds//
             MainMenuTheme.stop();
             //*/
@@ -903,8 +966,8 @@ function draw(){
             textSizeZoomed(25);
             textZoomed("Difficulty: Master", 25, 100);
             textSizeZoomed(15);
-            textZoomed("Music: Galeem and Dharkon (8-Bit Remix) - Super Smash Bros. Ultimate", 25, 150);
-            textZoomed("By Tater-Tot Tunes", 25, 200);
+            textZoomed("Music: Revenge", 25, 150);
+            textZoomed("By nbclover", 25, 200);
             if (masterworldRecord === null){
                 textZoomed("Personal Best: ???", 20, 570);
             }else{
@@ -944,6 +1007,10 @@ function draw(){
             break;
         //-------------------------------------------
     }
+
+    textSizeZoomed(20);
+    textZoomed(debugText, 100, 100);
+
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -989,6 +1056,7 @@ function finished(){
     if (coins.length === points && finishedPos.x == tilePos.x && finishedPos.y == tilePos.y){ //If it collides with the endBlock
         console.log("Winner!");
         level = 4;
+        FailSound.stop();
         VictorySound.setVolume(0.3);
         VictorySound.play();
 
@@ -1000,7 +1068,7 @@ function finished(){
         realStartTime = 0;
         oldMusicRate = 1; // not perfect. fixes some situations.
         isStartTime = false;
-        x2wait = 0; 
+        x2waitFps = 0; 
         x2t = 0;
         x2temp = -rectWidth; //
         y2 = 575; //
@@ -1056,7 +1124,7 @@ function failed(){
     isStartTime = false;
     x2t = 0;
     x2temp = -rectWidth; //
-    x2wait = 0; //
+    x2waitFps = 0; //
     y2 = 575; //
     i = 0; //
     finishLine = []; //
@@ -1197,19 +1265,19 @@ function visualAudio(){
   
     volHistory.push(vol);
   
-    if(volHistory.length > xBoardSizeZoomed*1) volHistory.splice(0,1); //width map
+    if(volHistory.length > boardSize*1) volHistory.splice(0,1); //width map
   
     stroke('cyan');
     noFill();
     beginShape();
     for(let i=0; i<volHistory.length; i++) {
         let y = map(volHistory[i], 0, 1, yBoardSizeZoomed/2, 0); //position map
-        vertex(i, y);
+        vertex(i*boardZoom, y);
     }
     endShape();
   
     stroke(11, 37, 52);
-    line(volHistory.length, 0, volHistory.length, yBoardSizeZoomed);
+    line(volHistory.length*boardZoom, 0, volHistory.length*boardZoom, yBoardSizeZoomed);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1417,7 +1485,7 @@ function level1(){ //Done
 
     //We time the player
     easyModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1513,7 +1581,7 @@ function level2(){ //Normal mode
 
     //We time the player
     normalModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1607,7 +1675,7 @@ function level3(){ // Hard Mode
 
     //We time the player
     hardModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1700,7 +1768,7 @@ function level4(){ //MASTER MODE
 
     //We time the player
     masterModeTimer = true;
-    if (frameCount % 60 == 0 && timer >= 0) {
+    if (frameCount % fps == 0 && timer >= 0) {
         timer++;
     }
 
@@ -1770,42 +1838,128 @@ function playJumpSound() {
 //Moving correlates to Canvas size. Ex: If Canvas is 600x600, then the
 //block moves 60. 500x500 is 50, etc.
 function keyPressed() {
-    if(player != null){
-        // if (key === "p") {
-        //     isPaused = !isPaused;
-        //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
-        // }
-        // if (isPaused) return;
-        
-        switch (key) {
-            case "w":
-            case "i":
-                player.face("up");
-                player.move(0, 1);
-                playJumpSound();
-                break;
-            case "a":
-            case "j":
-                player.face("left");
-                player.move(-1, 0);
-                playJumpSound();
-                break;
-            case "s":
-            case "k":
-                player.face("down");
-                player.move(0, -1);
-                playJumpSound();
-                break;
-            case "d":
-            case "l":
-                player.face("right");
-                player.move(1, 0);
-                playJumpSound();
-                break;
-        }
+    if(player == null){
+        return;
+    }
+    // if (key === "p") {
+    //     isPaused = !isPaused;
+    //     // console.log(`(p Pressed) offset f musicobj: ${easySound.currentTime() - realMusicTime}`)
+    // }
+    // if (isPaused) return;
+
+    switch (key) {
+        case "w":
+        case "i":
+            if (keysDebounce.has(1)) break;
+            keysDebounce.add(1);
+            player.face("up");
+            player.move(0, 1);
+            playJumpSound();
+            break;
+        case "a":
+        case "j":
+            if (keysDebounce.has(2)) break;
+            keysDebounce.add(2);
+            player.face("left");
+            player.move(-1, 0);
+            playJumpSound();
+            break;
+        case "s":
+        case "k":
+            if (keysDebounce.has(3)) break;
+            keysDebounce.add(3);
+            player.face("down");
+            player.move(0, -1);
+            playJumpSound();
+            break;
+        case "d":
+        case "l":
+            if (keysDebounce.has(4)) break;
+            keysDebounce.add(4);
+            player.face("right");
+            player.move(1, 0);
+            playJumpSound();
+            break;
+        // case "e":
+        //     throw "Pressed e for test error.";
     }
     
 }
+
+function touchEnded(e) {
+    // If canvas is not used or not playing, ignore
+    if (e.target.id !== "defaultCanvas0" || realPrevMusicTime === 0) return;
+    
+ // e.clientX returns undefined on mobile devices I've tested
+    clientX = e.layerX;
+    clientY = e.layerY;
+
+    // debugText = "direction cords: old:" + oldClientX + " " + oldClientY + " new:" + clientX + " " + clientY;
+    
+    clientDirX = clientX * 2 / xBoardSizeZoomed - 1;
+    clientDirY = clientY * 2 / yBoardSizeZoomed - 1;
+    clientDirMax = Math.max(Math.abs(clientDirX), Math.abs(clientDirY));
+
+    // if (clientDirMax < 10*boardZoom) {
+    //     return;
+    // }
+
+    clientDirX /= clientDirMax;
+    clientDirY /= clientDirMax;
+
+    // debugText += "\ndirection: " + clientDirX + " " + clientDirY;
+    
+// try this with the timing in between triggering cube deletion instead of rn?
+    // nah. that's too complex for no real benefit
+    if (clientDirX > clientDirY) {
+        if (clientDirX > -clientDirY) {
+            if (keysDebounce.has(4)) return;
+            keysDebounce.add(4);
+            player.face("right");
+            player.move(1, 0);
+            playJumpSound();
+        } else {
+            if (keysDebounce.has(1)) return;
+            keysDebounce.add(1);
+            player.face("up");
+            player.move(0, 1);
+            playJumpSound();
+        }
+    } else {
+        if (clientDirX > -clientDirY) {
+            if (keysDebounce.has(3)) return;
+            keysDebounce.add(3);
+            player.face("down");
+            player.move(0, -1);
+            playJumpSound();
+        } else {
+            if (keysDebounce.has(2)) return;
+            keysDebounce.add(2);
+            player.face("left");
+            player.move(-1, 0);
+            playJumpSound();
+        }
+    }
+
+    // todo: sensitivity, test irl
+
+    console.log("direction: " + clientDirX + " " + clientDirY);
+    console.log(e)
+    // StartGameButton.html("The touchEnded! " + event);
+}
+//-----------------------------------------------------------ERROR DESIGN-----------------------------------------------------------------
+window.onerror = function(e){
+    debugText = e.toString();
+                    
+    // This isn't visible for some reason: document.querySelector(".GameError").textContent = "Report on <a href=\"https://github.com/FrancisTR/Rhythm-Swipe/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc\" target=\"_blank\">GitHub issues</a> okay?\n" + debugText; // future idea to append: or send an email to rhythmswipe@gmail.com
+    console.log("onerror debugText: " + debugText);
+}
+// window.addEventListener("error", (event) => {
+//   // log.textContent = `${log.textContent}${event.type}: ${event.message}\n`;
+//   console.log(event);
+// });
+
+
 //---------------------------------------------------------LEVEL DESIGN-------------------------------------------------------------------
 
 
@@ -2141,11 +2295,11 @@ class Cube{ //The red cube
             // [-2, -998], // game will auto set these values
             // [0 || -1, -999],
         ]
-        // New music: Super_Smash_Bros.mp3
+        // New new music: Revenge - 8-Bit Cover [LrIYu4Lcs2Y].mp3
         this.masterTempo = [
-            [0.4, -997],
-            [0, 236], // (236, 236.?) // tempo might be changing
-            [masterSound.duration() - 2, -998],
+            // [0.4, -997], // review this ln later
+            [0, 200],
+            [masterSound.duration() - 4, -998],
             [masterSound.duration() || -1, -999],
         ]
 
@@ -2242,7 +2396,7 @@ class Cube{ //The red cube
                 y2 -= 12;
             }else{
                 console.log("Perfect!");
-                x2[j] -= 600;
+                x2[j] -= boardSize;
             }
         }else{
             console.log("Still perfect!");
@@ -2296,28 +2450,34 @@ class Cube{ //The red cube
     }
 
     x2tNoSkip(x2check, realTempo, _offset = 0){
+        x2waitOld = x2waitNow;
+        x2waitNow = Date.now();
+
         // if 0 (or false), use previous value
-        // remove x2check by x2wait when audioContext is not 0
+        // remove x2check by x2waitFps when audioContext is not 0
         if (realTempo === 0) {
             x2t = 0;
             return;
         }
 
         if (x2check === 0) {
-            x2t = realTempo / 60;
-            x2wait += x2t;
-//            if (x2wait > 80) {
-//            }
+            // x2t = x2waitTravel * realTempo;
+            x2t = (x2waitNow - x2waitOld) * realTempo / 1000;
+            x2waitMs += (x2waitOld - x2waitNow) * realTempo / 1000;
+            x2waitFps += x2t;
         } else {
 
-            if (x2wait === 0) {
+            // if (x2waitFps === 0) {
+            if (x2waitMs === 0) {
                 x2t = x2check;
             } else {
-                x2t = x2check - x2wait;
-                // if (x2wait > 22) {
-                //    console.log(`laggier waiting: x2wait=${x2wait} original x2t=${x2check}`)
+                x2t = x2check - x2waitFps;
+                // x2t = x2check - x2waitMs;
+                // if (x2waitFps > 22) {
+                //    console.log(`laggier waiting: x2waitFps=${x2waitFps} original x2t=${x2check}`)
                 // }
-                x2wait = 0;
+                x2waitMs = 0.0;
+                x2waitFps = 0.0;
             }
         }
     }
@@ -2336,9 +2496,9 @@ class Cube{ //The red cube
         // p5js currentTime() is a bit jittery.
         if (isStartTime) {
 
-            if (typeof this.tempoChange === "undefined") {
-                return this.restartMusic(false, "WARNING: tempoChange is undefined. Restarting...");
-            }
+            if (typeof this.tempoChange === "undefined")
+                return this.restartMusic(false,
+                    "WARNING: tempoChange is undefined. Restarting...");
 
             realPrevMusicTime = realMusicTime;
             realMusicTime = getAudioContext().currentTime * musicRate - realStartTime;
@@ -2429,8 +2589,6 @@ class Cube{ //The red cube
                 if (_x2[this.tempoChange][1] === -999) {
                     this.restartMusic(musicLevel);
                 } 
-        //  } else {
-        //      console.log("this should never be called from now on since it loops");
             }
         } else {
             isStartTime = true;
@@ -2452,16 +2610,18 @@ class Cube{ //The red cube
             }
             console.log(`Restarted song. firstCubeTimestamp ${firstCubeTimestamp} realMusicTime: ${realMusicTime} startTime: ${realStartTime} musicOffset: ${musicOffset} tempoChange: ${this.tempoChange}`);
             musicLevel.rate(musicRate);
-            
+
             this.tempoChange = 0;
             this.x2calculate(musicOffset); // x start positions
             realStartTime = getAudioContext().currentTime;
+            x2waitNow = Date.now();
             musicLevel.play();
 
             realPrevMusicTime = 0;
             realMusicTime = 0;
         }
 
+        keysDebounce.clear()
         let tempo = _x2[this.tempoChange][1]
 
 
@@ -2477,18 +2637,18 @@ class Cube{ //The red cube
                 rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
                 // console.log(_x2[0][1])
-            }
-
-            fill('red'); //Red boxes
-            if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
+            } else if((x2[1] > widthMinusCube) || (x2[2] > widthMinusCube) || (x2[3] > widthMinusCube) || (x2[4] > widthMinusCube) || (x2[5] > widthMinusCube)) {
+                fill('red'); //Red boxes
                 rectZoomed(x2temp, y2, rectWidth, rectHeight);
                 x2temp+=x2t;
             }
+            fill('red');
 
             for (let i = 0; i < x2.length; i++) {
-                if(x2[i] > xBoardSizeZoomed) {
-                    x2[i] %= 600;
-                    x2temp = -rectWidth;
+                if(x2[i] > boardSize) {
+                    x2[i] %= boardSize;
+                    x2temp = x2[i] - rectWidth;
+                    // x2temp = -rectWidth*boardZoom;
                 }
                 x2[i]+=x2t;
             }
@@ -2531,7 +2691,7 @@ class Cube{ //The red cube
     }
 
     displayLevel4(){
-        this.displayLevelSetup(masterSound, this.masterTempo, -155);
+        this.displayLevelSetup(masterSound, this.masterTempo);
     }
 }
 //-----------------------------------------------------------------------------------------------------------------
